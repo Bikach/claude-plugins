@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "codegraph",
-      "version": "1.0.7",
+      "version": "1.1.0",
       "source": "./codegraph",
       "description": "Claude Code plugin to analyze and navigate codebases through a Neo4j-backed knowledge graph"
     }

@@ -52,6 +52,7 @@ Starts Neo4j and prepares the database.
 2. Starts the Neo4j container
 3. Waits for Neo4j to be ready
 4. Creates indexes and constraints
+5. Installs tree-sitter native dependencies (required for parsing)
 
 **Result:** Neo4j available at http://localhost:7474
 
