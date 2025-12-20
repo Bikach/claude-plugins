@@ -2,46 +2,38 @@
 
 A collection of plugins for [Claude Code](https://claude.ai/code).
 
-## Installation
+## Marketplace
 
-### 1. Add this marketplace
+### Add this marketplace
 
 ```bash
 /plugin marketplace add Bikach/claude-plugins
 ```
 
-### 2. Install a plugin
+### Marketplace commands
 
-```bash
-/plugin install <plugin-name>@Bikach
-```
+| Command | Description |
+|---------|-------------|
+| `/plugin marketplace add <owner>/<repo>` | Add a marketplace |
+| `/plugin marketplace remove <owner>/<repo>` | Remove a marketplace |
+| `/plugin marketplace list` | List all configured marketplaces |
+| `/plugin marketplace update` | Update all marketplaces |
+
+### Plugin commands
+
+| Command | Description |
+|---------|-------------|
+| `/plugin install <plugin-name>@<owner>` | Install a plugin from a marketplace |
+| `/plugin uninstall <plugin-name>` | Uninstall a plugin |
+| `/plugin list` | List installed plugins |
+| `/plugin update` | Update all installed plugins |
+| `/plugin update <plugin-name>` | Update a specific plugin |
 
 ## Available Plugins
 
 | Plugin | Description |
 |--------|-------------|
 | [codegraph](./codegraph) | Analyze and navigate codebases through a Neo4j-backed knowledge graph |
-
-## Plugin Details
-
-### CodeGraph
-
-Analyze and navigate codebases through a Neo4j-backed knowledge graph.
-
-**Supported Languages:**
-- ✅ Kotlin
-- 🔜 Java (coming soon)
-- 🔜 TypeScript (coming soon)
-
-**Commands:**
-- `/codegraph:setup` - Start Neo4j and prepare the database
-- `/codegraph:index` - Index a project into the graph
-- `/codegraph:status` - Show Neo4j status and statistics
-
-**Install:**
-```bash
-/plugin install codegraph@Bikach
-```
 
 ## License
 
