@@ -20,7 +20,7 @@ A collection of plugins for [Claude Code](https://claude.ai/code).
 
 | Plugin | Description |
 |--------|-------------|
-| [codegraph](https://github.com/bikach/codegraph/tree/main/plugin) | Analyze and navigate codebases through a Neo4j-backed knowledge graph |
+| [codegraph](./codegraph) | Analyze and navigate codebases through a Neo4j-backed knowledge graph |
 
 ## Plugin Details
 
