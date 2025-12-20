@@ -1,4 +1,4 @@
-# Claude Plugins by Chakib Houd
+# Claude Plugins by [Chakib Houd](https://www.linkedin.com/in/chakib-houd-io/)
 
 A collection of plugins for [Claude Code](https://claude.ai/code).
 

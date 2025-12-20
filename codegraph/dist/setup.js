@@ -34795,12 +34795,18 @@ function isNeo4jContainerRunning() {
   }
 }
 function startNeo4jContainer(composePath) {
-  try {
-    (0, import_child_process.execSync)(`docker compose -f "${composePath}" up -d`, { stdio: "ignore" });
-    return true;
-  } catch {
-    return false;
+  const commands = [
+    `docker compose -f "${composePath}" up -d`,
+    `docker-compose -f "${composePath}" up -d`
+  ];
+  for (const cmd of commands) {
+    try {
+      (0, import_child_process.execSync)(cmd, { stdio: "ignore" });
+      return true;
+    } catch {
+    }
   }
+  return false;
 }
 async function waitForNeo4j(maxRetries = 30, delayMs = 2e3) {
   const client = new Neo4jClient(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD);
