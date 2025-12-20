@@ -34775,11 +34775,14 @@ function isDockerRunning() {
   }
 }
 function findDockerCompose() {
+  const scriptDir = __dirname;
   const candidates = [
-    (0, import_path2.resolve)(process.cwd(), "docker-compose.yml"),
-    (0, import_path2.resolve)(process.cwd(), "plugin", "docker-compose.yml"),
-    (0, import_path2.resolve)(process.cwd(), "..", "docker-compose.yml"),
-    (0, import_path2.resolve)(process.cwd(), "..", "plugin", "docker-compose.yml")
+    // From script dir: ../docker-compose.yml (scripts/ -> plugin/)
+    (0, import_path2.resolve)(scriptDir, "..", "docker-compose.yml"),
+    // From script dir: ../../docker-compose.yml (dist/scripts/ -> plugin/)
+    (0, import_path2.resolve)(scriptDir, "..", "..", "docker-compose.yml"),
+    // Fallback: check cwd for local development
+    (0, import_path2.resolve)(process.cwd(), "docker-compose.yml")
   ];
   for (const path of candidates) {
     if ((0, import_fs2.existsSync)(path)) return path;
