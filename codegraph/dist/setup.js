@@ -34795,13 +34795,14 @@ function isNeo4jContainerRunning() {
   }
 }
 function startNeo4jContainer(composePath) {
+  const composeDir = (0, import_path2.dirname)(composePath);
   const commands = [
-    `docker compose -f "${composePath}" up -d`,
-    `docker-compose -f "${composePath}" up -d`
+    "docker compose up -d",
+    "docker-compose up -d"
   ];
   for (const cmd of commands) {
     try {
-      (0, import_child_process.execSync)(cmd, { stdio: "ignore" });
+      (0, import_child_process.execSync)(cmd, { cwd: composeDir, stdio: "ignore" });
       return true;
     } catch {
     }
