@@ -7,13 +7,13 @@ A collection of plugins for [Claude Code](https://claude.ai/code).
 ### 1. Add this marketplace
 
 ```bash
-/plugin marketplace add bikach/claude-plugins
+/plugin marketplace add Bikach/claude-plugins
 ```
 
 ### 2. Install a plugin
 
 ```bash
-/plugin install <plugin-name>@bikach
+/plugin install <plugin-name>@Bikach
 ```
 
 ## Available Plugins
@@ -40,7 +40,7 @@ Analyze and navigate codebases through a Neo4j-backed knowledge graph.
 
 **Install:**
 ```bash
-/plugin install codegraph@bikach
+/plugin install codegraph@Bikach
 ```
 
 ## License

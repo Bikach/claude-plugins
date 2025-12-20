@@ -1,0 +1,20 @@
+{
+  "$schema": "https://cdn.jsdelivr.net/npm/@anthropic-ai/claude-code-plugins@latest/marketplace.schema.json",
+  "name": "Bikach-claude-plugins",
+  "description": "Claude Code plugins by Chakib Houd",
+  "author": {
+    "name": "Chakib Houd",
+    "url": "https://www.linkedin.com/in/chakib-houd-io/"
+  },
+  "plugins": [
+    {
+      "name": "codegraph",
+      "repository": "https://github.com/Bikach/codeGraph",
+      "path": "./plugin",
+      "author": {
+        "name": "Chakib Houd",
+        "url": "https://www.linkedin.com/in/chakib-houd-io/"
+      },
+    }
+  ]
+}
