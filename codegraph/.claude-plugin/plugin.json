@@ -1,6 +1,6 @@
 {
   "name": "codegraph",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Analyze and navigate codebases through a Neo4j-backed knowledge graph",
   "author": {
     "name": "Chakib Houd",
@@ -8,5 +8,11 @@
   },
   "repository": "https://github.com/Bikach/claude-plugins/tree/main/codegraph",
   "license": "MIT",
-  "keywords": ["code-analysis", "neo4j", "kotlin", "graph", "navigation"]
+  "keywords": [
+    "code-analysis",
+    "neo4j",
+    "kotlin",
+    "graph",
+    "navigation"
+  ]
 }
