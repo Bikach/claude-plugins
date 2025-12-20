@@ -1,16 +1,17 @@
 {
   "$schema": "https://cdn.jsdelivr.net/npm/@anthropic-ai/claude-code-plugins@latest/marketplace.schema.json",
   "name": "Bikach-claude-plugins",
-  "description": "Claude Code plugins by Chakib Houd",
-  "author": {
-    "name": "Chakib Houd",
-    "url": "https://www.linkedin.com/in/chakib-houd-io/"
+  "owner": {
+    "name": "Chakib Houd"
   },
   "plugins": [
     {
       "name": "codegraph",
-      "repository": "https://github.com/Bikach/codeGraph",
-      "path": "./plugin"
+      "source": {
+        "source": "github",
+        "repo": "Bikach/codeGraph"
+      },
+      "description": "Analyze and navigate codebases through a Neo4j-backed knowledge graph"
     }
   ]
 }
