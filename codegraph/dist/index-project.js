@@ -35544,7 +35544,8 @@ async function main() {
     dryRun
   };
   if (paths.length === 0) {
-    result.error = "No project path provided";
+    result.errorMessage = "No project path provided";
+    result.hint = "Usage: npx tsx index-project.ts [--clear] [--exclude-tests] [--dry-run] <project-path>";
     console.log(JSON.stringify(result));
     process.exit(1);
   }
@@ -35553,19 +35554,22 @@ async function main() {
   try {
     const projectStat = await (0, import_promises2.stat)(projectPath);
     if (!projectStat.isDirectory()) {
-      result.error = `Not a directory: ${projectPath}`;
+      result.errorMessage = `Not a directory: ${projectPath}`;
+      result.hint = "Provide a valid directory path to index";
       console.log(JSON.stringify(result));
       process.exit(1);
     }
   } catch {
-    result.error = `Project not found: ${projectPath}`;
+    result.errorMessage = `Project not found: ${projectPath}`;
+    result.hint = "Check that the path exists and is accessible";
     console.log(JSON.stringify(result));
     process.exit(1);
   }
   const files = await findSourceFiles(projectPath, excludeTests);
   result.filesFound = files.length;
   if (files.length === 0) {
-    result.error = "No supported source files found";
+    result.errorMessage = "No supported source files found";
+    result.hint = "Currently supported: Kotlin (.kt, .kts). Make sure the project contains Kotlin files.";
     console.log(JSON.stringify(result));
     process.exit(0);
   }
@@ -35587,6 +35591,7 @@ async function main() {
   result.symbolsResolved = symbolTable.byFqn.size;
   if (dryRun) {
     result.success = true;
+    result.message = `Dry run completed. Parsed ${result.filesParsed} files, resolved ${result.symbolsResolved} symbols.`;
     console.log(JSON.stringify(result));
     return;
   }
@@ -35594,7 +35599,8 @@ async function main() {
   try {
     await client.connect();
   } catch (err) {
-    result.error = `Failed to connect to Neo4j: ${err instanceof Error ? err.message : String(err)}`;
+    result.errorMessage = `Failed to connect to Neo4j: ${err instanceof Error ? err.message : String(err)}`;
+    result.hint = "Run /codegraph:setup first to start Neo4j";
     console.log(JSON.stringify(result));
     process.exit(1);
   }
@@ -35609,8 +35615,10 @@ async function main() {
     result.relationshipsCreated = writeResult.relationshipsCreated;
     result.writeErrors = writeResult.errors.length;
     result.success = true;
+    result.message = `Indexed ${result.filesParsed} files. Created ${result.nodesCreated} nodes and ${result.relationshipsCreated} relationships.`;
   } catch (err) {
-    result.error = `Write failed: ${err instanceof Error ? err.message : String(err)}`;
+    result.errorMessage = `Write failed: ${err instanceof Error ? err.message : String(err)}`;
+    result.hint = "Check Neo4j connection. Try running /codegraph:setup again.";
   } finally {
     await client.close();
   }
@@ -35618,6 +35626,10 @@ async function main() {
   if (!result.success) process.exit(1);
 }
 main().catch((err) => {
-  console.log(JSON.stringify({ success: false, error: err instanceof Error ? err.message : String(err) }));
+  console.log(JSON.stringify({
+    success: false,
+    errorMessage: err instanceof Error ? err.message : String(err),
+    hint: "An unexpected error occurred during indexing."
+  }));
   process.exit(1);
 });

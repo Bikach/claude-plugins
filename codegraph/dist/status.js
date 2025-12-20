@@ -31795,14 +31795,24 @@ async function main() {
     result.relationships = stats.relationships;
     result.totalNodes = Object.values(stats.nodes).reduce((a, b) => a + b, 0);
     result.totalRelationships = Object.values(stats.relationships).reduce((a, b) => a + b, 0);
+    if (result.totalNodes === 0) {
+      result.message = "Neo4j connected but graph is empty. Run /codegraph:index to index a project.";
+    } else {
+      result.message = `Neo4j connected. Graph contains ${result.totalNodes} nodes and ${result.totalRelationships} relationships.`;
+    }
   } catch (err) {
-    result.error = err instanceof Error ? err.message : String(err);
+    result.errorMessage = err instanceof Error ? err.message : String(err);
+    result.hint = "Cannot connect to Neo4j. Run /codegraph:setup first to start the database.";
   } finally {
     await client.close();
   }
   console.log(JSON.stringify(result));
 }
 main().catch((err) => {
-  console.log(JSON.stringify({ connected: false, error: err instanceof Error ? err.message : String(err) }));
+  console.log(JSON.stringify({
+    connected: false,
+    errorMessage: err instanceof Error ? err.message : String(err),
+    hint: "Cannot connect to Neo4j. Run /codegraph:setup first to start the database."
+  }));
   process.exit(1);
 });
