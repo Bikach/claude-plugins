@@ -4,14 +4,19 @@
   "owner": {
     "name": "Chakib Houd"
   },
+  "metadata": {
+    "description": "Claude Code plugins by Chakib Houd",
+    "version": "1.0.0"
+  },
   "plugins": [
     {
       "name": "codegraph",
+      "version": "1.0.0",
       "source": {
         "source": "github",
         "repo": "Bikach/codeGraph"
       },
-      "description": "Analyze and navigate codebases through a Neo4j-backed knowledge graph"
+      "description": "Claude Code plugin to analyze and navigate codebases through a Neo4j-backed knowledge graph"
     }
   ]
 }
