@@ -10,11 +10,7 @@
     {
       "name": "codegraph",
       "repository": "https://github.com/Bikach/codeGraph",
-      "path": "./plugin",
-      "author": {
-        "name": "Chakib Houd",
-        "url": "https://www.linkedin.com/in/chakib-houd-io/"
-      },
+      "path": "./plugin"
     }
   ]
 }
