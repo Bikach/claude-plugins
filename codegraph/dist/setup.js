@@ -31559,11 +31559,11 @@ function extractImports(root) {
     if (child.type === "import_header") {
       const identifier = findChildByType(child, "identifier");
       if (identifier) {
-        const path = identifier.text;
-        const isWildcard = path.endsWith("*") || child.children.some((c) => c.type === "STAR" || c.type === "wildcard_import");
+        const path2 = identifier.text;
+        const isWildcard = path2.endsWith("*") || child.children.some((c) => c.type === "STAR" || c.type === "wildcard_import");
         const aliasNode = findChildByType(child, "import_alias");
         imports.push({
-          path: path.replace(/\.\*$/, ""),
+          path: path2.replace(/\.\*$/, ""),
           alias: aliasNode ? (findChildByType(aliasNode, "type_identifier") ?? findChildByType(aliasNode, "simple_identifier"))?.text : void 0,
           isWildcard
         });
@@ -32447,7 +32447,7 @@ var init_kotlin = __esm({
 // src/scripts/setup.ts
 var import_child_process = require("child_process");
 var import_fs2 = require("fs");
-var import_path2 = require("path");
+var import_path3 = require("path");
 
 // src/neo4j/neo4j.ts
 var import_neo4j_driver = __toESM(require_lib3(), 1);
@@ -33441,6 +33441,7 @@ var stdlibRegistry = new StdlibRegistry();
 
 // src/indexer/writer/index.ts
 var import_neo4j_driver2 = __toESM(require_lib3(), 1);
+var import_path2 = __toESM(require("path"), 1);
 
 // src/indexer/domain/index.ts
 var import_promises = require("fs/promises");
@@ -33490,8 +33491,8 @@ async function analyzeDomains(files, options = {}) {
 }
 async function loadDomainsConfig(configPath) {
   const paths = configPath ? [configPath] : ["codegraph.domains.json", ".codegraph/domains.json", "codegraph.config.json"];
-  for (const path of paths) {
-    const fullPath = (0, import_path.join)(process.cwd(), path);
+  for (const path2 of paths) {
+    const fullPath = (0, import_path.join)(process.cwd(), path2);
     if ((0, import_fs.existsSync)(fullPath)) {
       try {
         const content = await (0, import_promises.readFile)(fullPath, "utf-8");
@@ -33722,6 +33723,8 @@ var Neo4jWriter = class {
    */
   async ensureConstraintsAndIndexes() {
     const constraints = [
+      // Project uniqueness by path
+      "CREATE CONSTRAINT project_path_unique IF NOT EXISTS FOR (p:Project) REQUIRE p.path IS UNIQUE",
       // Uniqueness constraints (FQN-based for most types)
       "CREATE CONSTRAINT class_fqn_unique IF NOT EXISTS FOR (c:Class) REQUIRE c.fqn IS UNIQUE",
       "CREATE CONSTRAINT interface_fqn_unique IF NOT EXISTS FOR (i:Interface) REQUIRE i.fqn IS UNIQUE",
@@ -33737,6 +33740,8 @@ var Neo4jWriter = class {
       "CREATE CONSTRAINT domain_name_unique IF NOT EXISTS FOR (d:Domain) REQUIRE d.name IS UNIQUE"
     ];
     const indexes = [
+      // Project index
+      "CREATE INDEX project_name_index IF NOT EXISTS FOR (p:Project) ON (p.name)",
       // Name indexes for fast lookups
       "CREATE INDEX class_name_index IF NOT EXISTS FOR (c:Class) ON (c.name)",
       "CREATE INDEX interface_name_index IF NOT EXISTS FOR (i:Interface) ON (i.name)",
@@ -33760,18 +33765,30 @@ var Neo4jWriter = class {
     }
   }
   /**
-   * Clear all code graph data from the database.
-   * Useful before a full re-index.
+   * Clear code graph data from the database.
+   * If projectPath is provided, only clears data for that project.
+   * Otherwise, clears all code graph data.
    */
-  async clearGraph() {
-    const deleteQuery = `
-      MATCH (n)
-      WHERE n:Package OR n:Class OR n:Interface OR n:Object
-         OR n:Function OR n:Property OR n:Parameter OR n:Annotation OR n:TypeAlias
-         OR n:Constructor OR n:Domain
-      DETACH DELETE n
-    `;
-    const result = await this.client.execute(deleteQuery, {}, import_neo4j_driver2.default.routing.WRITE);
+  async clearGraph(projectPath) {
+    let deleteQuery;
+    let params = {};
+    if (projectPath) {
+      deleteQuery = `
+        MATCH (proj:Project {path: $projectPath})
+        OPTIONAL MATCH (proj)-[:CONTAINS*]->(n)
+        DETACH DELETE proj, n
+      `;
+      params = { projectPath };
+    } else {
+      deleteQuery = `
+        MATCH (n)
+        WHERE n:Project OR n:Package OR n:Class OR n:Interface OR n:Object
+           OR n:Function OR n:Property OR n:Parameter OR n:Annotation OR n:TypeAlias
+           OR n:Constructor OR n:Domain
+        DETACH DELETE n
+      `;
+    }
+    const result = await this.client.execute(deleteQuery, params, import_neo4j_driver2.default.routing.WRITE);
     return {
       nodesDeleted: result.summary.counters.nodesDeleted || 0,
       relationshipsDeleted: result.summary.counters.relationshipsDeleted || 0
@@ -33792,7 +33809,11 @@ var Neo4jWriter = class {
       await this.ensureConstraintsAndIndexes();
     }
     if (options.clearBefore) {
-      await this.clearGraph();
+      await this.clearGraph(options.projectPath);
+    }
+    if (options.projectPath) {
+      await this.writeProject(options.projectPath, options.projectName);
+      result.nodesCreated++;
     }
     const packages = /* @__PURE__ */ new Set();
     for (const file of files) {
@@ -33800,8 +33821,9 @@ var Neo4jWriter = class {
         packages.add(file.packageName);
       }
     }
-    const packageResult = await this.writePackages(Array.from(packages));
-    result.nodesCreated += packageResult;
+    const packageResult = await this.writePackages(Array.from(packages), options.projectPath);
+    result.nodesCreated += packageResult.nodesCreated;
+    result.relationshipsCreated += packageResult.relationshipsCreated;
     for (const file of files) {
       try {
         const fileResult = await this.writeFile(file);
@@ -33875,17 +33897,40 @@ var Neo4jWriter = class {
     return { nodesCreated, relationshipsCreated };
   }
   /**
-   * Write packages to Neo4j.
+   * Write a project node to Neo4j.
    */
-  async writePackages(packages) {
-    if (packages.length === 0) return 0;
+  async writeProject(projectPath, projectName) {
+    const name = projectName || import_path2.default.basename(projectPath);
     const query = `
+      MERGE (p:Project {path: $path})
+      SET p.name = $name
+      RETURN p
+    `;
+    await this.client.write(query, { path: projectPath, name });
+  }
+  /**
+   * Write packages to Neo4j and link them to the project if provided.
+   */
+  async writePackages(packages, projectPath) {
+    if (packages.length === 0) return { nodesCreated: 0, relationshipsCreated: 0 };
+    const createQuery = `
       UNWIND $packages AS pkg
       MERGE (p:Package {name: pkg})
       RETURN count(p) AS created
     `;
-    await this.client.write(query, { packages });
-    return packages.length;
+    await this.client.write(createQuery, { packages });
+    let relationshipsCreated = 0;
+    if (projectPath) {
+      const linkQuery = `
+        MATCH (proj:Project {path: $projectPath})
+        UNWIND $packages AS pkg
+        MATCH (p:Package {name: pkg})
+        MERGE (proj)-[:CONTAINS]->(p)
+      `;
+      await this.client.write(linkQuery, { projectPath, packages });
+      relationshipsCreated = packages.length;
+    }
+    return { nodesCreated: packages.length, relationshipsCreated };
   }
   /**
    * Write a class/interface/object/enum to Neo4j with all its members.
@@ -34778,14 +34823,14 @@ function findDockerCompose() {
   const scriptDir = __dirname;
   const candidates = [
     // From script dir: ../docker-compose.yml (scripts/ -> plugin/)
-    (0, import_path2.resolve)(scriptDir, "..", "docker-compose.yml"),
+    (0, import_path3.resolve)(scriptDir, "..", "docker-compose.yml"),
     // From script dir: ../../docker-compose.yml (dist/scripts/ -> plugin/)
-    (0, import_path2.resolve)(scriptDir, "..", "..", "docker-compose.yml"),
+    (0, import_path3.resolve)(scriptDir, "..", "..", "docker-compose.yml"),
     // Fallback: check cwd for local development
-    (0, import_path2.resolve)(process.cwd(), "docker-compose.yml")
+    (0, import_path3.resolve)(process.cwd(), "docker-compose.yml")
   ];
-  for (const path of candidates) {
-    if ((0, import_fs2.existsSync)(path)) return path;
+  for (const path2 of candidates) {
+    if ((0, import_fs2.existsSync)(path2)) return path2;
   }
   return null;
 }
@@ -34798,7 +34843,7 @@ function isNeo4jContainerRunning() {
   }
 }
 function startNeo4jContainer(composePath) {
-  const composeDir = (0, import_path2.dirname)(composePath);
+  const composeDir = (0, import_path3.dirname)(composePath);
   const commands = [
     "docker compose up -d",
     "docker-compose up -d"

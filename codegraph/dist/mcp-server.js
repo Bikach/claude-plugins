@@ -52562,7 +52562,8 @@ var searchNodesDefinition = {
     query: external_exports.string().describe("Search query (name or pattern)"),
     node_types: external_exports.array(external_exports.enum(["class", "interface", "function", "property", "object"])).optional().describe("Filter by node types (all if not specified)"),
     exact_match: external_exports.boolean().optional().default(false).describe("If true, exact match. If false, partial match (CONTAINS)"),
-    limit: external_exports.number().int().min(1).max(100).optional().default(20).describe("Maximum number of results")
+    limit: external_exports.number().int().min(1).max(100).optional().default(20).describe("Maximum number of results"),
+    project_path: external_exports.string().optional().describe("Filter by project path (use current working directory). If not provided, searches all indexed projects.")
   }
 };
 
@@ -52575,10 +52576,39 @@ function buildCompactOutput(header, items, formatter) {
 ${items.map(formatter).join("\n")}`;
 }
 
+// src/tools/project-filter.ts
+async function validateProject(client, projectPath) {
+  const cypher = `
+    MATCH (p:Project)
+    WHERE $projectPath STARTS WITH p.path
+    RETURN p.path AS path, p.name AS name
+    LIMIT 1
+  `;
+  const records = await client.query(cypher, { projectPath });
+  if (records.length === 0) {
+    return {
+      valid: false,
+      error: `No indexed project found for path "${projectPath}". The project may have been moved or not yet indexed. Run the indexer to index this project.`
+    };
+  }
+  return { valid: true, projectPath: records[0].path };
+}
+function projectNotFoundResponse(error2) {
+  return {
+    content: [{ type: "text", text: `ERROR: ${error2}` }]
+  };
+}
+
 // src/tools/search-nodes/handler.ts
 var formatNode = (n) => `${n.type} | ${n.name} | ${n.visibility} | ${n.filePath}:${n.lineNumber}`;
 async function handleSearchNodes(client, params) {
-  const { query, node_types, exact_match = false, limit = 20 } = params;
+  const { query, node_types, exact_match = false, limit = 20, project_path } = params;
+  if (project_path) {
+    const validation = await validateProject(client, project_path);
+    if (!validation.valid) {
+      return projectNotFoundResponse(validation.error);
+    }
+  }
   const labels = node_types?.map((t) => t.charAt(0).toUpperCase() + t.slice(1)) ?? [
     "Class",
     "Interface",
@@ -52587,10 +52617,12 @@ async function handleSearchNodes(client, params) {
     "Object"
   ];
   const searchPattern = exact_match ? query : `(?i).*${escapeRegex2(query)}.*`;
+  const projectFilter = project_path ? "AND n.filePath STARTS WITH $projectPath" : "";
   const cypher = `
     MATCH (n)
     WHERE any(label IN labels(n) WHERE label IN $labels)
       AND n.name =~ $pattern
+      ${projectFilter}
     RETURN
       n.name AS name,
       [label IN labels(n) WHERE label IN $labels][0] AS type,
@@ -52603,8 +52635,9 @@ async function handleSearchNodes(client, params) {
   const records = await client.query(cypher, {
     labels,
     pattern: searchPattern,
-    limit: Math.trunc(limit)
+    limit: Math.trunc(limit),
     // Ensure integer for Neo4j LIMIT clause
+    projectPath: project_path ?? ""
   });
   const results = records.map((r) => ({
     name: r.name,
@@ -52630,19 +52663,28 @@ var getCallersDefinition = {
   inputSchema: {
     function_name: external_exports.string().describe("Name of the function to find callers for"),
     class_name: external_exports.string().optional().describe("Class containing the function (for disambiguation)"),
-    depth: external_exports.number().int().min(1).max(5).optional().default(2).describe("Trace depth (1 = direct callers only)")
+    depth: external_exports.number().int().min(1).max(5).optional().default(2).describe("Trace depth (1 = direct callers only)"),
+    project_path: external_exports.string().optional().describe("Filter by project path (use current working directory). If not provided, searches all indexed projects.")
   }
 };
 
 // src/tools/get-callers/handler.ts
 var formatCaller = (c) => `${c.depth} | ${c.className ? `${c.className}.` : ""}${c.functionName}() | ${c.filePath}:${c.lineNumber}`;
 async function handleGetCallers(client, params) {
-  const { function_name, class_name, depth = 2 } = params;
+  const { function_name, class_name, depth = 2, project_path } = params;
+  if (project_path) {
+    const validation = await validateProject(client, project_path);
+    if (!validation.valid) {
+      return projectNotFoundResponse(validation.error);
+    }
+  }
+  const projectFilter = project_path ? "AND caller.filePath STARTS WITH $projectPath" : "";
   const cypher = `
     MATCH path = (caller:Function)-[:CALLS*1..${depth}]->(target:Function)
     WHERE target.name = $function_name
       AND ($class_name IS NULL OR target.declaringType ENDS WITH $class_name)
       AND caller <> target
+      ${projectFilter}
     WITH DISTINCT caller, length(path) AS pathDepth
     OPTIONAL MATCH (owner)-[:DECLARES]->(caller)
     WHERE owner:Class OR owner:Interface OR owner:Object
@@ -52656,7 +52698,8 @@ async function handleGetCallers(client, params) {
   `;
   const records = await client.query(cypher, {
     function_name,
-    class_name: class_name ?? null
+    class_name: class_name ?? null,
+    projectPath: project_path ?? ""
   });
   const callers = records.map((r) => ({
     functionName: r.functionName,
@@ -52679,19 +52722,28 @@ var getCalleesDefinition = {
   inputSchema: {
     function_name: external_exports.string().describe("Name of the function to find callees for"),
     class_name: external_exports.string().optional().describe("Class containing the function (for disambiguation)"),
-    depth: external_exports.number().int().min(1).max(5).optional().default(2).describe("Trace depth (1 = direct callees only)")
+    depth: external_exports.number().int().min(1).max(5).optional().default(2).describe("Trace depth (1 = direct callees only)"),
+    project_path: external_exports.string().optional().describe("Filter by project path (use current working directory). If not provided, searches all indexed projects.")
   }
 };
 
 // src/tools/get-callees/handler.ts
 var formatCallee = (c) => `${c.depth} | ${c.className ? `${c.className}.` : ""}${c.functionName}() | ${c.filePath}:${c.lineNumber}`;
 async function handleGetCallees(client, params) {
-  const { function_name, class_name, depth = 2 } = params;
+  const { function_name, class_name, depth = 2, project_path } = params;
+  if (project_path) {
+    const validation = await validateProject(client, project_path);
+    if (!validation.valid) {
+      return projectNotFoundResponse(validation.error);
+    }
+  }
+  const projectFilter = project_path ? "AND source.filePath STARTS WITH $projectPath" : "";
   const cypher = `
     MATCH path = (source:Function)-[:CALLS*1..${depth}]->(callee:Function)
     WHERE source.name = $function_name
       AND ($class_name IS NULL OR source.declaringType ENDS WITH $class_name)
       AND source <> callee
+      ${projectFilter}
     WITH DISTINCT callee, length(path) AS pathDepth
     OPTIONAL MATCH (owner)-[:DECLARES]->(callee)
     WHERE owner:Class OR owner:Interface OR owner:Object
@@ -52705,7 +52757,8 @@ async function handleGetCallees(client, params) {
   `;
   const records = await client.query(cypher, {
     function_name,
-    class_name: class_name ?? null
+    class_name: class_name ?? null,
+    projectPath: project_path ?? ""
   });
   const callees = records.map((r) => ({
     functionName: r.functionName,
@@ -52729,14 +52782,22 @@ var getNeighborsDefinition = {
     node_name: external_exports.string().describe("Name of the class/interface to get neighbors for"),
     direction: external_exports.enum(["outgoing", "incoming", "both"]).optional().default("both").describe("Direction: outgoing (dependencies), incoming (dependents), or both"),
     depth: external_exports.number().int().min(1).max(5).optional().default(1).describe("Search depth (1 = direct only)"),
-    include_external: external_exports.boolean().optional().default(false).describe("Include external dependencies (npm packages)")
+    include_external: external_exports.boolean().optional().default(false).describe("Include external dependencies (npm packages)"),
+    project_path: external_exports.string().optional().describe("Filter by project path (use current working directory). If not provided, searches all indexed projects.")
   }
 };
 
 // src/tools/get-neighbors/handler.ts
 var formatNeighbor = (n) => `${n.direction} | ${n.depth} | ${n.type} | ${n.name}${n.filePath ? ` | ${n.filePath}` : ""}`;
 async function handleGetNeighbors(client, params) {
-  const { node_name, direction = "both", depth: _depth = 1, include_external = false } = params;
+  const { node_name, direction = "both", depth: _depth = 1, include_external = false, project_path } = params;
+  if (project_path) {
+    const validation = await validateProject(client, project_path);
+    if (!validation.valid) {
+      return projectNotFoundResponse(validation.error);
+    }
+  }
+  const projectFilterSource = project_path ? "AND source.filePath STARTS WITH $projectPath" : "";
   const neighbors = [];
   if (direction === "outgoing" || direction === "both") {
     const directOutgoingCypher = `
@@ -52745,6 +52806,7 @@ async function handleGetNeighbors(client, params) {
         AND (source:Class OR source:Interface OR source:Object)
         AND (target:Class OR target:Interface)
         ${include_external ? "" : "AND target.filePath IS NOT NULL"}
+        ${projectFilterSource}
       RETURN DISTINCT
         target.name AS name,
         [label IN labels(target) WHERE label IN ['Class', 'Interface', 'Object']][0] AS type,
@@ -52759,6 +52821,7 @@ async function handleGetNeighbors(client, params) {
         AND (target:Class OR target:Interface)
         AND source <> target
         ${include_external ? "" : "AND target.filePath IS NOT NULL"}
+        ${projectFilterSource}
       RETURN DISTINCT
         target.name AS name,
         [label IN labels(target) WHERE label IN ['Class', 'Interface', 'Object']][0] AS type,
@@ -52767,8 +52830,8 @@ async function handleGetNeighbors(client, params) {
         target.filePath AS filePath
     `;
     const [directOutgoing, functionUsesOutgoing] = await Promise.all([
-      client.query(directOutgoingCypher, { node_name }),
-      client.query(functionUsesOutgoingCypher, { node_name })
+      client.query(directOutgoingCypher, { node_name, projectPath: project_path ?? "" }),
+      client.query(functionUsesOutgoingCypher, { node_name, projectPath: project_path ?? "" })
     ]);
     const outgoingMap = /* @__PURE__ */ new Map();
     [...directOutgoing, ...functionUsesOutgoing].forEach((r) => {
@@ -52793,6 +52856,7 @@ async function handleGetNeighbors(client, params) {
         AND (source:Class OR source:Interface OR source:Object)
         AND (target:Class OR target:Interface)
         ${include_external ? "" : "AND source.filePath IS NOT NULL"}
+        ${projectFilterSource}
       RETURN DISTINCT
         source.name AS name,
         [label IN labels(source) WHERE label IN ['Class', 'Interface', 'Object']][0] AS type,
@@ -52807,6 +52871,7 @@ async function handleGetNeighbors(client, params) {
         AND (target:Class OR target:Interface)
         AND source <> target
         ${include_external ? "" : "AND source.filePath IS NOT NULL"}
+        ${projectFilterSource}
       RETURN DISTINCT
         source.name AS name,
         [label IN labels(source) WHERE label IN ['Class', 'Interface', 'Object']][0] AS type,
@@ -52815,8 +52880,8 @@ async function handleGetNeighbors(client, params) {
         source.filePath AS filePath
     `;
     const [directIncoming, functionUsesIncoming] = await Promise.all([
-      client.query(directIncomingCypher, { node_name }),
-      client.query(functionUsesIncomingCypher, { node_name })
+      client.query(directIncomingCypher, { node_name, projectPath: project_path ?? "" }),
+      client.query(functionUsesIncomingCypher, { node_name, projectPath: project_path ?? "" })
     ]);
     const incomingMap = /* @__PURE__ */ new Map();
     [...directIncoming, ...functionUsesIncoming].forEach((r) => {
@@ -52847,18 +52912,27 @@ var getImplementationsDefinition = {
   description: 'Find all classes that implement a given interface or extend an abstract class. Returns compact format: "direct/indirect | ClassName | filePath:line"',
   inputSchema: {
     interface_name: external_exports.string().describe("Name of the interface or abstract class"),
-    include_indirect: external_exports.boolean().optional().default(false).describe("Include indirect implementations (via inheritance chain)")
+    include_indirect: external_exports.boolean().optional().default(false).describe("Include indirect implementations (via inheritance chain)"),
+    project_path: external_exports.string().optional().describe("Filter by project path (use current working directory). If not provided, searches all indexed projects.")
   }
 };
 
 // src/tools/get-implementations/handler.ts
 var formatImplementation = (i) => `${i.isDirect ? "direct" : "indirect"} | ${i.name} | ${i.filePath}:${i.lineNumber}`;
 async function handleGetImplementations(client, params) {
-  const { interface_name, include_indirect = false } = params;
+  const { interface_name, include_indirect = false, project_path } = params;
+  if (project_path) {
+    const validation = await validateProject(client, project_path);
+    if (!validation.valid) {
+      return projectNotFoundResponse(validation.error);
+    }
+  }
+  const projectFilter = project_path ? "AND c.filePath STARTS WITH $projectPath" : "";
   const implementations = [];
   const directCypher = `
     MATCH (c:Class)-[:IMPLEMENTS]->(i:Interface)
     WHERE i.name = $interface_name
+      ${projectFilter}
     RETURN
       c.name AS name,
       c.filePath AS filePath,
@@ -52866,7 +52940,10 @@ async function handleGetImplementations(client, params) {
       true AS isDirect
     ORDER BY c.name
   `;
-  const direct = await client.query(directCypher, { interface_name });
+  const direct = await client.query(directCypher, {
+    interface_name,
+    projectPath: project_path ?? ""
+  });
   implementations.push(
     ...direct.map((r) => ({
       name: r.name,
@@ -52880,6 +52957,7 @@ async function handleGetImplementations(client, params) {
       MATCH (c:Class)-[:EXTENDS*1..]->(parent:Class)-[:IMPLEMENTS]->(i:Interface)
       WHERE i.name = $interface_name
         AND NOT (c)-[:IMPLEMENTS]->(i)
+        ${projectFilter}
       RETURN DISTINCT
         c.name AS name,
         c.filePath AS filePath,
@@ -52887,7 +52965,10 @@ async function handleGetImplementations(client, params) {
         false AS isDirect
       ORDER BY c.name
     `;
-    const indirect = await client.query(indirectCypher, { interface_name });
+    const indirect = await client.query(indirectCypher, {
+      interface_name,
+      projectPath: project_path ?? ""
+    });
     implementations.push(
       ...indirect.map((r) => ({
         name: r.name,
@@ -52911,14 +52992,25 @@ var getImpactDefinition = {
   inputSchema: {
     node_name: external_exports.string().describe("Name of the node to analyze impact for"),
     node_type: external_exports.enum(["class", "interface", "function", "property"]).optional().describe("Type of node (for disambiguation)"),
-    depth: external_exports.number().int().min(1).max(10).optional().default(3).describe("Analysis depth")
+    depth: external_exports.number().int().min(1).max(10).optional().default(3).describe("Analysis depth"),
+    project_path: external_exports.string().optional().describe("Filter by project path (use current working directory). If not provided, searches all indexed projects.")
   }
 };
 
 // src/tools/get-impact/handler.ts
 var formatImpact = (i) => `${i.impactType} | ${i.depth} | ${i.type} | ${i.name} | ${i.filePath}:${i.lineNumber}`;
 async function handleGetImpact(client, params) {
-  const { node_name, node_type, depth = 3 } = params;
+  const { node_name, node_type, depth = 3, project_path } = params;
+  if (project_path) {
+    const validation = await validateProject(client, project_path);
+    if (!validation.valid) {
+      return projectNotFoundResponse(validation.error);
+    }
+  }
+  const projectFilter = project_path ? "AND caller.filePath STARTS WITH $projectPath" : "";
+  const projectFilterDependent = project_path ? "AND dependent.filePath STARTS WITH $projectPath" : "";
+  const projectFilterImpl = project_path ? "AND impl.filePath STARTS WITH $projectPath" : "";
+  const projectFilterChild = project_path ? "AND child.filePath STARTS WITH $projectPath" : "";
   const impacts = [];
   const labelFilter = node_type ? node_type.charAt(0).toUpperCase() + node_type.slice(1) : null;
   if (!node_type || node_type === "function") {
@@ -52926,6 +53018,7 @@ async function handleGetImpact(client, params) {
       MATCH path = (caller:Function)-[:CALLS*1..${depth}]->(target:Function)
       WHERE target.name = $node_name
         AND caller <> target
+        ${projectFilter}
       WITH DISTINCT caller, min(length(path)) AS pathDepth
       RETURN
         caller.name AS name,
@@ -52936,7 +53029,10 @@ async function handleGetImpact(client, params) {
         coalesce(caller.lineNumber, 0) AS lineNumber
       ORDER BY pathDepth, name
     `;
-    const callers = await client.query(callersCypher, { node_name });
+    const callers = await client.query(callersCypher, {
+      node_name,
+      projectPath: project_path ?? ""
+    });
     impacts.push(...callers);
   }
   if (!node_type || node_type === "class" || node_type === "interface") {
@@ -52946,6 +53042,7 @@ async function handleGetImpact(client, params) {
         ${labelFilter ? `AND target:${labelFilter}` : "AND (target:Class OR target:Interface)"}
         AND (dependent:Class OR dependent:Interface OR dependent:Object)
         AND dependent <> target
+        ${projectFilterDependent}
       RETURN DISTINCT
         dependent.name AS name,
         [label IN labels(dependent) WHERE label IN ['Class', 'Interface', 'Object']][0] AS type,
@@ -52955,13 +53052,17 @@ async function handleGetImpact(client, params) {
         coalesce(dependent.lineNumber, 0) AS lineNumber
       ORDER BY name
     `;
-    const dependents = await client.query(dependentsCypher, { node_name });
+    const dependents = await client.query(dependentsCypher, {
+      node_name,
+      projectPath: project_path ?? ""
+    });
     impacts.push(...dependents);
   }
   if (!node_type || node_type === "interface") {
     const implementorsCypher = `
       MATCH (impl:Class)-[:IMPLEMENTS]->(target:Interface)
       WHERE target.name = $node_name
+        ${projectFilterImpl}
       RETURN DISTINCT
         impl.name AS name,
         'class' AS type,
@@ -52971,13 +53072,17 @@ async function handleGetImpact(client, params) {
         coalesce(impl.lineNumber, 0) AS lineNumber
       ORDER BY name
     `;
-    const implementors = await client.query(implementorsCypher, { node_name });
+    const implementors = await client.query(implementorsCypher, {
+      node_name,
+      projectPath: project_path ?? ""
+    });
     impacts.push(...implementors);
   }
   if (!node_type || node_type === "class") {
     const childrenCypher = `
       MATCH path = (child:Class)-[:EXTENDS*1..${depth}]->(target:Class)
       WHERE target.name = $node_name
+        ${projectFilterChild}
       WITH DISTINCT child, min(length(path)) AS pathDepth
       RETURN
         child.name AS name,
@@ -52988,7 +53093,10 @@ async function handleGetImpact(client, params) {
         coalesce(child.lineNumber, 0) AS lineNumber
       ORDER BY pathDepth, name
     `;
-    const children = await client.query(childrenCypher, { node_name });
+    const children = await client.query(childrenCypher, {
+      node_name,
+      projectPath: project_path ?? ""
+    });
     impacts.push(...children);
   }
   const text = buildCompactOutput("IMPACT ANALYSIS", impacts, formatImpact);
@@ -53006,24 +53114,39 @@ var findPathDefinition = {
     from_node: external_exports.string().describe("Name of the starting node"),
     to_node: external_exports.string().describe("Name of the target node"),
     max_depth: external_exports.number().int().min(1).max(10).optional().default(5).describe("Maximum path length to search"),
-    relationship_types: external_exports.array(external_exports.string()).optional().describe('Filter by relationship types (e.g., ["CALLS", "USES"])')
+    relationship_types: external_exports.array(external_exports.string()).optional().describe('Filter by relationship types (e.g., ["CALLS", "USES"])'),
+    project_path: external_exports.string().optional().describe("Filter by project path (use current working directory). If not provided, searches all indexed projects.")
   }
 };
 
 // src/tools/find-path/handler.ts
 var formatPathStep = (p) => `${p.step} | ${p.type} | ${p.name} | ${p.relationship} | ${p.filePath}:${p.lineNumber}`;
 async function handleFindPath(client, params) {
-  const { from_node, to_node, max_depth = 5, relationship_types } = params;
+  const { from_node, to_node, max_depth = 5, relationship_types, project_path } = params;
+  if (project_path) {
+    const validation = await validateProject(client, project_path);
+    if (!validation.valid) {
+      return projectNotFoundResponse(validation.error);
+    }
+  }
   const relFilter = relationship_types && relationship_types.length > 0 ? `:${relationship_types.join("|")}` : "";
+  const projectFilterFrom = project_path ? "AND from.filePath STARTS WITH $projectPath" : "";
+  const projectFilterTo = project_path ? "AND to.filePath STARTS WITH $projectPath" : "";
   const cypher = `
     MATCH (from), (to)
     WHERE from.name = $from_node AND to.name = $to_node
       AND from <> to
+      ${projectFilterFrom}
+      ${projectFilterTo}
     MATCH path = shortestPath((from)-[${relFilter}*1..${max_depth}]-(to))
     RETURN path
     LIMIT 1
   `;
-  const records = await client.query(cypher, { from_node, to_node });
+  const records = await client.query(cypher, {
+    from_node,
+    to_node,
+    projectPath: project_path ?? ""
+  });
   if (records.length === 0) {
     return {
       content: [
@@ -53079,19 +53202,28 @@ var getFileSymbolsDefinition = {
   description: 'List all symbols (classes, interfaces, functions, properties) defined in a file. Returns compact format: "type | Name | visibility | line"',
   inputSchema: {
     file_path: external_exports.string().describe("Path to the file (absolute or relative to project root)"),
-    include_private: external_exports.boolean().optional().default(true).describe("Include private/internal symbols")
+    include_private: external_exports.boolean().optional().default(true).describe("Include private/internal symbols"),
+    project_path: external_exports.string().optional().describe("Filter by project path (use current working directory). If not provided, searches all indexed projects.")
   }
 };
 
 // src/tools/get-file-symbols/handler.ts
 var formatSymbol = (s) => `${s.type} | ${s.name} | ${s.visibility} | ${s.lineNumber}`;
 async function handleGetFileSymbols(client, params) {
-  const { file_path, include_private = true } = params;
+  const { file_path, include_private = true, project_path } = params;
+  if (project_path) {
+    const validation = await validateProject(client, project_path);
+    if (!validation.valid) {
+      return projectNotFoundResponse(validation.error);
+    }
+  }
+  const projectFilter = project_path ? "AND n.filePath STARTS WITH $projectPath" : "";
   const cypher = `
     MATCH (n)
     WHERE (n.filePath = $file_path OR n.filePath ENDS WITH $file_path)
       AND any(label IN labels(n) WHERE label IN ['Class', 'Interface', 'Function', 'Property', 'Object'])
       ${include_private ? "" : "AND coalesce(n.visibility, 'public') IN ['public', 'protected', 'internal']"}
+      ${projectFilter}
     RETURN
       n.name AS name,
       [label IN labels(n) WHERE label IN ['Class', 'Interface', 'Function', 'Property', 'Object']][0] AS type,
@@ -53099,7 +53231,10 @@ async function handleGetFileSymbols(client, params) {
       coalesce(n.lineNumber, 0) AS lineNumber
     ORDER BY lineNumber, type, name
   `;
-  const records = await client.query(cypher, { file_path });
+  const records = await client.query(cypher, {
+    file_path,
+    projectPath: project_path ?? ""
+  });
   const symbols = records.map((r) => ({
     name: r.name,
     type: r.type.toLowerCase(),
