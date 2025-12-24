@@ -96,24 +96,31 @@ Shows Neo4j status and graph statistics.
 
 ## After Indexing
 
-Once indexed, MCP tools are available automatically:
+Once indexed, the following tools are available:
+
+### MCP tools (graph-based)
 
 | Tool | Description |
 |------|-------------|
 | `search_nodes` | Search by name or pattern |
-| `get_callers` | Who calls this function? |
 | `get_callees` | What functions are called? |
 | `get_neighbors` | Get dependencies and dependents of a class |
-| `get_implementations` | Find interface implementations |
 | `get_impact` | Analyze modification impact |
 | `find_path` | Find shortest path between two nodes |
 | `get_file_symbols` | List all symbols in a file |
 
+### LSP tools (semantic analysis - more accurate)
+
+| Tool | Description |
+|------|-------------|
+| `LSP incomingCalls` | Who calls this function? |
+| `LSP goToImplementation` | Find interface implementations |
+
 ---
 
-## Language Server (LSP) - Optional
+## Language Server (LSP)
 
-CodeGraph can use Language Servers to improve code navigation accuracy (find callers, find implementations).
+CodeGraph uses Language Servers for accurate code navigation (find callers, find implementations).
 
 ### Supported LSP
 

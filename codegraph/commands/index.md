@@ -25,12 +25,16 @@ The user can specify options:
 
 ## After indexing
 
-Show the indexing summary and list these available MCP tools:
+Show the indexing summary and list these available tools:
+
+**MCP tools (graph-based):**
 - search_nodes - Search for nodes (classes, interfaces, functions) by name or pattern
-- get_callers - Find all functions that call a specified function
 - get_callees - Find all functions called by a specified function
 - get_neighbors - Get dependencies and dependents of a class/interface
-- get_implementations - Find interface implementations (direct or indirect)
 - get_impact - Analyze impact of modifying a node
 - find_path - Find shortest path between two nodes
 - get_file_symbols - List all symbols defined in a file
+
+**LSP tools (semantic analysis - more accurate):**
+- LSP incomingCalls - Find all functions that call a specified function
+- LSP goToImplementation - Find interface implementations
