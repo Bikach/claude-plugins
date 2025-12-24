@@ -53257,7 +53257,8 @@ var config2 = {
   server: {
     name: "codegraph-server",
     version: "0.1.0"
-  }
+  },
+  lspMode: process.env.CODEGRAPH_LSP_MODE === "true"
 };
 
 // src/index.ts
@@ -53303,21 +53304,23 @@ var CodeGraphServer = class {
         });
       }
     );
-    this.server.registerTool(
-      getCallersDefinition.name,
-      {
-        title: getCallersDefinition.title,
-        description: getCallersDefinition.description,
-        inputSchema: getCallersDefinition.inputSchema
-      },
-      async ({ function_name, class_name, depth }) => {
-        return await handleGetCallers(this.neo4jClient, {
-          function_name,
-          class_name,
-          depth: depth ?? 2
-        });
-      }
-    );
+    if (!config2.lspMode) {
+      this.server.registerTool(
+        getCallersDefinition.name,
+        {
+          title: getCallersDefinition.title,
+          description: getCallersDefinition.description,
+          inputSchema: getCallersDefinition.inputSchema
+        },
+        async ({ function_name, class_name, depth }) => {
+          return await handleGetCallers(this.neo4jClient, {
+            function_name,
+            class_name,
+            depth: depth ?? 2
+          });
+        }
+      );
+    }
     this.server.registerTool(
       getCalleesDefinition.name,
       {
@@ -53349,20 +53352,22 @@ var CodeGraphServer = class {
         });
       }
     );
-    this.server.registerTool(
-      getImplementationsDefinition.name,
-      {
-        title: getImplementationsDefinition.title,
-        description: getImplementationsDefinition.description,
-        inputSchema: getImplementationsDefinition.inputSchema
-      },
-      async ({ interface_name, include_indirect }) => {
-        return await handleGetImplementations(this.neo4jClient, {
-          interface_name,
-          include_indirect: include_indirect ?? false
-        });
-      }
-    );
+    if (!config2.lspMode) {
+      this.server.registerTool(
+        getImplementationsDefinition.name,
+        {
+          title: getImplementationsDefinition.title,
+          description: getImplementationsDefinition.description,
+          inputSchema: getImplementationsDefinition.inputSchema
+        },
+        async ({ interface_name, include_indirect }) => {
+          return await handleGetImplementations(this.neo4jClient, {
+            interface_name,
+            include_indirect: include_indirect ?? false
+          });
+        }
+      );
+    }
     this.server.registerTool(
       getImpactDefinition.name,
       {

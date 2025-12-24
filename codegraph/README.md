@@ -44,7 +44,8 @@ Analyze and navigate codebases through a Neo4j-backed knowledge graph.
 Starts Neo4j and prepares the database.
 
 ```
-/codegraph:setup
+/codegraph:setup              # Neo4j only
+/codegraph:setup kotlin       # Neo4j + Kotlin LSP
 ```
 
 **What it does:**
@@ -53,6 +54,7 @@ Starts Neo4j and prepares the database.
 3. Waits for Neo4j to be ready
 4. Creates indexes and constraints
 5. Installs tree-sitter native dependencies (required for parsing)
+6. Installs Language Server if language specified (optional)
 
 **Result:** Neo4j available at http://localhost:7474
 
@@ -106,3 +108,34 @@ Once indexed, MCP tools are available automatically:
 | `get_impact` | Analyze modification impact |
 | `find_path` | Find shortest path between two nodes |
 | `get_file_symbols` | List all symbols in a file |
+
+---
+
+## Language Server (LSP) - Optional
+
+CodeGraph can use Language Servers to improve code navigation accuracy (find callers, find implementations).
+
+### Supported LSP
+
+| Language | LSP Server | Status |
+|----------|------------|--------|
+| Kotlin | `kotlin-language-server` | ✅ Available |
+| Java | `jdtls` | 🔜 Coming soon |
+| TypeScript | `typescript-language-server` | 🔜 Coming soon |
+
+### Automatic installation
+
+```
+/codegraph:setup kotlin
+```
+
+### Manual installation
+
+If you didn't add the option during setup:
+
+| OS | Command |
+|----|---------|
+| macOS | `brew install <lsp-server-name>` |
+| Linux (snap) | `sudo snap install <lsp-server-name> --classic` |
+| Linux (SDKMAN) | `sdk install <lsp-server-name>` |
+| Windows (Scoop) | `scoop install <lsp-server-name>` |
