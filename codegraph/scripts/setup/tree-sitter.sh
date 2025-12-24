@@ -1,10 +1,10 @@
 #!/bin/bash
 # Install tree-sitter native dependencies
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/utils.sh"
+_TREE_SITTER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${_TREE_SITTER_DIR}/utils.sh"
 
-PLUGIN_DIR="${SCRIPT_DIR}/../.."
+PLUGIN_DIR="${_TREE_SITTER_DIR}/../.."
 
 install_tree_sitter() {
   if [ -d "${PLUGIN_DIR}/node_modules/tree-sitter" ]; then

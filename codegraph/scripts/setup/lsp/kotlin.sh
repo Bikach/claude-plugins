@@ -1,8 +1,8 @@
 #!/bin/bash
 # Install Kotlin Language Server
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/../utils.sh"
+_KOTLIN_LSP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${_KOTLIN_LSP_DIR}/../utils.sh"
 
 install_kotlin_lsp() {
   if command -v kotlin-language-server &> /dev/null; then
