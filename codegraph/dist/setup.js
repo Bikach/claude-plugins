@@ -31501,56 +31501,91 @@ var init_parser = __esm({
   }
 });
 
-// src/indexer/parsers/kotlin/extractor.ts
-function extractSymbols(tree, filePath) {
-  const root = tree.rootNode;
-  const result = {
-    filePath,
-    language: "kotlin",
-    packageName: extractPackageName(root),
-    imports: extractImports(root),
-    classes: [],
-    topLevelFunctions: [],
-    topLevelProperties: [],
-    typeAliases: [],
-    destructuringDeclarations: [],
-    objectExpressions: []
-  };
-  for (const child of root.children) {
-    switch (child.type) {
-      case "class_declaration":
-      case "interface_declaration":
-      case "object_declaration":
-      case "enum_class_declaration":
-      case "annotation_declaration":
-        result.classes.push(extractClass(child));
-        break;
-      case "function_declaration":
-        result.topLevelFunctions.push(extractFunction(child));
-        break;
-      case "property_declaration": {
-        const destructuring = extractDestructuringDeclaration(child);
-        if (destructuring) {
-          result.destructuringDeclarations.push(destructuring);
-        } else {
-          result.topLevelProperties.push(extractProperty(child));
-        }
-        break;
-      }
-      case "type_alias":
-        result.typeAliases.push(extractTypeAlias(child));
-        break;
-    }
-  }
-  result.objectExpressions = extractAllObjectExpressions(root);
-  return result;
+// src/indexer/parsers/kotlin/extractor/ast-utils/find-child-by-type.ts
+function findChildByType(node, type) {
+  return node.children.find((c) => c.type === type);
 }
+var init_find_child_by_type = __esm({
+  "src/indexer/parsers/kotlin/extractor/ast-utils/find-child-by-type.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/ast-utils/traverse-node.ts
+function traverseNode(node, callback) {
+  callback(node);
+  for (const child of node.children) {
+    traverseNode(child, callback);
+  }
+}
+var init_traverse_node = __esm({
+  "src/indexer/parsers/kotlin/extractor/ast-utils/traverse-node.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/ast-utils/node-location.ts
+function nodeLocation(node) {
+  return {
+    filePath: "",
+    // Will be set by caller
+    startLine: node.startPosition.row + 1,
+    startColumn: node.startPosition.column + 1,
+    endLine: node.endPosition.row + 1,
+    endColumn: node.endPosition.column + 1
+  };
+}
+var init_node_location = __esm({
+  "src/indexer/parsers/kotlin/extractor/ast-utils/node-location.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/ast-utils/extract-type-name.ts
+function extractTypeName(typeNode) {
+  if (typeNode.type === "user_type") {
+    const identifier = findChildByType(typeNode, "simple_identifier");
+    return identifier?.text ?? typeNode.text;
+  }
+  if (typeNode.type === "constructor_invocation") {
+    const userType = findChildByType(typeNode, "user_type");
+    return userType ? extractTypeName(userType) : typeNode.text;
+  }
+  return typeNode.text;
+}
+var init_extract_type_name = __esm({
+  "src/indexer/parsers/kotlin/extractor/ast-utils/extract-type-name.ts"() {
+    "use strict";
+    init_find_child_by_type();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/ast-utils/index.ts
+var init_ast_utils = __esm({
+  "src/indexer/parsers/kotlin/extractor/ast-utils/index.ts"() {
+    "use strict";
+    init_find_child_by_type();
+    init_traverse_node();
+    init_node_location();
+    init_extract_type_name();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/package/extract-package-name.ts
 function extractPackageName(root) {
   const packageHeader = root.children.find((c) => c.type === "package_header");
   if (!packageHeader) return void 0;
   const identifier = findChildByType(packageHeader, "identifier");
   return identifier?.text;
 }
+var init_extract_package_name = __esm({
+  "src/indexer/parsers/kotlin/extractor/package/extract-package-name.ts"() {
+    "use strict";
+    init_ast_utils();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/package/extract-imports.ts
 function extractImports(root) {
   const imports = [];
   const importList = root.children.find((c) => c.type === "import_list");
@@ -31572,219 +31607,195 @@ function extractImports(root) {
   }
   return imports;
 }
-function extractClass(node) {
-  const kind = mapClassKind(node);
-  const nameNode = node.childForFieldName("name") ?? findChildByType(node, "type_identifier") ?? findChildByType(node, "simple_identifier");
-  const name = nameNode?.text ?? "<anonymous>";
+var init_extract_imports = __esm({
+  "src/indexer/parsers/kotlin/extractor/package/extract-imports.ts"() {
+    "use strict";
+    init_ast_utils();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/package/index.ts
+var init_package = __esm({
+  "src/indexer/parsers/kotlin/extractor/package/index.ts"() {
+    "use strict";
+    init_extract_package_name();
+    init_extract_imports();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/modifiers/map-visibility.ts
+function mapVisibility(text) {
+  switch (text) {
+    case "private":
+      return "private";
+    case "protected":
+      return "protected";
+    case "internal":
+      return "internal";
+    default:
+      return "public";
+  }
+}
+var init_map_visibility = __esm({
+  "src/indexer/parsers/kotlin/extractor/modifiers/map-visibility.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/modifiers/extract-modifiers.ts
+function extractModifiers(node) {
+  const result = {
+    visibility: "public",
+    isAbstract: false,
+    isData: false,
+    isSealed: false,
+    isSuspend: false,
+    isInline: false,
+    isInfix: false,
+    isOperator: false
+  };
+  const modifiersList = findChildByType(node, "modifiers");
+  if (!modifiersList) return result;
+  for (const child of modifiersList.children) {
+    switch (child.type) {
+      case "visibility_modifier":
+        result.visibility = mapVisibility(child.text);
+        break;
+      case "inheritance_modifier":
+        if (child.text === "abstract") result.isAbstract = true;
+        if (child.text === "sealed") result.isSealed = true;
+        break;
+      case "class_modifier":
+        if (child.text === "data") result.isData = true;
+        if (child.text === "sealed") result.isSealed = true;
+        break;
+      case "function_modifier":
+        if (child.text === "suspend") result.isSuspend = true;
+        if (child.text === "inline") result.isInline = true;
+        if (child.text === "infix") result.isInfix = true;
+        if (child.text === "operator") result.isOperator = true;
+        break;
+    }
+  }
+  return result;
+}
+var init_extract_modifiers = __esm({
+  "src/indexer/parsers/kotlin/extractor/modifiers/extract-modifiers.ts"() {
+    "use strict";
+    init_ast_utils();
+    init_map_visibility();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/modifiers/extract-annotation-arguments.ts
+function extractAnnotationArguments(node) {
+  const constructorInvocation = findChildByType(node, "constructor_invocation");
+  if (!constructorInvocation) return void 0;
+  const valueArgs = findChildByType(constructorInvocation, "value_arguments");
+  if (!valueArgs) return void 0;
+  const args = {};
+  let positionalIndex = 0;
+  for (const child of valueArgs.children) {
+    if (child.type === "value_argument") {
+      const nameNode = findChildByType(child, "simple_identifier");
+      const expression = child.children.find(
+        (c) => c.type !== "simple_identifier" && c.type !== "=" && c.type !== "(" && c.type !== ")" && c.type !== ","
+      );
+      if (nameNode) {
+        args[nameNode.text] = expression?.text ?? "";
+      } else if (expression) {
+        args[`_${positionalIndex}`] = expression.text;
+        positionalIndex++;
+      }
+    }
+  }
+  return Object.keys(args).length > 0 ? args : void 0;
+}
+var init_extract_annotation_arguments = __esm({
+  "src/indexer/parsers/kotlin/extractor/modifiers/extract-annotation-arguments.ts"() {
+    "use strict";
+    init_ast_utils();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/modifiers/extract-annotations.ts
+function extractAnnotations(node) {
+  const annotations = [];
+  const modifiersList = findChildByType(node, "modifiers");
+  if (!modifiersList) return annotations;
+  for (const child of modifiersList.children) {
+    if (child.type === "annotation") {
+      const constructorInvocation = findChildByType(child, "constructor_invocation");
+      const nameNode = constructorInvocation ? findChildByType(constructorInvocation, "user_type") : findChildByType(child, "user_type") ?? findChildByType(child, "simple_identifier");
+      if (nameNode) {
+        const typeIdentifier = findChildByType(nameNode, "type_identifier");
+        annotations.push({
+          name: typeIdentifier?.text ?? nameNode.text,
+          arguments: extractAnnotationArguments(child)
+        });
+      }
+    }
+  }
+  return annotations;
+}
+var init_extract_annotations = __esm({
+  "src/indexer/parsers/kotlin/extractor/modifiers/extract-annotations.ts"() {
+    "use strict";
+    init_ast_utils();
+    init_extract_annotation_arguments();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/modifiers/index.ts
+var init_modifiers = __esm({
+  "src/indexer/parsers/kotlin/extractor/modifiers/index.ts"() {
+    "use strict";
+    init_map_visibility();
+    init_extract_modifiers();
+    init_extract_annotations();
+    init_extract_annotation_arguments();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/property/extract-property.ts
+function extractProperty(node) {
+  const varDecl = findChildByType(node, "variable_declaration");
+  const nameNode = node.childForFieldName("name") ?? (varDecl ? findChildByType(varDecl, "simple_identifier") : null) ?? findChildByType(node, "simple_identifier");
+  const name = nameNode?.text ?? "<unnamed>";
   const modifiers = extractModifiers(node);
   const annotations = extractAnnotations(node);
-  const typeParameters = extractTypeParameters(node);
-  const { superClass, interfaces } = extractSuperTypes(node);
-  const primaryConstructorProps = extractPrimaryConstructorProperties(node);
-  const classBody = findChildByType(node, "class_body") ?? findChildByType(node, "enum_class_body");
-  const { properties, functions, nestedClasses, companionObject, secondaryConstructors } = extractClassBody(classBody);
-  const allProperties = [...primaryConstructorProps, ...properties];
+  const bindingKind = findChildByType(node, "binding_pattern_kind");
+  const isVal = bindingKind ? bindingKind.children.some((c) => c.type === "val") : node.children.some((c) => c.type === "val");
+  const typeNode = varDecl ? findChildByType(varDecl, "nullable_type") ?? findChildByType(varDecl, "user_type") : findChildByType(node, "nullable_type") ?? findChildByType(node, "user_type") ?? findChildByType(node, "type");
+  const type = typeNode?.text;
+  const initializer = findChildByType(node, "property_delegate") ?? node.childForFieldName("initializer");
   return {
     name,
-    kind,
+    type,
     visibility: modifiers.visibility,
-    isAbstract: modifiers.isAbstract,
-    isData: modifiers.isData,
-    isSealed: modifiers.isSealed,
-    superClass,
-    interfaces,
-    typeParameters: typeParameters.length > 0 ? typeParameters : void 0,
+    isVal,
+    initializer: initializer?.text,
     annotations,
-    properties: allProperties,
-    functions,
-    nestedClasses,
-    companionObject,
-    secondaryConstructors: secondaryConstructors.length > 0 ? secondaryConstructors : void 0,
     location: nodeLocation(node)
   };
 }
-function mapClassKind(node) {
-  const hasInterface = node.children.some((c) => c.type === "interface");
-  const hasObject = node.children.some((c) => c.type === "object");
-  const hasEnum = node.children.some((c) => c.type === "enum");
-  const modifiers = findChildByType(node, "modifiers");
-  const hasAnnotationModifier = modifiers?.children.some(
-    (c) => c.type === "class_modifier" && c.children.some((m) => m.type === "annotation")
-  );
-  if (hasInterface) return "interface";
-  if (hasObject) return "object";
-  if (hasEnum) return "enum";
-  if (hasAnnotationModifier) return "annotation";
-  switch (node.type) {
-    case "object_declaration":
-      return "object";
-    case "enum_class_declaration":
-      return "enum";
-    default:
-      return "class";
+var init_extract_property = __esm({
+  "src/indexer/parsers/kotlin/extractor/property/extract-property.ts"() {
+    "use strict";
+    init_ast_utils();
+    init_modifiers();
   }
-}
-function extractSuperTypes(classNode) {
-  let superClass;
-  const interfaces = [];
-  for (const child of classNode.children) {
-    if (child.type === "delegation_specifier") {
-      const constructorInvocation = findChildByType(child, "constructor_invocation");
-      const userType = findChildByType(child, "user_type");
-      if (constructorInvocation) {
-        const typeNode = findChildByType(constructorInvocation, "user_type");
-        const typeName = typeNode ? extractTypeName(typeNode) : extractTypeName(constructorInvocation);
-        if (typeName && !superClass) {
-          superClass = typeName;
-        } else if (typeName) {
-          interfaces.push(typeName);
-        }
-      } else if (userType) {
-        const typeName = extractTypeName(userType);
-        if (typeName) {
-          interfaces.push(typeName);
-        }
-      }
-    }
+});
+
+// src/indexer/parsers/kotlin/extractor/property/index.ts
+var init_property = __esm({
+  "src/indexer/parsers/kotlin/extractor/property/index.ts"() {
+    "use strict";
+    init_extract_property();
   }
-  return { superClass, interfaces };
-}
-function extractClassBody(classBody) {
-  const properties = [];
-  const functions = [];
-  const nestedClasses = [];
-  const secondaryConstructors = [];
-  let companionObject = void 0;
-  if (!classBody) {
-    return { properties, functions, nestedClasses, companionObject, secondaryConstructors };
-  }
-  for (const child of classBody.children) {
-    switch (child.type) {
-      case "property_declaration":
-        properties.push(extractProperty(child));
-        break;
-      case "function_declaration":
-        functions.push(extractFunction(child));
-        break;
-      case "class_declaration":
-      case "interface_declaration":
-      case "enum_class_declaration":
-        nestedClasses.push(extractClass(child));
-        break;
-      case "object_declaration":
-        if (isCompanionObject(child)) {
-          companionObject = extractClass(child);
-        } else {
-          nestedClasses.push(extractClass(child));
-        }
-        break;
-      case "companion_object":
-        companionObject = extractCompanionObject(child);
-        break;
-      case "secondary_constructor":
-        secondaryConstructors.push(extractSecondaryConstructor(child));
-        break;
-    }
-  }
-  return { properties, functions, nestedClasses, companionObject, secondaryConstructors };
-}
-function extractFunction(node) {
-  const nameNode = node.childForFieldName("name") ?? findChildByType(node, "simple_identifier");
-  const name = nameNode?.text ?? "<anonymous>";
-  const modifiers = extractModifiers(node);
-  const annotations = extractAnnotations(node);
-  const parameters = extractParameters(node);
-  const returnType = extractReturnType(node);
-  const typeParameters = extractTypeParameters(node);
-  const receiverType = extractReceiverType(node);
-  const body = findChildByType(node, "function_body");
-  const calls = body ? extractCalls(body) : [];
-  return {
-    name,
-    visibility: modifiers.visibility,
-    parameters,
-    returnType,
-    isAbstract: modifiers.isAbstract,
-    isSuspend: modifiers.isSuspend,
-    isExtension: !!receiverType,
-    receiverType,
-    isInline: modifiers.isInline,
-    isInfix: modifiers.isInfix,
-    isOperator: modifiers.isOperator,
-    typeParameters: typeParameters.length > 0 ? typeParameters : void 0,
-    annotations,
-    location: nodeLocation(node),
-    calls
-  };
-}
-function extractParameters(node) {
-  const params = [];
-  const paramList = findChildByType(node, "function_value_parameters");
-  if (!paramList) return params;
-  let pendingModifiers = null;
-  for (const child of paramList.children) {
-    if (child.type === "parameter_modifiers") {
-      pendingModifiers = child;
-      continue;
-    }
-    if (child.type === "parameter") {
-      const nameNode = findChildByType(child, "simple_identifier");
-      const functionTypeNode = findChildByType(child, "function_type");
-      const typeNode = functionTypeNode ?? findChildByType(child, "nullable_type") ?? findChildByType(child, "user_type") ?? findChildByType(child, "type");
-      const defaultValue = findChildByType(child, "default_value");
-      let functionType;
-      if (functionTypeNode) {
-        functionType = extractFunctionType(functionTypeNode, child);
-      }
-      let isCrossinline = false;
-      let isNoinline = false;
-      if (pendingModifiers) {
-        for (const mod of pendingModifiers.children) {
-          if (mod.type === "parameter_modifier") {
-            if (mod.text === "crossinline") isCrossinline = true;
-            if (mod.text === "noinline") isNoinline = true;
-          }
-        }
-        pendingModifiers = null;
-      }
-      params.push({
-        name: nameNode?.text ?? "<unnamed>",
-        type: typeNode?.text,
-        functionType,
-        defaultValue: defaultValue?.text,
-        annotations: extractAnnotations(child),
-        isCrossinline: isCrossinline || void 0,
-        isNoinline: isNoinline || void 0
-      });
-    }
-  }
-  return params;
-}
-function extractReturnType(node) {
-  for (const child of node.children) {
-    if (child.type === "nullable_type" || child.type === "user_type" || child.type === "type_identifier") {
-      const prevSibling = child.previousSibling;
-      if (prevSibling?.type === ":") {
-        return child.text;
-      }
-    }
-  }
-  return void 0;
-}
-function extractReceiverType(node) {
-  const receiverType = node.childForFieldName("receiver_type");
-  if (receiverType) {
-    return receiverType.text;
-  }
-  const userType = findChildByType(node, "user_type");
-  if (userType) {
-    const nextSibling = userType.nextSibling;
-    if (nextSibling?.type === ".") {
-      return userType.text;
-    }
-  }
-  return void 0;
-}
+});
+
+// src/indexer/parsers/kotlin/extractor/function/extract-function-type.ts
 function extractFunctionType(node, parentNode) {
   if (node.type !== "function_type") return void 0;
   const parameterTypes = [];
@@ -31829,316 +31840,106 @@ function extractFunctionType(node, parentNode) {
     receiverType
   };
 }
-function extractProperty(node) {
-  const varDecl = findChildByType(node, "variable_declaration");
-  const nameNode = node.childForFieldName("name") ?? (varDecl ? findChildByType(varDecl, "simple_identifier") : null) ?? findChildByType(node, "simple_identifier");
-  const name = nameNode?.text ?? "<unnamed>";
-  const modifiers = extractModifiers(node);
-  const annotations = extractAnnotations(node);
-  const bindingKind = findChildByType(node, "binding_pattern_kind");
-  const isVal = bindingKind ? bindingKind.children.some((c) => c.type === "val") : node.children.some((c) => c.type === "val");
-  const typeNode = varDecl ? findChildByType(varDecl, "nullable_type") ?? findChildByType(varDecl, "user_type") : findChildByType(node, "nullable_type") ?? findChildByType(node, "user_type") ?? findChildByType(node, "type");
-  const type = typeNode?.text;
-  const initializer = findChildByType(node, "property_delegate") ?? node.childForFieldName("initializer");
-  return {
-    name,
-    type,
-    visibility: modifiers.visibility,
-    isVal,
-    initializer: initializer?.text,
-    annotations,
-    location: nodeLocation(node)
-  };
-}
-function extractCalls(body) {
-  const calls = [];
-  traverseNode(body, (node) => {
-    if (node.type === "call_expression") {
-      const call = extractCallExpression(node);
-      if (call) {
-        calls.push(call);
-      }
-    }
-  });
-  return calls;
-}
-function extractCallExpression(node) {
-  const navigations = findChildByType(node, "navigation_expression");
-  const callSuffix = findChildByType(node, "call_suffix");
-  if (!callSuffix) return void 0;
-  let name;
-  let receiver;
-  let isSafeCall = false;
-  if (navigations) {
-    const { receiverPath, methodName, hasSafeCall } = extractNavigationPath(navigations);
-    receiver = receiverPath;
-    name = methodName;
-    isSafeCall = hasSafeCall;
-  } else {
-    const identifier = node.children.find((c) => c.type === "simple_identifier");
-    name = identifier?.text ?? "<unknown>";
+var init_extract_function_type = __esm({
+  "src/indexer/parsers/kotlin/extractor/function/extract-function-type.ts"() {
+    "use strict";
   }
-  const { argumentCount, argumentTypes } = extractCallArguments(callSuffix);
-  return {
-    name,
-    receiver,
-    receiverType: void 0,
-    // Will be resolved later
-    argumentCount,
-    argumentTypes: argumentTypes.length > 0 ? argumentTypes : void 0,
-    isSafeCall: isSafeCall || void 0,
-    location: nodeLocation(node)
-  };
-}
-function extractNavigationPath(navExpr) {
-  const parts = [];
-  let hasSafeCall = false;
-  function collectParts(node) {
-    if (node.type === "simple_identifier") {
-      parts.push(node.text);
-    } else if (node.type === "navigation_expression") {
-      for (const child of node.children) {
-        if (child.type === "navigation_expression" || child.type === "simple_identifier") {
-          collectParts(child);
-        } else if (child.type === "navigation_suffix") {
-          for (const suffixChild of child.children) {
-            if (suffixChild.text === "?." || suffixChild.type === "?.") {
-              hasSafeCall = true;
-            } else if (suffixChild.type === "simple_identifier") {
-              parts.push(suffixChild.text);
-            }
+});
+
+// src/indexer/parsers/kotlin/extractor/function/extract-parameters.ts
+function extractParameters(node) {
+  const params = [];
+  const paramList = findChildByType(node, "function_value_parameters");
+  if (!paramList) return params;
+  let pendingModifiers = null;
+  for (const child of paramList.children) {
+    if (child.type === "parameter_modifiers") {
+      pendingModifiers = child;
+      continue;
+    }
+    if (child.type === "parameter") {
+      const nameNode = findChildByType(child, "simple_identifier");
+      const functionTypeNode = findChildByType(child, "function_type");
+      const typeNode = functionTypeNode ?? findChildByType(child, "nullable_type") ?? findChildByType(child, "user_type") ?? findChildByType(child, "type");
+      const defaultValue = findChildByType(child, "default_value");
+      let functionType;
+      if (functionTypeNode) {
+        functionType = extractFunctionType(functionTypeNode, child);
+      }
+      let isCrossinline = false;
+      let isNoinline = false;
+      if (pendingModifiers) {
+        for (const mod of pendingModifiers.children) {
+          if (mod.type === "parameter_modifier") {
+            if (mod.text === "crossinline") isCrossinline = true;
+            if (mod.text === "noinline") isNoinline = true;
           }
         }
+        pendingModifiers = null;
       }
+      params.push({
+        name: nameNode?.text ?? "<unnamed>",
+        type: typeNode?.text,
+        functionType,
+        defaultValue: defaultValue?.text,
+        annotations: extractAnnotations(child),
+        isCrossinline: isCrossinline || void 0,
+        isNoinline: isNoinline || void 0
+      });
     }
   }
-  collectParts(navExpr);
-  if (parts.length === 0) {
-    return { receiverPath: void 0, methodName: "<unknown>", hasSafeCall };
-  }
-  if (parts.length === 1) {
-    return { receiverPath: void 0, methodName: parts[0], hasSafeCall };
-  }
-  const methodName = parts.pop();
-  const receiverPath = parts.join(".");
-  return { receiverPath, methodName, hasSafeCall };
+  return params;
 }
-function extractCallArguments(callSuffix) {
-  const argumentTypes = [];
-  let argumentCount = 0;
-  const valueArguments = findChildByType(callSuffix, "value_arguments");
-  if (!valueArguments) {
-    return { argumentCount: 0, argumentTypes: [] };
+var init_extract_parameters = __esm({
+  "src/indexer/parsers/kotlin/extractor/function/extract-parameters.ts"() {
+    "use strict";
+    init_ast_utils();
+    init_modifiers();
+    init_extract_function_type();
   }
-  for (const child of valueArguments.children) {
-    if (child.type === "value_argument") {
-      argumentCount++;
-      const argType = inferArgumentType(child);
-      argumentTypes.push(argType);
-    }
-  }
-  return { argumentCount, argumentTypes };
-}
-function inferArgumentType(valueArgument) {
-  const expression = findFirstExpression(valueArgument);
-  if (!expression) return "Unknown";
-  return inferExpressionType(expression);
-}
-function findFirstExpression(node) {
+});
+
+// src/indexer/parsers/kotlin/extractor/function/extract-return-type.ts
+function extractReturnType(node) {
   for (const child of node.children) {
-    if (child.type === "simple_identifier" || child.text === "=") continue;
-    if (isExpressionType(child.type)) {
-      return child;
+    if (child.type === "nullable_type" || child.type === "user_type" || child.type === "type_identifier") {
+      const prevSibling = child.previousSibling;
+      if (prevSibling?.type === ":") {
+        return child.text;
+      }
     }
   }
   return void 0;
 }
-function isExpressionType(type) {
-  const expressionTypes = [
-    "integer_literal",
-    "long_literal",
-    "real_literal",
-    "string_literal",
-    "character_literal",
-    "boolean_literal",
-    "null_literal",
-    "call_expression",
-    "navigation_expression",
-    "simple_identifier",
-    "prefix_expression",
-    "postfix_expression",
-    "additive_expression",
-    "multiplicative_expression",
-    "comparison_expression",
-    "equality_expression",
-    "conjunction_expression",
-    "disjunction_expression",
-    "lambda_literal",
-    "object_literal",
-    "collection_literal",
-    "if_expression",
-    "when_expression",
-    "try_expression",
-    "parenthesized_expression"
-  ];
-  return expressionTypes.includes(type);
-}
-function inferExpressionType(expression) {
-  switch (expression.type) {
-    // Literal types - these are certain
-    case "integer_literal":
-      return "Int";
-    case "long_literal":
-      return "Long";
-    case "real_literal":
-      return expression.text.toLowerCase().endsWith("f") ? "Float" : "Double";
-    case "string_literal":
-      return "String";
-    case "character_literal":
-      return "Char";
-    case "boolean_literal":
-      return "Boolean";
-    case "null_literal":
-      return "Nothing?";
-    case "lambda_literal":
-      return "Function";
-    // Collection literals
-    case "collection_literal":
-      return "Collection";
-    // For other expressions, we can't reliably infer the type without full type analysis
-    default:
-      return "Unknown";
+var init_extract_return_type = __esm({
+  "src/indexer/parsers/kotlin/extractor/function/extract-return-type.ts"() {
+    "use strict";
   }
-}
-function extractModifiers(node) {
-  const result = {
-    visibility: "public",
-    isAbstract: false,
-    isData: false,
-    isSealed: false,
-    isSuspend: false,
-    isInline: false,
-    isInfix: false,
-    isOperator: false
-  };
-  const modifiersList = findChildByType(node, "modifiers");
-  if (!modifiersList) return result;
-  for (const child of modifiersList.children) {
-    switch (child.type) {
-      case "visibility_modifier":
-        result.visibility = mapVisibility(child.text);
-        break;
-      case "inheritance_modifier":
-        if (child.text === "abstract") result.isAbstract = true;
-        if (child.text === "sealed") result.isSealed = true;
-        break;
-      case "class_modifier":
-        if (child.text === "data") result.isData = true;
-        if (child.text === "sealed") result.isSealed = true;
-        break;
-      case "function_modifier":
-        if (child.text === "suspend") result.isSuspend = true;
-        if (child.text === "inline") result.isInline = true;
-        if (child.text === "infix") result.isInfix = true;
-        if (child.text === "operator") result.isOperator = true;
-        break;
+});
+
+// src/indexer/parsers/kotlin/extractor/function/extract-receiver-type.ts
+function extractReceiverType(node) {
+  const receiverType = node.childForFieldName("receiver_type");
+  if (receiverType) {
+    return receiverType.text;
+  }
+  const userType = findChildByType(node, "user_type");
+  if (userType) {
+    const nextSibling = userType.nextSibling;
+    if (nextSibling?.type === ".") {
+      return userType.text;
     }
   }
-  return result;
+  return void 0;
 }
-function mapVisibility(text) {
-  switch (text) {
-    case "private":
-      return "private";
-    case "protected":
-      return "protected";
-    case "internal":
-      return "internal";
-    default:
-      return "public";
+var init_extract_receiver_type = __esm({
+  "src/indexer/parsers/kotlin/extractor/function/extract-receiver-type.ts"() {
+    "use strict";
+    init_ast_utils();
   }
-}
-function extractAnnotations(node) {
-  const annotations = [];
-  const modifiersList = findChildByType(node, "modifiers");
-  if (!modifiersList) return annotations;
-  for (const child of modifiersList.children) {
-    if (child.type === "annotation") {
-      const constructorInvocation = findChildByType(child, "constructor_invocation");
-      const nameNode = constructorInvocation ? findChildByType(constructorInvocation, "user_type") : findChildByType(child, "user_type") ?? findChildByType(child, "simple_identifier");
-      if (nameNode) {
-        const typeIdentifier = findChildByType(nameNode, "type_identifier");
-        annotations.push({
-          name: typeIdentifier?.text ?? nameNode.text,
-          arguments: extractAnnotationArguments(child)
-        });
-      }
-    }
-  }
-  return annotations;
-}
-function findChildByType(node, type) {
-  return node.children.find((c) => c.type === type);
-}
-function extractTypeName(typeNode) {
-  if (typeNode.type === "user_type") {
-    const identifier = findChildByType(typeNode, "simple_identifier");
-    return identifier?.text ?? typeNode.text;
-  }
-  if (typeNode.type === "constructor_invocation") {
-    const userType = findChildByType(typeNode, "user_type");
-    return userType ? extractTypeName(userType) : typeNode.text;
-  }
-  return typeNode.text;
-}
-function nodeLocation(node) {
-  return {
-    filePath: "",
-    // Will be set by caller
-    startLine: node.startPosition.row + 1,
-    startColumn: node.startPosition.column + 1,
-    endLine: node.endPosition.row + 1,
-    endColumn: node.endPosition.column + 1
-  };
-}
-function traverseNode(node, callback) {
-  callback(node);
-  for (const child of node.children) {
-    traverseNode(child, callback);
-  }
-}
-function extractTypeParameters(node) {
-  const typeParams = [];
-  const typeParamList = findChildByType(node, "type_parameters");
-  if (!typeParamList) return typeParams;
-  for (const child of typeParamList.children) {
-    if (child.type === "type_parameter") {
-      const typeParam = extractSingleTypeParameter(child);
-      if (typeParam) {
-        typeParams.push(typeParam);
-      }
-    }
-  }
-  const typeConstraints = findChildByType(node, "type_constraints");
-  if (typeConstraints) {
-    for (const constraintNode of typeConstraints.children) {
-      if (constraintNode.type === "type_constraint") {
-        const typeId = findChildByType(constraintNode, "type_identifier");
-        const boundType = findChildByType(constraintNode, "user_type") ?? findChildByType(constraintNode, "nullable_type");
-        if (typeId && boundType) {
-          const matchingParam = typeParams.find((tp) => tp.name === typeId.text);
-          if (matchingParam) {
-            if (!matchingParam.bounds) {
-              matchingParam.bounds = [];
-            }
-            matchingParam.bounds.push(boundType.text);
-          }
-        }
-      }
-    }
-  }
-  return typeParams;
-}
+});
+
+// src/indexer/parsers/kotlin/extractor/generics/extract-single-type-parameter.ts
 function extractSingleTypeParameter(node) {
   const nameNode = findChildByType(node, "type_identifier");
   if (!nameNode) return void 0;
@@ -32181,6 +31982,569 @@ function extractSingleTypeParameter(node) {
     isReified: isReified || void 0
   };
 }
+var init_extract_single_type_parameter = __esm({
+  "src/indexer/parsers/kotlin/extractor/generics/extract-single-type-parameter.ts"() {
+    "use strict";
+    init_ast_utils();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/generics/extract-type-parameters.ts
+function extractTypeParameters(node) {
+  const typeParams = [];
+  const typeParamList = findChildByType(node, "type_parameters");
+  if (!typeParamList) return typeParams;
+  for (const child of typeParamList.children) {
+    if (child.type === "type_parameter") {
+      const typeParam = extractSingleTypeParameter(child);
+      if (typeParam) {
+        typeParams.push(typeParam);
+      }
+    }
+  }
+  const typeConstraints = findChildByType(node, "type_constraints");
+  if (typeConstraints) {
+    for (const constraintNode of typeConstraints.children) {
+      if (constraintNode.type === "type_constraint") {
+        const typeId = findChildByType(constraintNode, "type_identifier");
+        const boundType = findChildByType(constraintNode, "user_type") ?? findChildByType(constraintNode, "nullable_type");
+        if (typeId && boundType) {
+          const matchingParam = typeParams.find((tp) => tp.name === typeId.text);
+          if (matchingParam) {
+            if (!matchingParam.bounds) {
+              matchingParam.bounds = [];
+            }
+            matchingParam.bounds.push(boundType.text);
+          }
+        }
+      }
+    }
+  }
+  return typeParams;
+}
+var init_extract_type_parameters = __esm({
+  "src/indexer/parsers/kotlin/extractor/generics/extract-type-parameters.ts"() {
+    "use strict";
+    init_ast_utils();
+    init_extract_single_type_parameter();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/generics/index.ts
+var init_generics = __esm({
+  "src/indexer/parsers/kotlin/extractor/generics/index.ts"() {
+    "use strict";
+    init_extract_single_type_parameter();
+    init_extract_type_parameters();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/calls/type-inference/is-expression-type.ts
+function isExpressionType(type) {
+  return expressionTypes.includes(type);
+}
+var expressionTypes;
+var init_is_expression_type = __esm({
+  "src/indexer/parsers/kotlin/extractor/calls/type-inference/is-expression-type.ts"() {
+    "use strict";
+    expressionTypes = [
+      "integer_literal",
+      "long_literal",
+      "real_literal",
+      "string_literal",
+      "character_literal",
+      "boolean_literal",
+      "null_literal",
+      "call_expression",
+      "navigation_expression",
+      "simple_identifier",
+      "prefix_expression",
+      "postfix_expression",
+      "additive_expression",
+      "multiplicative_expression",
+      "comparison_expression",
+      "equality_expression",
+      "conjunction_expression",
+      "disjunction_expression",
+      "lambda_literal",
+      "object_literal",
+      "collection_literal",
+      "if_expression",
+      "when_expression",
+      "try_expression",
+      "parenthesized_expression"
+    ];
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/calls/type-inference/infer-expression-type.ts
+function inferExpressionType(expression) {
+  switch (expression.type) {
+    // Literal types - these are certain
+    case "integer_literal":
+      return "Int";
+    case "long_literal":
+      return "Long";
+    case "real_literal":
+      return expression.text.toLowerCase().endsWith("f") ? "Float" : "Double";
+    case "string_literal":
+      return "String";
+    case "character_literal":
+      return "Char";
+    case "boolean_literal":
+      return "Boolean";
+    case "null_literal":
+      return "Nothing?";
+    case "lambda_literal":
+      return "Function";
+    // Collection literals
+    case "collection_literal":
+      return "Collection";
+    // For other expressions, we can't reliably infer the type without full type analysis
+    default:
+      return "Unknown";
+  }
+}
+var init_infer_expression_type = __esm({
+  "src/indexer/parsers/kotlin/extractor/calls/type-inference/infer-expression-type.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/calls/type-inference/find-first-expression.ts
+function findFirstExpression(node) {
+  for (const child of node.children) {
+    if (child.type === "simple_identifier" || child.text === "=") continue;
+    if (isExpressionType(child.type)) {
+      return child;
+    }
+  }
+  return void 0;
+}
+var init_find_first_expression = __esm({
+  "src/indexer/parsers/kotlin/extractor/calls/type-inference/find-first-expression.ts"() {
+    "use strict";
+    init_is_expression_type();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/calls/type-inference/infer-argument-type.ts
+function inferArgumentType(valueArgument) {
+  const expression = findFirstExpression(valueArgument);
+  if (!expression) return "Unknown";
+  return inferExpressionType(expression);
+}
+var init_infer_argument_type = __esm({
+  "src/indexer/parsers/kotlin/extractor/calls/type-inference/infer-argument-type.ts"() {
+    "use strict";
+    init_find_first_expression();
+    init_infer_expression_type();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/calls/type-inference/index.ts
+var init_type_inference = __esm({
+  "src/indexer/parsers/kotlin/extractor/calls/type-inference/index.ts"() {
+    "use strict";
+    init_is_expression_type();
+    init_infer_expression_type();
+    init_find_first_expression();
+    init_infer_argument_type();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/calls/extract-navigation-path.ts
+function extractNavigationPath(navExpr) {
+  const parts = [];
+  let hasSafeCall = false;
+  function collectParts(node) {
+    if (node.type === "simple_identifier") {
+      parts.push(node.text);
+    } else if (node.type === "navigation_expression") {
+      for (const child of node.children) {
+        if (child.type === "navigation_expression" || child.type === "simple_identifier") {
+          collectParts(child);
+        } else if (child.type === "navigation_suffix") {
+          for (const suffixChild of child.children) {
+            if (suffixChild.text === "?." || suffixChild.type === "?.") {
+              hasSafeCall = true;
+            } else if (suffixChild.type === "simple_identifier") {
+              parts.push(suffixChild.text);
+            }
+          }
+        }
+      }
+    }
+  }
+  collectParts(navExpr);
+  if (parts.length === 0) {
+    return { receiverPath: void 0, methodName: "<unknown>", hasSafeCall };
+  }
+  if (parts.length === 1) {
+    return { receiverPath: void 0, methodName: parts[0], hasSafeCall };
+  }
+  const methodName = parts.pop();
+  const receiverPath = parts.join(".");
+  return { receiverPath, methodName, hasSafeCall };
+}
+var init_extract_navigation_path = __esm({
+  "src/indexer/parsers/kotlin/extractor/calls/extract-navigation-path.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/calls/extract-call-arguments.ts
+function extractCallArguments(callSuffix) {
+  const argumentTypes = [];
+  let argumentCount = 0;
+  const valueArguments = findChildByType(callSuffix, "value_arguments");
+  if (!valueArguments) {
+    return { argumentCount: 0, argumentTypes: [] };
+  }
+  for (const child of valueArguments.children) {
+    if (child.type === "value_argument") {
+      argumentCount++;
+      const argType = inferArgumentType(child);
+      argumentTypes.push(argType);
+    }
+  }
+  return { argumentCount, argumentTypes };
+}
+var init_extract_call_arguments = __esm({
+  "src/indexer/parsers/kotlin/extractor/calls/extract-call-arguments.ts"() {
+    "use strict";
+    init_ast_utils();
+    init_type_inference();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/calls/extract-call-expression.ts
+function extractCallExpression(node) {
+  const navigations = findChildByType(node, "navigation_expression");
+  const callSuffix = findChildByType(node, "call_suffix");
+  if (!callSuffix) return void 0;
+  let name;
+  let receiver;
+  let isSafeCall = false;
+  if (navigations) {
+    const { receiverPath, methodName, hasSafeCall } = extractNavigationPath(navigations);
+    receiver = receiverPath;
+    name = methodName;
+    isSafeCall = hasSafeCall;
+  } else {
+    const identifier = node.children.find((c) => c.type === "simple_identifier");
+    name = identifier?.text ?? "<unknown>";
+  }
+  const { argumentCount, argumentTypes } = extractCallArguments(callSuffix);
+  return {
+    name,
+    receiver,
+    receiverType: void 0,
+    // Will be resolved later
+    argumentCount,
+    argumentTypes: argumentTypes.length > 0 ? argumentTypes : void 0,
+    isSafeCall: isSafeCall || void 0,
+    location: nodeLocation(node)
+  };
+}
+var init_extract_call_expression = __esm({
+  "src/indexer/parsers/kotlin/extractor/calls/extract-call-expression.ts"() {
+    "use strict";
+    init_ast_utils();
+    init_extract_navigation_path();
+    init_extract_call_arguments();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/calls/extract-calls.ts
+function extractCalls(body) {
+  const calls = [];
+  traverseNode(body, (node) => {
+    if (node.type === "call_expression") {
+      const call = extractCallExpression(node);
+      if (call) {
+        calls.push(call);
+      }
+    }
+  });
+  return calls;
+}
+var init_extract_calls = __esm({
+  "src/indexer/parsers/kotlin/extractor/calls/extract-calls.ts"() {
+    "use strict";
+    init_ast_utils();
+    init_extract_call_expression();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/calls/index.ts
+var init_calls = __esm({
+  "src/indexer/parsers/kotlin/extractor/calls/index.ts"() {
+    "use strict";
+    init_type_inference();
+    init_extract_navigation_path();
+    init_extract_call_arguments();
+    init_extract_call_expression();
+    init_extract_calls();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/function/extract-function.ts
+function extractFunction(node) {
+  const nameNode = node.childForFieldName("name") ?? findChildByType(node, "simple_identifier");
+  const name = nameNode?.text ?? "<anonymous>";
+  const modifiers = extractModifiers(node);
+  const annotations = extractAnnotations(node);
+  const parameters = extractParameters(node);
+  const returnType = extractReturnType(node);
+  const typeParameters = extractTypeParameters(node);
+  const receiverType = extractReceiverType(node);
+  const body = findChildByType(node, "function_body");
+  const calls = body ? extractCalls(body) : [];
+  return {
+    name,
+    visibility: modifiers.visibility,
+    parameters,
+    returnType,
+    isAbstract: modifiers.isAbstract,
+    isSuspend: modifiers.isSuspend,
+    isExtension: !!receiverType,
+    receiverType,
+    isInline: modifiers.isInline,
+    isInfix: modifiers.isInfix,
+    isOperator: modifiers.isOperator,
+    typeParameters: typeParameters.length > 0 ? typeParameters : void 0,
+    annotations,
+    location: nodeLocation(node),
+    calls
+  };
+}
+var init_extract_function = __esm({
+  "src/indexer/parsers/kotlin/extractor/function/extract-function.ts"() {
+    "use strict";
+    init_ast_utils();
+    init_modifiers();
+    init_generics();
+    init_calls();
+    init_extract_parameters();
+    init_extract_return_type();
+    init_extract_receiver_type();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/function/index.ts
+var init_function = __esm({
+  "src/indexer/parsers/kotlin/extractor/function/index.ts"() {
+    "use strict";
+    init_extract_function_type();
+    init_extract_parameters();
+    init_extract_return_type();
+    init_extract_receiver_type();
+    init_extract_function();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/advanced/extract-type-alias.ts
+function extractTypeAlias(node) {
+  const nameNode = findChildByType(node, "type_identifier");
+  const name = nameNode?.text ?? "<unnamed>";
+  const modifiers = extractModifiers(node);
+  const typeParameters = extractTypeParameters(node);
+  let aliasedType = "";
+  for (const child of node.children) {
+    if (child.type === "user_type" || child.type === "nullable_type" || child.type === "function_type") {
+      const prev = child.previousSibling;
+      if (prev?.type === "=") {
+        aliasedType = child.text;
+        break;
+      }
+    }
+  }
+  return {
+    name,
+    aliasedType,
+    visibility: modifiers.visibility,
+    typeParameters: typeParameters.length > 0 ? typeParameters : void 0,
+    location: nodeLocation(node)
+  };
+}
+var init_extract_type_alias = __esm({
+  "src/indexer/parsers/kotlin/extractor/advanced/extract-type-alias.ts"() {
+    "use strict";
+    init_ast_utils();
+    init_modifiers();
+    init_generics();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/advanced/extract-destructuring-declaration.ts
+function extractDestructuringDeclaration(node) {
+  const multiVarDecl = findChildByType(node, "multi_variable_declaration");
+  if (!multiVarDecl) return void 0;
+  const componentNames = [];
+  const componentTypes = [];
+  for (const child of multiVarDecl.children) {
+    if (child.type === "variable_declaration") {
+      const nameNode = findChildByType(child, "simple_identifier");
+      const typeNode = findChildByType(child, "nullable_type") ?? findChildByType(child, "user_type");
+      componentNames.push(nameNode?.text ?? "_");
+      componentTypes.push(typeNode?.text);
+    }
+  }
+  if (componentNames.length === 0) return void 0;
+  const modifiers = extractModifiers(node);
+  const bindingKind = findChildByType(node, "binding_pattern_kind");
+  const isVal = bindingKind ? bindingKind.children.some((c) => c.type === "val") : node.children.some((c) => c.type === "val");
+  const initializer = node.childForFieldName("initializer");
+  return {
+    componentNames,
+    componentTypes: componentTypes.some((t) => t !== void 0) ? componentTypes : void 0,
+    initializer: initializer?.text,
+    visibility: modifiers.visibility,
+    isVal,
+    location: nodeLocation(node)
+  };
+}
+var init_extract_destructuring_declaration = __esm({
+  "src/indexer/parsers/kotlin/extractor/advanced/extract-destructuring-declaration.ts"() {
+    "use strict";
+    init_ast_utils();
+    init_modifiers();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/advanced/index.ts
+var init_advanced = __esm({
+  "src/indexer/parsers/kotlin/extractor/advanced/index.ts"() {
+    "use strict";
+    init_extract_type_alias();
+    init_extract_destructuring_declaration();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/object-expressions/extract-object-expression.ts
+function extractObjectExpression(node, extractClassBody2) {
+  const superTypes = [];
+  for (const child of node.children) {
+    if (child.type === "delegation_specifier") {
+      const typeRef = findChildByType(child, "user_type") ?? findChildByType(child, "constructor_invocation");
+      if (typeRef) {
+        const typeName = extractTypeName(typeRef);
+        if (typeName) {
+          superTypes.push(typeName);
+        }
+      }
+    }
+  }
+  const classBody = findChildByType(node, "class_body");
+  const { properties, functions } = extractClassBody2(classBody);
+  return {
+    superTypes,
+    properties,
+    functions,
+    location: nodeLocation(node)
+  };
+}
+var init_extract_object_expression = __esm({
+  "src/indexer/parsers/kotlin/extractor/object-expressions/extract-object-expression.ts"() {
+    "use strict";
+    init_ast_utils();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/object-expressions/extract-all-object-expressions.ts
+function extractAllObjectExpressions(root, extractClassBody2) {
+  const expressions = [];
+  traverseNode(root, (node) => {
+    if (node.type === "object_literal") {
+      const expr = extractObjectExpression(node, extractClassBody2);
+      if (expr) {
+        expressions.push(expr);
+      }
+    }
+  });
+  return expressions;
+}
+var init_extract_all_object_expressions = __esm({
+  "src/indexer/parsers/kotlin/extractor/object-expressions/extract-all-object-expressions.ts"() {
+    "use strict";
+    init_ast_utils();
+    init_extract_object_expression();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/object-expressions/index.ts
+var init_object_expressions = __esm({
+  "src/indexer/parsers/kotlin/extractor/object-expressions/index.ts"() {
+    "use strict";
+    init_extract_object_expression();
+    init_extract_all_object_expressions();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/class/map-class-kind.ts
+function mapClassKind(node) {
+  const hasInterface = node.children.some((c) => c.type === "interface");
+  const hasObject = node.children.some((c) => c.type === "object");
+  const hasEnum = node.children.some((c) => c.type === "enum");
+  const modifiers = findChildByType(node, "modifiers");
+  const hasAnnotationModifier = modifiers?.children.some(
+    (c) => c.type === "class_modifier" && c.children.some((m) => m.type === "annotation")
+  );
+  if (hasInterface) return "interface";
+  if (hasObject) return "object";
+  if (hasEnum) return "enum";
+  if (hasAnnotationModifier) return "annotation";
+  switch (node.type) {
+    case "object_declaration":
+      return "object";
+    case "enum_class_declaration":
+      return "enum";
+    default:
+      return "class";
+  }
+}
+var init_map_class_kind = __esm({
+  "src/indexer/parsers/kotlin/extractor/class/map-class-kind.ts"() {
+    "use strict";
+    init_ast_utils();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/class/extract-super-types.ts
+function extractSuperTypes(classNode) {
+  let superClass;
+  const interfaces = [];
+  for (const child of classNode.children) {
+    if (child.type === "delegation_specifier") {
+      const constructorInvocation = findChildByType(child, "constructor_invocation");
+      const userType = findChildByType(child, "user_type");
+      if (constructorInvocation) {
+        const typeNode = findChildByType(constructorInvocation, "user_type");
+        const typeName = typeNode ? extractTypeName(typeNode) : extractTypeName(constructorInvocation);
+        if (typeName && !superClass) {
+          superClass = typeName;
+        } else if (typeName) {
+          interfaces.push(typeName);
+        }
+      } else if (userType) {
+        const typeName = extractTypeName(userType);
+        if (typeName) {
+          interfaces.push(typeName);
+        }
+      }
+    }
+  }
+  return { superClass, interfaces };
+}
+var init_extract_super_types = __esm({
+  "src/indexer/parsers/kotlin/extractor/class/extract-super-types.ts"() {
+    "use strict";
+    init_ast_utils();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/constructor/extract-primary-constructor-properties.ts
 function extractPrimaryConstructorProperties(classNode) {
   const properties = [];
   const primaryConstructor = findChildByType(classNode, "primary_constructor");
@@ -32209,40 +32573,15 @@ function extractPrimaryConstructorProperties(classNode) {
   }
   return properties;
 }
-function isCompanionObject(node) {
-  const modifiers = findChildByType(node, "modifiers");
-  if (modifiers) {
-    for (const child of modifiers.children) {
-      if (child.type === "class_modifier" && child.text === "companion") {
-        return true;
-      }
-    }
+var init_extract_primary_constructor_properties = __esm({
+  "src/indexer/parsers/kotlin/extractor/constructor/extract-primary-constructor-properties.ts"() {
+    "use strict";
+    init_ast_utils();
+    init_modifiers();
   }
-  return node.children.some((c) => c.type === "companion");
-}
-function extractCompanionObject(node) {
-  const nameNode = findChildByType(node, "type_identifier") ?? findChildByType(node, "simple_identifier");
-  const name = nameNode?.text ?? "Companion";
-  const modifiers = extractModifiers(node);
-  const annotations = extractAnnotations(node);
-  const classBody = findChildByType(node, "class_body");
-  const { properties, functions, nestedClasses } = extractClassBody(classBody);
-  return {
-    name,
-    kind: "object",
-    visibility: modifiers.visibility,
-    isAbstract: false,
-    isData: false,
-    isSealed: false,
-    superClass: void 0,
-    interfaces: [],
-    annotations,
-    properties,
-    functions,
-    nestedClasses,
-    location: nodeLocation(node)
-  };
-}
+});
+
+// src/indexer/parsers/kotlin/extractor/constructor/extract-secondary-constructor.ts
 function extractSecondaryConstructor(node) {
   const modifiers = extractModifiers(node);
   const annotations = extractAnnotations(node);
@@ -32278,116 +32617,272 @@ function extractSecondaryConstructor(node) {
     location: nodeLocation(node)
   };
 }
-function extractTypeAlias(node) {
-  const nameNode = findChildByType(node, "type_identifier");
-  const name = nameNode?.text ?? "<unnamed>";
-  const modifiers = extractModifiers(node);
-  const typeParameters = extractTypeParameters(node);
-  let aliasedType = "";
-  for (const child of node.children) {
-    if (child.type === "user_type" || child.type === "nullable_type" || child.type === "function_type") {
-      const prev = child.previousSibling;
-      if (prev?.type === "=") {
-        aliasedType = child.text;
-        break;
+var init_extract_secondary_constructor = __esm({
+  "src/indexer/parsers/kotlin/extractor/constructor/extract-secondary-constructor.ts"() {
+    "use strict";
+    init_ast_utils();
+    init_modifiers();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/constructor/index.ts
+var init_constructor = __esm({
+  "src/indexer/parsers/kotlin/extractor/constructor/index.ts"() {
+    "use strict";
+    init_extract_primary_constructor_properties();
+    init_extract_secondary_constructor();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/companion/is-companion-object.ts
+function isCompanionObject(node) {
+  const modifiers = findChildByType(node, "modifiers");
+  if (modifiers) {
+    for (const child of modifiers.children) {
+      if (child.type === "class_modifier" && child.text === "companion") {
+        return true;
       }
     }
   }
+  return node.children.some((c) => c.type === "companion");
+}
+var init_is_companion_object = __esm({
+  "src/indexer/parsers/kotlin/extractor/companion/is-companion-object.ts"() {
+    "use strict";
+    init_ast_utils();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/companion/extract-companion-object.ts
+function extractCompanionObject(node, extractClassBody2) {
+  const nameNode = findChildByType(node, "type_identifier") ?? findChildByType(node, "simple_identifier");
+  const name = nameNode?.text ?? "Companion";
+  const modifiers = extractModifiers(node);
+  const annotations = extractAnnotations(node);
+  const classBody = findChildByType(node, "class_body");
+  const { properties, functions, nestedClasses } = extractClassBody2(classBody);
   return {
     name,
-    aliasedType,
+    kind: "object",
     visibility: modifiers.visibility,
-    typeParameters: typeParameters.length > 0 ? typeParameters : void 0,
-    location: nodeLocation(node)
-  };
-}
-function extractDestructuringDeclaration(node) {
-  const multiVarDecl = findChildByType(node, "multi_variable_declaration");
-  if (!multiVarDecl) return void 0;
-  const componentNames = [];
-  const componentTypes = [];
-  for (const child of multiVarDecl.children) {
-    if (child.type === "variable_declaration") {
-      const nameNode = findChildByType(child, "simple_identifier");
-      const typeNode = findChildByType(child, "nullable_type") ?? findChildByType(child, "user_type");
-      componentNames.push(nameNode?.text ?? "_");
-      componentTypes.push(typeNode?.text);
-    }
-  }
-  if (componentNames.length === 0) return void 0;
-  const modifiers = extractModifiers(node);
-  const bindingKind = findChildByType(node, "binding_pattern_kind");
-  const isVal = bindingKind ? bindingKind.children.some((c) => c.type === "val") : node.children.some((c) => c.type === "val");
-  const initializer = node.childForFieldName("initializer");
-  return {
-    componentNames,
-    componentTypes: componentTypes.some((t) => t !== void 0) ? componentTypes : void 0,
-    initializer: initializer?.text,
-    visibility: modifiers.visibility,
-    isVal,
-    location: nodeLocation(node)
-  };
-}
-function extractAllObjectExpressions(root) {
-  const expressions = [];
-  traverseNode(root, (node) => {
-    if (node.type === "object_literal") {
-      const expr = extractObjectExpression(node);
-      if (expr) {
-        expressions.push(expr);
-      }
-    }
-  });
-  return expressions;
-}
-function extractObjectExpression(node) {
-  const superTypes = [];
-  for (const child of node.children) {
-    if (child.type === "delegation_specifier") {
-      const typeRef = findChildByType(child, "user_type") ?? findChildByType(child, "constructor_invocation");
-      if (typeRef) {
-        const typeName = extractTypeName(typeRef);
-        if (typeName) {
-          superTypes.push(typeName);
-        }
-      }
-    }
-  }
-  const classBody = findChildByType(node, "class_body");
-  const { properties, functions } = extractClassBody(classBody);
-  return {
-    superTypes,
+    isAbstract: false,
+    isData: false,
+    isSealed: false,
+    superClass: void 0,
+    interfaces: [],
+    annotations,
     properties,
     functions,
+    nestedClasses,
     location: nodeLocation(node)
   };
 }
-function extractAnnotationArguments(node) {
-  const constructorInvocation = findChildByType(node, "constructor_invocation");
-  if (!constructorInvocation) return void 0;
-  const valueArgs = findChildByType(constructorInvocation, "value_arguments");
-  if (!valueArgs) return void 0;
-  const args = {};
-  let positionalIndex = 0;
-  for (const child of valueArgs.children) {
-    if (child.type === "value_argument") {
-      const nameNode = findChildByType(child, "simple_identifier");
-      const expression = child.children.find(
-        (c) => c.type !== "simple_identifier" && c.type !== "=" && c.type !== "(" && c.type !== ")" && c.type !== ","
-      );
-      if (nameNode) {
-        args[nameNode.text] = expression?.text ?? "";
-      } else if (expression) {
-        args[`_${positionalIndex}`] = expression.text;
-        positionalIndex++;
-      }
+var init_extract_companion_object = __esm({
+  "src/indexer/parsers/kotlin/extractor/companion/extract-companion-object.ts"() {
+    "use strict";
+    init_ast_utils();
+    init_modifiers();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/companion/index.ts
+var init_companion = __esm({
+  "src/indexer/parsers/kotlin/extractor/companion/index.ts"() {
+    "use strict";
+    init_is_companion_object();
+    init_extract_companion_object();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/class/extract-class-body.ts
+function extractClassBody(classBody, extractClass2, extractCompanionObject2) {
+  const properties = [];
+  const functions = [];
+  const nestedClasses = [];
+  const secondaryConstructors = [];
+  let companionObject = void 0;
+  if (!classBody) {
+    return { properties, functions, nestedClasses, companionObject, secondaryConstructors };
+  }
+  for (const child of classBody.children) {
+    switch (child.type) {
+      case "property_declaration":
+        properties.push(extractProperty(child));
+        break;
+      case "function_declaration":
+        functions.push(extractFunction(child));
+        break;
+      case "class_declaration":
+      case "interface_declaration":
+      case "enum_class_declaration":
+        nestedClasses.push(extractClass2(child));
+        break;
+      case "object_declaration":
+        if (isCompanionObject(child)) {
+          companionObject = extractClass2(child);
+        } else {
+          nestedClasses.push(extractClass2(child));
+        }
+        break;
+      case "companion_object":
+        companionObject = extractCompanionObject2(child);
+        break;
+      case "secondary_constructor":
+        secondaryConstructors.push(extractSecondaryConstructor(child));
+        break;
     }
   }
-  return Object.keys(args).length > 0 ? args : void 0;
+  return { properties, functions, nestedClasses, companionObject, secondaryConstructors };
 }
-var init_extractor = __esm({
-  "src/indexer/parsers/kotlin/extractor.ts"() {
+var init_extract_class_body = __esm({
+  "src/indexer/parsers/kotlin/extractor/class/extract-class-body.ts"() {
     "use strict";
+    init_property();
+    init_function();
+    init_constructor();
+    init_companion();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/class/extract-class.ts
+function extractClass(node, extractCompanionObject2) {
+  const kind = mapClassKind(node);
+  const nameNode = node.childForFieldName("name") ?? findChildByType(node, "type_identifier") ?? findChildByType(node, "simple_identifier");
+  const name = nameNode?.text ?? "<anonymous>";
+  const modifiers = extractModifiers(node);
+  const annotations = extractAnnotations(node);
+  const typeParameters = extractTypeParameters(node);
+  const { superClass, interfaces } = extractSuperTypes(node);
+  const primaryConstructorProps = extractPrimaryConstructorProperties(node);
+  const recursiveExtractClass = (n) => extractClass(n, extractCompanionObject2);
+  const classBody = findChildByType(node, "class_body") ?? findChildByType(node, "enum_class_body");
+  const { properties, functions, nestedClasses, companionObject, secondaryConstructors } = extractClassBody(
+    classBody,
+    recursiveExtractClass,
+    extractCompanionObject2
+  );
+  const allProperties = [...primaryConstructorProps, ...properties];
+  return {
+    name,
+    kind,
+    visibility: modifiers.visibility,
+    isAbstract: modifiers.isAbstract,
+    isData: modifiers.isData,
+    isSealed: modifiers.isSealed,
+    superClass,
+    interfaces,
+    typeParameters: typeParameters.length > 0 ? typeParameters : void 0,
+    annotations,
+    properties: allProperties,
+    functions,
+    nestedClasses,
+    companionObject,
+    secondaryConstructors: secondaryConstructors.length > 0 ? secondaryConstructors : void 0,
+    location: nodeLocation(node)
+  };
+}
+var init_extract_class = __esm({
+  "src/indexer/parsers/kotlin/extractor/class/extract-class.ts"() {
+    "use strict";
+    init_ast_utils();
+    init_modifiers();
+    init_generics();
+    init_constructor();
+    init_class();
+    init_extract_class_body();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/class/index.ts
+var init_class = __esm({
+  "src/indexer/parsers/kotlin/extractor/class/index.ts"() {
+    "use strict";
+    init_map_class_kind();
+    init_extract_super_types();
+    init_extract_class_body();
+    init_extract_class();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/extract-symbols.ts
+function createClassBodyExtractor() {
+  const boundExtractCompanionObject = (node) => {
+    return extractCompanionObject(
+      node,
+      (classBody) => extractClassBody(classBody, boundExtractClass, boundExtractCompanionObject)
+    );
+  };
+  const boundExtractClass = (node) => {
+    return extractClass(node, boundExtractCompanionObject);
+  };
+  return {
+    extractClass: boundExtractClass,
+    extractCompanionObject: boundExtractCompanionObject,
+    extractClassBody: (classBody) => extractClassBody(classBody, boundExtractClass, boundExtractCompanionObject)
+  };
+}
+function extractSymbols(tree, filePath) {
+  const root = tree.rootNode;
+  const { extractClass: boundExtractClass, extractClassBody: boundExtractClassBody } = createClassBodyExtractor();
+  const result = {
+    filePath,
+    language: "kotlin",
+    packageName: extractPackageName(root),
+    imports: extractImports(root),
+    classes: [],
+    topLevelFunctions: [],
+    topLevelProperties: [],
+    typeAliases: [],
+    destructuringDeclarations: [],
+    objectExpressions: []
+  };
+  for (const child of root.children) {
+    switch (child.type) {
+      case "class_declaration":
+      case "interface_declaration":
+      case "object_declaration":
+      case "enum_class_declaration":
+      case "annotation_declaration":
+        result.classes.push(boundExtractClass(child));
+        break;
+      case "function_declaration":
+        result.topLevelFunctions.push(extractFunction(child));
+        break;
+      case "property_declaration": {
+        const destructuring = extractDestructuringDeclaration(child);
+        if (destructuring) {
+          result.destructuringDeclarations.push(destructuring);
+        } else {
+          result.topLevelProperties.push(extractProperty(child));
+        }
+        break;
+      }
+      case "type_alias":
+        result.typeAliases.push(extractTypeAlias(child));
+        break;
+    }
+  }
+  result.objectExpressions = extractAllObjectExpressions(root, boundExtractClassBody);
+  return result;
+}
+var init_extract_symbols = __esm({
+  "src/indexer/parsers/kotlin/extractor/extract-symbols.ts"() {
+    "use strict";
+    init_package();
+    init_property();
+    init_function();
+    init_advanced();
+    init_object_expressions();
+    init_class();
+    init_companion();
+  }
+});
+
+// src/indexer/parsers/kotlin/extractor/index.ts
+var init_extractor = __esm({
+  "src/indexer/parsers/kotlin/extractor/index.ts"() {
+    "use strict";
+    init_extract_symbols();
   }
 });
 
@@ -33443,10 +33938,59 @@ var stdlibRegistry = new StdlibRegistry();
 var import_neo4j_driver2 = __toESM(require_lib3(), 1);
 var import_path2 = __toESM(require("path"), 1);
 
-// src/indexer/domain/index.ts
-var import_promises = require("fs/promises");
-var import_fs = require("fs");
-var import_path = require("path");
+// src/indexer/domain/utils/capitalize.ts
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// src/indexer/domain/utils/merge-domains.ts
+function mergeDomains(existing, inferred) {
+  const result = [...existing];
+  const existingNames = new Set(existing.map((d) => d.name.toLowerCase()));
+  for (const domain of inferred) {
+    if (!existingNames.has(domain.name.toLowerCase())) {
+      result.push(domain);
+    }
+  }
+  return result;
+}
+
+// src/indexer/domain/inference/extract-domain-from-package.ts
+function extractDomainFromPackage(pkg, segmentIndex) {
+  const separator = pkg.includes("/") ? "/" : ".";
+  const segments = pkg.split(separator);
+  if (segments.length > segmentIndex) {
+    const domainSegment = segments[segmentIndex];
+    const skipSegments = ["domain", "application", "infrastructure", "presentation", "api", "impl", "internal"];
+    if (domainSegment && !skipSegments.includes(domainSegment.toLowerCase())) {
+      return domainSegment.toLowerCase();
+    }
+    if (segments.length > segmentIndex + 1) {
+      return segments[segmentIndex + 1]?.toLowerCase() || null;
+    }
+  }
+  return null;
+}
+
+// src/indexer/domain/inference/detect-primary-language.ts
+function detectPrimaryLanguage(files) {
+  const languageCounts = /* @__PURE__ */ new Map();
+  for (const file of files) {
+    const count = languageCounts.get(file.language) || 0;
+    languageCounts.set(file.language, count + 1);
+  }
+  let maxCount = 0;
+  let primaryLanguage = "kotlin";
+  for (const [language, count] of languageCounts) {
+    if (count > maxCount) {
+      maxCount = count;
+      primaryLanguage = language;
+    }
+  }
+  return primaryLanguage;
+}
+
+// src/indexer/domain/inference/infer-domains-from-packages.ts
 var DEFAULT_DOMAIN_SEGMENT_INDEX = {
   kotlin: 2,
   // com.example.[domain].*
@@ -33457,6 +34001,136 @@ var DEFAULT_DOMAIN_SEGMENT_INDEX = {
   javascript: 1
   // src/[domain]/*
 };
+function inferDomainsFromPackages(packages, language, options) {
+  const segmentIndex = options.domainSegmentIndex ?? DEFAULT_DOMAIN_SEGMENT_INDEX[language];
+  const domainMap = /* @__PURE__ */ new Map();
+  for (const pkg of packages) {
+    const domainName = extractDomainFromPackage(pkg, segmentIndex);
+    if (domainName) {
+      const existing = domainMap.get(domainName) || [];
+      existing.push(pkg);
+      domainMap.set(domainName, existing);
+    }
+  }
+  return Array.from(domainMap.entries()).map(([name, matchedPackages]) => ({
+    name: capitalize(name),
+    patterns: [`*.${name}.*`, `*.${name}`],
+    // Inferred patterns
+    matchedPackages
+  }));
+}
+
+// src/indexer/domain/pattern-matching/matches-pattern.ts
+function matchesPattern(pkg, pattern) {
+  const regexPattern = pattern.replace(/\./g, "\\.").replace(/\*\*/g, "{{DOUBLE_STAR}}").replace(/\*/g, "[^.]+").replace(/\{\{DOUBLE_STAR}}/g, ".*");
+  const regex = new RegExp(`^${regexPattern}$`);
+  return regex.test(pkg);
+}
+
+// src/indexer/domain/pattern-matching/matches-any-pattern.ts
+function matchesAnyPattern(pkg, patterns) {
+  for (const pattern of patterns) {
+    if (matchesPattern(pkg, pattern)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// src/indexer/domain/assignment/assign-packages-to-domains.ts
+function assignPackagesToConfiguredDomains(packages, configs) {
+  const domains = configs.map((config) => ({
+    name: config.name,
+    description: config.description,
+    patterns: config.patterns,
+    matchedPackages: []
+  }));
+  const unassigned = [];
+  for (const pkg of packages) {
+    let assigned = false;
+    for (const domain of domains) {
+      if (matchesAnyPattern(pkg, domain.patterns)) {
+        domain.matchedPackages.push(pkg);
+        assigned = true;
+        break;
+      }
+    }
+    if (!assigned) {
+      unassigned.push(pkg);
+    }
+  }
+  return { domains, unassigned };
+}
+
+// src/indexer/domain/config/load-domains-config.ts
+var import_promises = require("fs/promises");
+var import_fs = require("fs");
+var import_path = require("path");
+async function loadDomainsConfig(configPath) {
+  const paths = configPath ? [configPath] : ["codegraph.domains.json", ".codegraph/domains.json", "codegraph.config.json"];
+  for (const path2 of paths) {
+    const fullPath = (0, import_path.join)(process.cwd(), path2);
+    if ((0, import_fs.existsSync)(fullPath)) {
+      try {
+        const content = await (0, import_promises.readFile)(fullPath, "utf-8");
+        const config = JSON.parse(content);
+        return config.domains || [];
+      } catch {
+      }
+    }
+  }
+  return [];
+}
+
+// src/indexer/domain/dependencies/extract-package-from-fqn.ts
+function extractPackageFromFqn(fqn) {
+  const lastDot = fqn.lastIndexOf(".");
+  if (lastDot === -1) return null;
+  let current = fqn.substring(0, lastDot);
+  while (current.includes(".")) {
+    const lastSegment = current.substring(current.lastIndexOf(".") + 1);
+    if (lastSegment[0] === lastSegment[0]?.toUpperCase() && lastSegment[0] !== lastSegment[0]?.toLowerCase()) {
+      current = current.substring(0, current.lastIndexOf("."));
+    } else {
+      return current;
+    }
+  }
+  return current || null;
+}
+
+// src/indexer/domain/dependencies/calculate-domain-dependencies.ts
+function calculateDomainDependencies(files, domains) {
+  const packageToDomain = /* @__PURE__ */ new Map();
+  for (const domain of domains) {
+    for (const pkg of domain.matchedPackages) {
+      packageToDomain.set(pkg, domain.name);
+    }
+  }
+  const dependencyMap = /* @__PURE__ */ new Map();
+  for (const file of files) {
+    const fromDomain = file.packageName ? packageToDomain.get(file.packageName) : void 0;
+    if (!fromDomain) continue;
+    for (const call of file.resolvedCalls) {
+      const toPackage = extractPackageFromFqn(call.toFqn);
+      const toDomain = toPackage ? packageToDomain.get(toPackage) : void 0;
+      if (toDomain && fromDomain !== toDomain) {
+        const key = `${fromDomain}->${toDomain}`;
+        const count = dependencyMap.get(key) || 0;
+        dependencyMap.set(key, count + 1);
+      }
+    }
+  }
+  const dependencies = [];
+  for (const [key, weight] of dependencyMap) {
+    const [from, to] = key.split("->");
+    if (from && to) {
+      dependencies.push({ from, to, weight });
+    }
+  }
+  return dependencies.sort((a, b) => b.weight - a.weight);
+}
+
+// src/indexer/domain/index.ts
 async function analyzeDomains(files, options = {}) {
   const packages = /* @__PURE__ */ new Set();
   for (const file of files) {
@@ -33488,163 +34162,6 @@ async function analyzeDomains(files, options = {}) {
     dependencies,
     unassignedPackages
   };
-}
-async function loadDomainsConfig(configPath) {
-  const paths = configPath ? [configPath] : ["codegraph.domains.json", ".codegraph/domains.json", "codegraph.config.json"];
-  for (const path2 of paths) {
-    const fullPath = (0, import_path.join)(process.cwd(), path2);
-    if ((0, import_fs.existsSync)(fullPath)) {
-      try {
-        const content = await (0, import_promises.readFile)(fullPath, "utf-8");
-        const config = JSON.parse(content);
-        return config.domains || [];
-      } catch {
-      }
-    }
-  }
-  return [];
-}
-function assignPackagesToConfiguredDomains(packages, configs) {
-  const domains = configs.map((config) => ({
-    name: config.name,
-    description: config.description,
-    patterns: config.patterns,
-    matchedPackages: []
-  }));
-  const unassigned = [];
-  for (const pkg of packages) {
-    let assigned = false;
-    for (const domain of domains) {
-      if (matchesAnyPattern(pkg, domain.patterns)) {
-        domain.matchedPackages.push(pkg);
-        assigned = true;
-        break;
-      }
-    }
-    if (!assigned) {
-      unassigned.push(pkg);
-    }
-  }
-  return { domains, unassigned };
-}
-function matchesAnyPattern(pkg, patterns) {
-  for (const pattern of patterns) {
-    if (matchesPattern(pkg, pattern)) {
-      return true;
-    }
-  }
-  return false;
-}
-function matchesPattern(pkg, pattern) {
-  const regexPattern = pattern.replace(/\./g, "\\.").replace(/\*\*/g, "{{DOUBLE_STAR}}").replace(/\*/g, "[^.]+").replace(/\{\{DOUBLE_STAR}}/g, ".*");
-  const regex = new RegExp(`^${regexPattern}$`);
-  return regex.test(pkg);
-}
-function inferDomainsFromPackages(packages, language, options) {
-  const segmentIndex = options.domainSegmentIndex ?? DEFAULT_DOMAIN_SEGMENT_INDEX[language];
-  const domainMap = /* @__PURE__ */ new Map();
-  for (const pkg of packages) {
-    const domainName = extractDomainFromPackage(pkg, segmentIndex);
-    if (domainName) {
-      const existing = domainMap.get(domainName) || [];
-      existing.push(pkg);
-      domainMap.set(domainName, existing);
-    }
-  }
-  return Array.from(domainMap.entries()).map(([name, matchedPackages]) => ({
-    name: capitalize(name),
-    patterns: [`*.${name}.*`, `*.${name}`],
-    // Inferred patterns
-    matchedPackages
-  }));
-}
-function extractDomainFromPackage(pkg, segmentIndex) {
-  const separator = pkg.includes("/") ? "/" : ".";
-  const segments = pkg.split(separator);
-  if (segments.length > segmentIndex) {
-    const domainSegment = segments[segmentIndex];
-    const skipSegments = ["domain", "application", "infrastructure", "presentation", "api", "impl", "internal"];
-    if (domainSegment && !skipSegments.includes(domainSegment.toLowerCase())) {
-      return domainSegment.toLowerCase();
-    }
-    if (segments.length > segmentIndex + 1) {
-      return segments[segmentIndex + 1]?.toLowerCase() || null;
-    }
-  }
-  return null;
-}
-function detectPrimaryLanguage(files) {
-  const languageCounts = /* @__PURE__ */ new Map();
-  for (const file of files) {
-    const count = languageCounts.get(file.language) || 0;
-    languageCounts.set(file.language, count + 1);
-  }
-  let maxCount = 0;
-  let primaryLanguage = "kotlin";
-  for (const [language, count] of languageCounts) {
-    if (count > maxCount) {
-      maxCount = count;
-      primaryLanguage = language;
-    }
-  }
-  return primaryLanguage;
-}
-function calculateDomainDependencies(files, domains) {
-  const packageToDomain = /* @__PURE__ */ new Map();
-  for (const domain of domains) {
-    for (const pkg of domain.matchedPackages) {
-      packageToDomain.set(pkg, domain.name);
-    }
-  }
-  const dependencyMap = /* @__PURE__ */ new Map();
-  for (const file of files) {
-    const fromDomain = file.packageName ? packageToDomain.get(file.packageName) : void 0;
-    if (!fromDomain) continue;
-    for (const call of file.resolvedCalls) {
-      const toPackage = extractPackageFromFqn(call.toFqn);
-      const toDomain = toPackage ? packageToDomain.get(toPackage) : void 0;
-      if (toDomain && fromDomain !== toDomain) {
-        const key = `${fromDomain}->${toDomain}`;
-        const count = dependencyMap.get(key) || 0;
-        dependencyMap.set(key, count + 1);
-      }
-    }
-  }
-  const dependencies = [];
-  for (const [key, weight] of dependencyMap) {
-    const [from, to] = key.split("->");
-    if (from && to) {
-      dependencies.push({ from, to, weight });
-    }
-  }
-  return dependencies.sort((a, b) => b.weight - a.weight);
-}
-function extractPackageFromFqn(fqn) {
-  const lastDot = fqn.lastIndexOf(".");
-  if (lastDot === -1) return null;
-  let current = fqn.substring(0, lastDot);
-  while (current.includes(".")) {
-    const lastSegment = current.substring(current.lastIndexOf(".") + 1);
-    if (lastSegment[0] === lastSegment[0]?.toUpperCase() && lastSegment[0] !== lastSegment[0]?.toLowerCase()) {
-      current = current.substring(0, current.lastIndexOf("."));
-    } else {
-      return current;
-    }
-  }
-  return current || null;
-}
-function mergeDomains(existing, inferred) {
-  const result = [...existing];
-  const existingNames = new Set(existing.map((d) => d.name.toLowerCase()));
-  for (const domain of inferred) {
-    if (!existingNames.has(domain.name.toLowerCase())) {
-      result.push(domain);
-    }
-  }
-  return result;
-}
-function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 // src/indexer/writer/index.ts
