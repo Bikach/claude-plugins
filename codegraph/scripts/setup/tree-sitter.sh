@@ -14,7 +14,7 @@ install_tree_sitter() {
 
   log_step "tree_sitter" "running" "Installing native dependencies (tree-sitter)..."
 
-  if ! npm install --prefix "${PLUGIN_DIR}" 2>&1 | while read line; do
+  if ! npm install --legacy-peer-deps --prefix "${PLUGIN_DIR}" 2>&1 | while read line; do
     echo "{\"step\": \"npm_install\", \"log\": \"$line\"}" >&2
   done; then
     log_error "npm install failed" "Check that npm is installed and you have internet access"
