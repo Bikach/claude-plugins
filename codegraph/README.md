@@ -7,7 +7,7 @@ Analyze and navigate codebases through a Neo4j-backed knowledge graph.
 | Language | Status |
 |----------|--------|
 | Kotlin | ✅ Available |
-| Java | 🔜 Coming soon |
+| Java | ✅ Available |
 | TypeScript | 🔜 Coming soon |
 
 ## Prerequisites
@@ -46,6 +46,7 @@ Starts Neo4j and prepares the database.
 ```
 /codegraph:setup              # Neo4j only
 /codegraph:setup kotlin       # Neo4j + Kotlin LSP
+/codegraph:setup java         # Neo4j + Java LSP
 ```
 
 **What it does:**
@@ -72,7 +73,7 @@ Indexes a project into the Neo4j graph.
 ```
 
 **What it does:**
-1. Scans source files (.kt)
+1. Scans source files (.kt, .java)
 2. Parses with tree-sitter
 3. Resolves cross-file symbols
 4. Writes the graph to Neo4j
@@ -127,13 +128,14 @@ CodeGraph uses Language Servers for accurate code navigation (find callers, find
 | Language | LSP Server | Status |
 |----------|------------|--------|
 | Kotlin | `kotlin-language-server` | ✅ Available |
-| Java | `jdtls` | 🔜 Coming soon |
+| Java | `jdtls` | ✅ Available |
 | TypeScript | `typescript-language-server` | 🔜 Coming soon |
 
 ### Automatic installation
 
 ```
 /codegraph:setup kotlin
+/codegraph:setup java
 ```
 
 ### Manual installation

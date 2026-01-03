@@ -6,5 +6,12 @@
       ".kt": "kotlin",
       ".kts": "kotlin"
     }
+  },
+  "java": {
+    "command": "jdtls",
+    "args": [],
+    "extensionToLanguage": {
+      ".java": "java"
+    }
   }
 }

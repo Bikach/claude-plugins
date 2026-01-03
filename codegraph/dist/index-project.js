@@ -32423,7 +32423,7 @@ var init_advanced = __esm({
 });
 
 // src/indexer/parsers/kotlin/extractor/object-expressions/extract-object-expression.ts
-function extractObjectExpression(node, extractClassBody2) {
+function extractObjectExpression(node, extractClassBody3) {
   const superTypes = [];
   for (const child of node.children) {
     if (child.type === "delegation_specifier") {
@@ -32437,7 +32437,7 @@ function extractObjectExpression(node, extractClassBody2) {
     }
   }
   const classBody = findChildByType(node, "class_body");
-  const { properties, functions } = extractClassBody2(classBody);
+  const { properties, functions } = extractClassBody3(classBody);
   return {
     superTypes,
     properties,
@@ -32453,11 +32453,11 @@ var init_extract_object_expression = __esm({
 });
 
 // src/indexer/parsers/kotlin/extractor/object-expressions/extract-all-object-expressions.ts
-function extractAllObjectExpressions(root, extractClassBody2) {
+function extractAllObjectExpressions(root, extractClassBody3) {
   const expressions = [];
   traverseNode(root, (node) => {
     if (node.type === "object_literal") {
-      const expr = extractObjectExpression(node, extractClassBody2);
+      const expr = extractObjectExpression(node, extractClassBody3);
       if (expr) {
         expressions.push(expr);
       }
@@ -32654,13 +32654,13 @@ var init_is_companion_object = __esm({
 });
 
 // src/indexer/parsers/kotlin/extractor/companion/extract-companion-object.ts
-function extractCompanionObject(node, extractClassBody2) {
+function extractCompanionObject(node, extractClassBody3) {
   const nameNode = findChildByType(node, "type_identifier") ?? findChildByType(node, "simple_identifier");
   const name = nameNode?.text ?? "Companion";
   const modifiers = extractModifiers(node);
   const annotations = extractAnnotations(node);
   const classBody = findChildByType(node, "class_body");
-  const { properties, functions, nestedClasses } = extractClassBody2(classBody);
+  const { properties, functions, nestedClasses } = extractClassBody3(classBody);
   return {
     name,
     kind: "object",
@@ -32695,7 +32695,7 @@ var init_companion = __esm({
 });
 
 // src/indexer/parsers/kotlin/extractor/class/extract-class-body.ts
-function extractClassBody(classBody, extractClass2, extractCompanionObject2) {
+function extractClassBody(classBody, extractClass3, extractCompanionObject2) {
   const properties = [];
   const functions = [];
   const nestedClasses = [];
@@ -32715,13 +32715,13 @@ function extractClassBody(classBody, extractClass2, extractCompanionObject2) {
       case "class_declaration":
       case "interface_declaration":
       case "enum_class_declaration":
-        nestedClasses.push(extractClass2(child));
+        nestedClasses.push(extractClass3(child));
         break;
       case "object_declaration":
         if (isCompanionObject(child)) {
-          companionObject = extractClass2(child);
+          companionObject = extractClass3(child);
         } else {
-          nestedClasses.push(extractClass2(child));
+          nestedClasses.push(extractClass3(child));
         }
         break;
       case "companion_object":
@@ -32933,6 +32933,1230 @@ var init_kotlin = __esm({
         const tree = parseKotlin(source);
         const parsed = extractSymbols(tree, filePath);
         setFilePathInLocations(parsed, filePath);
+        return parsed;
+      }
+    };
+  }
+});
+
+// src/indexer/parsers/java/parser.ts
+function getParser2() {
+  if (!parserInstance2) {
+    parserInstance2 = new import_tree_sitter2.default();
+    parserInstance2.setLanguage(import_tree_sitter_java.default);
+  }
+  return parserInstance2;
+}
+function parseJava(source) {
+  const parser = getParser2();
+  return parser.parse(source);
+}
+var import_tree_sitter2, import_tree_sitter_java, parserInstance2;
+var init_parser2 = __esm({
+  "src/indexer/parsers/java/parser.ts"() {
+    "use strict";
+    import_tree_sitter2 = __toESM(require("tree-sitter"), 1);
+    import_tree_sitter_java = __toESM(require("tree-sitter-java"), 1);
+    parserInstance2 = null;
+  }
+});
+
+// src/indexer/parsers/java/extractor/ast-utils/find-child-by-type.ts
+function findChildByType2(node, type) {
+  return node.children.find((c) => c.type === type);
+}
+function findChildrenByType(node, type) {
+  return node.children.filter((c) => c.type === type);
+}
+var init_find_child_by_type2 = __esm({
+  "src/indexer/parsers/java/extractor/ast-utils/find-child-by-type.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/java/extractor/ast-utils/traverse-node.ts
+function traverseNode2(node, callback) {
+  callback(node);
+  for (const child of node.children) {
+    traverseNode2(child, callback);
+  }
+}
+var init_traverse_node2 = __esm({
+  "src/indexer/parsers/java/extractor/ast-utils/traverse-node.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/java/extractor/ast-utils/node-location.ts
+function nodeLocation2(node) {
+  return {
+    filePath: "",
+    // Will be set by caller
+    startLine: node.startPosition.row + 1,
+    startColumn: node.startPosition.column + 1,
+    endLine: node.endPosition.row + 1,
+    endColumn: node.endPosition.column + 1
+  };
+}
+var init_node_location2 = __esm({
+  "src/indexer/parsers/java/extractor/ast-utils/node-location.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/java/extractor/ast-utils/extract-type-name.ts
+function extractFullTypeName(typeNode) {
+  return typeNode.text;
+}
+var init_extract_type_name2 = __esm({
+  "src/indexer/parsers/java/extractor/ast-utils/extract-type-name.ts"() {
+    "use strict";
+    init_find_child_by_type2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/ast-utils/index.ts
+var init_ast_utils2 = __esm({
+  "src/indexer/parsers/java/extractor/ast-utils/index.ts"() {
+    "use strict";
+    init_find_child_by_type2();
+    init_traverse_node2();
+    init_node_location2();
+    init_extract_type_name2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/package/extract-package-name.ts
+function extractPackageName2(root) {
+  const packageDecl = root.children.find((c) => c.type === "package_declaration");
+  if (!packageDecl) return void 0;
+  const scopedId = findChildByType2(packageDecl, "scoped_identifier");
+  if (scopedId) return scopedId.text;
+  const identifier = findChildByType2(packageDecl, "identifier");
+  return identifier?.text;
+}
+var init_extract_package_name2 = __esm({
+  "src/indexer/parsers/java/extractor/package/extract-package-name.ts"() {
+    "use strict";
+    init_ast_utils2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/package/extract-imports.ts
+function extractImports2(root) {
+  const imports = [];
+  for (const child of root.children) {
+    if (child.type === "import_declaration") {
+      const parsed = parseImportDeclaration(child);
+      if (parsed) {
+        imports.push(parsed);
+      }
+    }
+  }
+  return imports;
+}
+function parseImportDeclaration(node) {
+  const isStatic = node.children.some((c) => c.type === "static");
+  const isWildcard = node.children.some((c) => c.type === "asterisk");
+  const scopedId = findChildByType2(node, "scoped_identifier");
+  const identifier = findChildByType2(node, "identifier");
+  const pathNode = scopedId ?? identifier;
+  if (!pathNode) return void 0;
+  let path2 = pathNode.text;
+  if (isStatic) {
+    path2 = `static:${path2}`;
+  }
+  return {
+    path: path2,
+    alias: void 0,
+    // Java doesn't have import aliases
+    isWildcard
+  };
+}
+var init_extract_imports2 = __esm({
+  "src/indexer/parsers/java/extractor/package/extract-imports.ts"() {
+    "use strict";
+    init_ast_utils2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/package/index.ts
+var init_package2 = __esm({
+  "src/indexer/parsers/java/extractor/package/index.ts"() {
+    "use strict";
+    init_extract_package_name2();
+    init_extract_imports2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/class/map-class-kind.ts
+function mapClassKind2(node) {
+  switch (node.type) {
+    case "interface_declaration":
+      return "interface";
+    case "enum_declaration":
+      return "enum";
+    case "annotation_type_declaration":
+      return "annotation";
+    case "record_declaration":
+      return "class";
+    case "class_declaration":
+    default:
+      return "class";
+  }
+}
+function isRecordDeclaration(node) {
+  return node.type === "record_declaration";
+}
+var init_map_class_kind2 = __esm({
+  "src/indexer/parsers/java/extractor/class/map-class-kind.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/java/extractor/class/extract-super-types.ts
+function extractSuperTypes2(node) {
+  let superClass;
+  const interfaces = [];
+  const superclassNode = findChildByType2(node, "superclass");
+  if (superclassNode) {
+    for (const child of superclassNode.children) {
+      if (child.type === "extends") continue;
+      if (child.type === "type_identifier" || child.type === "generic_type" || child.type === "scoped_type_identifier") {
+        superClass = extractFullTypeName(child);
+        break;
+      }
+    }
+  }
+  const extendsInterfaces = findChildByType2(node, "extends_interfaces");
+  if (extendsInterfaces) {
+    const typeList = findChildByType2(extendsInterfaces, "type_list");
+    if (typeList) {
+      for (const child of typeList.children) {
+        if (child.type === "," || child.type === "extends") continue;
+        if (child.type === "type_identifier" || child.type === "generic_type" || child.type === "scoped_type_identifier") {
+          interfaces.push(extractFullTypeName(child));
+        }
+      }
+    }
+  }
+  const superInterfaces = findChildByType2(node, "super_interfaces");
+  if (superInterfaces) {
+    const typeList = findChildByType2(superInterfaces, "type_list");
+    if (typeList) {
+      for (const child of typeList.children) {
+        if (child.type === "," || child.type === "implements") continue;
+        if (child.type === "type_identifier" || child.type === "generic_type" || child.type === "scoped_type_identifier") {
+          interfaces.push(extractFullTypeName(child));
+        }
+      }
+    }
+  }
+  return { superClass, interfaces };
+}
+var init_extract_super_types2 = __esm({
+  "src/indexer/parsers/java/extractor/class/extract-super-types.ts"() {
+    "use strict";
+    init_ast_utils2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/modifiers/map-visibility.ts
+function mapVisibility2(text) {
+  switch (text) {
+    case "public":
+      return "public";
+    case "private":
+      return "private";
+    case "protected":
+      return "protected";
+    default:
+      return "internal";
+  }
+}
+var init_map_visibility2 = __esm({
+  "src/indexer/parsers/java/extractor/modifiers/map-visibility.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/java/extractor/modifiers/types.ts
+var DEFAULT_JAVA_MODIFIERS;
+var init_types = __esm({
+  "src/indexer/parsers/java/extractor/modifiers/types.ts"() {
+    "use strict";
+    DEFAULT_JAVA_MODIFIERS = {
+      visibility: "internal",
+      // package-private by default
+      isAbstract: false,
+      isFinal: false,
+      isStatic: false,
+      isSealed: false,
+      isNonSealed: false,
+      isDefault: false,
+      isSynchronized: false,
+      isNative: false,
+      isStrictfp: false,
+      isTransient: false,
+      isVolatile: false
+    };
+  }
+});
+
+// src/indexer/parsers/java/extractor/modifiers/extract-modifiers.ts
+function extractModifiers2(node) {
+  const result = { ...DEFAULT_JAVA_MODIFIERS };
+  const modifiersNode = findChildByType2(node, "modifiers");
+  if (!modifiersNode) return result;
+  for (const child of modifiersNode.children) {
+    const text = child.text;
+    switch (text) {
+      // Visibility
+      case "public":
+      case "private":
+      case "protected":
+        result.visibility = mapVisibility2(text);
+        break;
+      // Class/method modifiers
+      case "abstract":
+        result.isAbstract = true;
+        break;
+      case "final":
+        result.isFinal = true;
+        break;
+      case "static":
+        result.isStatic = true;
+        break;
+      case "sealed":
+        result.isSealed = true;
+        break;
+      case "non-sealed":
+        result.isNonSealed = true;
+        break;
+      // Method-specific modifiers
+      case "default":
+        result.isDefault = true;
+        break;
+      case "synchronized":
+        result.isSynchronized = true;
+        break;
+      case "native":
+        result.isNative = true;
+        break;
+      case "strictfp":
+        result.isStrictfp = true;
+        break;
+      // Field-specific modifiers
+      case "transient":
+        result.isTransient = true;
+        break;
+      case "volatile":
+        result.isVolatile = true;
+        break;
+    }
+  }
+  return result;
+}
+var init_extract_modifiers2 = __esm({
+  "src/indexer/parsers/java/extractor/modifiers/extract-modifiers.ts"() {
+    "use strict";
+    init_ast_utils2();
+    init_map_visibility2();
+    init_types();
+  }
+});
+
+// src/indexer/parsers/java/extractor/modifiers/extract-annotation-arguments.ts
+function extractAnnotationArguments2(node) {
+  const argList = findChildByType2(node, "annotation_argument_list");
+  if (!argList) return void 0;
+  const args = {};
+  for (const child of argList.children) {
+    if (child.type === "element_value_pair") {
+      const identifier = findChildByType2(child, "identifier");
+      const value = findChildByType2(child, "element_value") ?? child.children[child.children.length - 1];
+      if (identifier && value) {
+        args[identifier.text] = value.text;
+      }
+    } else if (child.type === "element_value" || child.type === "string_literal") {
+      args["value"] = child.text;
+    }
+  }
+  return Object.keys(args).length > 0 ? args : void 0;
+}
+var init_extract_annotation_arguments2 = __esm({
+  "src/indexer/parsers/java/extractor/modifiers/extract-annotation-arguments.ts"() {
+    "use strict";
+    init_ast_utils2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/modifiers/extract-annotations.ts
+function extractAnnotations2(node) {
+  const annotations = [];
+  const modifiersNode = findChildByType2(node, "modifiers");
+  if (!modifiersNode) return annotations;
+  for (const child of modifiersNode.children) {
+    if (child.type === "marker_annotation" || child.type === "annotation") {
+      const nameNode = findChildByType2(child, "identifier") ?? findChildByType2(child, "scoped_identifier");
+      if (nameNode) {
+        annotations.push({
+          name: extractAnnotationName(nameNode),
+          arguments: extractAnnotationArguments2(child)
+        });
+      }
+    }
+  }
+  return annotations;
+}
+function extractAnnotationName(node) {
+  if (node.type === "scoped_identifier") {
+    const identifiers = node.children.filter((c) => c.type === "identifier");
+    return identifiers[identifiers.length - 1]?.text ?? node.text;
+  }
+  return node.text;
+}
+var init_extract_annotations2 = __esm({
+  "src/indexer/parsers/java/extractor/modifiers/extract-annotations.ts"() {
+    "use strict";
+    init_ast_utils2();
+    init_extract_annotation_arguments2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/modifiers/index.ts
+var init_modifiers2 = __esm({
+  "src/indexer/parsers/java/extractor/modifiers/index.ts"() {
+    "use strict";
+    init_map_visibility2();
+    init_extract_modifiers2();
+    init_extract_annotations2();
+    init_extract_annotation_arguments2();
+    init_types();
+  }
+});
+
+// src/indexer/parsers/java/extractor/generics/extract-single-type-parameter.ts
+function extractSingleTypeParameter2(node) {
+  const nameNode = findChildByType2(node, "type_identifier");
+  if (!nameNode) return void 0;
+  const name = nameNode.text;
+  const bounds = [];
+  const typeBound = findChildByType2(node, "type_bound");
+  if (typeBound) {
+    for (const child of typeBound.children) {
+      if (child.type === "&" || child.type === "extends") continue;
+      if (child.type === "type_identifier" || child.type === "generic_type" || child.type === "scoped_type_identifier") {
+        bounds.push(extractFullTypeName(child));
+      }
+    }
+  }
+  return {
+    name,
+    bounds: bounds.length > 0 ? bounds : void 0,
+    // Java doesn't have variance or reified type parameters
+    variance: void 0,
+    isReified: void 0
+  };
+}
+var init_extract_single_type_parameter2 = __esm({
+  "src/indexer/parsers/java/extractor/generics/extract-single-type-parameter.ts"() {
+    "use strict";
+    init_ast_utils2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/generics/extract-type-parameters.ts
+function extractTypeParameters2(node) {
+  const typeParams = [];
+  const typeParamList = findChildByType2(node, "type_parameters");
+  if (!typeParamList) return typeParams;
+  for (const child of typeParamList.children) {
+    if (child.type === "type_parameter") {
+      const typeParam = extractSingleTypeParameter2(child);
+      if (typeParam) {
+        typeParams.push(typeParam);
+      }
+    }
+  }
+  return typeParams;
+}
+var init_extract_type_parameters2 = __esm({
+  "src/indexer/parsers/java/extractor/generics/extract-type-parameters.ts"() {
+    "use strict";
+    init_ast_utils2();
+    init_extract_single_type_parameter2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/generics/index.ts
+var init_generics2 = __esm({
+  "src/indexer/parsers/java/extractor/generics/index.ts"() {
+    "use strict";
+    init_extract_single_type_parameter2();
+    init_extract_type_parameters2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/function/extract-parameters.ts
+function extractParameters2(node) {
+  const params = [];
+  const formalParams = findChildByType2(node, "formal_parameters");
+  if (!formalParams) return params;
+  for (const child of formalParams.children) {
+    if (child.type === "formal_parameter") {
+      const param = extractFormalParameter(child);
+      if (param) params.push(param);
+    } else if (child.type === "spread_parameter") {
+      const param = extractSpreadParameter(child);
+      if (param) params.push(param);
+    }
+  }
+  return params;
+}
+function extractFormalParameter(node) {
+  const nameNode = findChildByType2(node, "identifier");
+  if (!nameNode) return void 0;
+  const name = nameNode.text;
+  const annotations = extractAnnotations2(node);
+  const typeNode = findTypeNode(node);
+  let type = typeNode ? extractFullTypeName(typeNode) : void 0;
+  const dimensions = findChildrenByType(node, "dimensions");
+  if (dimensions.length > 0 && type) {
+    type = type + dimensions.map(() => "[]").join("");
+  }
+  return {
+    name,
+    type,
+    annotations
+  };
+}
+function extractSpreadParameter(node) {
+  const varDeclarator = findChildByType2(node, "variable_declarator");
+  const nameNode = varDeclarator ? findChildByType2(varDeclarator, "identifier") : findChildByType2(node, "identifier");
+  if (!nameNode) return void 0;
+  const name = nameNode.text;
+  const annotations = extractAnnotations2(node);
+  const typeNode = findTypeNode(node);
+  let type = typeNode ? extractFullTypeName(typeNode) : void 0;
+  if (type) {
+    type = type + "...";
+  }
+  return {
+    name,
+    type,
+    annotations
+  };
+}
+function findTypeNode(node) {
+  return findChildByType2(node, "generic_type") ?? findChildByType2(node, "array_type") ?? findChildByType2(node, "type_identifier") ?? findChildByType2(node, "scoped_type_identifier") ?? findChildByType2(node, "integral_type") ?? findChildByType2(node, "floating_point_type") ?? findChildByType2(node, "boolean_type") ?? findChildByType2(node, "void_type");
+}
+var init_extract_parameters2 = __esm({
+  "src/indexer/parsers/java/extractor/function/extract-parameters.ts"() {
+    "use strict";
+    init_ast_utils2();
+    init_modifiers2();
+    init_ast_utils2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/function/extract-return-type.ts
+function extractReturnType2(node) {
+  for (const child of node.children) {
+    if (isTypeNode(child)) {
+      if (child.type === "void_type") {
+        return void 0;
+      }
+      return extractFullTypeName(child);
+    }
+  }
+  return void 0;
+}
+function isTypeNode(node) {
+  const typeNodes = [
+    "void_type",
+    "type_identifier",
+    "generic_type",
+    "array_type",
+    "scoped_type_identifier",
+    "integral_type",
+    "floating_point_type",
+    "boolean_type"
+  ];
+  return typeNodes.includes(node.type);
+}
+var init_extract_return_type2 = __esm({
+  "src/indexer/parsers/java/extractor/function/extract-return-type.ts"() {
+    "use strict";
+    init_ast_utils2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/calls/extract-method-invocation.ts
+function extractMethodInvocation(node) {
+  if (node.type !== "method_invocation") return void 0;
+  const argList = findChildByType2(node, "argument_list");
+  if (!argList) return void 0;
+  const methodName = findMethodName(node);
+  if (!methodName) return void 0;
+  const receiver = extractReceiver(node);
+  const argumentCount = countArguments(argList);
+  return {
+    name: methodName,
+    receiver,
+    receiverType: void 0,
+    // Resolved later by resolver
+    argumentCount,
+    isSafeCall: false,
+    // Java doesn't have safe calls
+    location: nodeLocation2(node)
+  };
+}
+function findMethodName(node) {
+  const children = node.children;
+  for (let i = children.length - 1; i >= 0; i--) {
+    const child = children[i];
+    if (!child) continue;
+    if (child.type === "identifier") {
+      return child.text;
+    }
+    if (child.type === "argument_list") {
+      continue;
+    }
+  }
+  return void 0;
+}
+function extractReceiver(node) {
+  const firstChild = node.children[0];
+  if (!firstChild) return void 0;
+  switch (firstChild.type) {
+    case "identifier":
+      const hasDot = node.children.some((c) => c.type === ".");
+      if (!hasDot) {
+        return void 0;
+      }
+      return firstChild.text;
+    case "field_access":
+      return extractFieldAccessText(firstChild);
+    case "this":
+      return "this";
+    case "super":
+      return "super";
+    case "method_invocation":
+      return firstChild.text;
+    case "parenthesized_expression":
+      return firstChild.text;
+    case "array_access":
+      return firstChild.text;
+    case "string_literal":
+      return firstChild.text;
+    default:
+      if (node.children.some((c) => c.type === ".")) {
+        return firstChild.text;
+      }
+      return void 0;
+  }
+}
+function extractFieldAccessText(node) {
+  const parts = [];
+  for (const child of node.children) {
+    if (child.type === "identifier") {
+      parts.push(child.text);
+    } else if (child.type === "field_access") {
+      parts.push(extractFieldAccessText(child));
+    }
+  }
+  return parts.join(".");
+}
+function countArguments(argList) {
+  let count = 0;
+  for (const child of argList.children) {
+    if (child.type !== "(" && child.type !== ")" && child.type !== ",") {
+      count++;
+    }
+  }
+  return count;
+}
+var init_extract_method_invocation = __esm({
+  "src/indexer/parsers/java/extractor/calls/extract-method-invocation.ts"() {
+    "use strict";
+    init_ast_utils2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/calls/extract-constructor-call.ts
+function extractConstructorCall(node) {
+  if (node.type !== "object_creation_expression") return void 0;
+  const typeName = extractConstructedType(node);
+  if (!typeName) return void 0;
+  const argList = findChildByType2(node, "argument_list");
+  const argumentCount = argList ? countArguments2(argList) : 0;
+  return {
+    name: typeName,
+    receiver: void 0,
+    // Constructor calls don't have a receiver
+    receiverType: void 0,
+    argumentCount,
+    isConstructorCall: true,
+    location: nodeLocation2(node)
+  };
+}
+function extractConstructedType(node) {
+  const typeNode = findChildByType2(node, "generic_type") ?? findChildByType2(node, "scoped_type_identifier") ?? findChildByType2(node, "type_identifier");
+  if (!typeNode) return void 0;
+  if (typeNode.type === "generic_type") {
+    const baseType = findChildByType2(typeNode, "type_identifier") ?? findChildByType2(typeNode, "scoped_type_identifier");
+    return baseType ? extractFullTypeName(baseType) : typeNode.text;
+  }
+  return extractFullTypeName(typeNode);
+}
+function countArguments2(argList) {
+  let count = 0;
+  for (const child of argList.children) {
+    if (child.type !== "(" && child.type !== ")" && child.type !== ",") {
+      count++;
+    }
+  }
+  return count;
+}
+var init_extract_constructor_call = __esm({
+  "src/indexer/parsers/java/extractor/calls/extract-constructor-call.ts"() {
+    "use strict";
+    init_ast_utils2();
+    init_ast_utils2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/calls/extract-calls.ts
+function extractCalls2(body) {
+  const calls = [];
+  traverseNode2(body, (node) => {
+    if (node.type === "method_invocation") {
+      const call = extractMethodInvocation(node);
+      if (call) {
+        calls.push(call);
+      }
+    } else if (node.type === "object_creation_expression") {
+      const call = extractConstructorCall(node);
+      if (call) {
+        calls.push(call);
+      }
+    }
+  });
+  return calls;
+}
+var init_extract_calls2 = __esm({
+  "src/indexer/parsers/java/extractor/calls/extract-calls.ts"() {
+    "use strict";
+    init_ast_utils2();
+    init_extract_method_invocation();
+    init_extract_constructor_call();
+  }
+});
+
+// src/indexer/parsers/java/extractor/calls/index.ts
+var init_calls2 = __esm({
+  "src/indexer/parsers/java/extractor/calls/index.ts"() {
+    "use strict";
+    init_extract_method_invocation();
+    init_extract_constructor_call();
+    init_extract_calls2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/function/extract-method.ts
+function extractMethod(node) {
+  const nameNode = findChildByType2(node, "identifier");
+  const name = nameNode?.text ?? "<anonymous>";
+  const modifiers = extractModifiers2(node);
+  const annotations = extractAnnotations2(node);
+  const parameters = extractParameters2(node);
+  const returnType = extractReturnType2(node);
+  const dimensions = findDimensionsAfterName(node, nameNode);
+  const finalReturnType = dimensions > 0 && returnType ? returnType + "[]".repeat(dimensions) : returnType;
+  const typeParameters = extractTypeParameters2(node);
+  const body = findChildByType2(node, "block");
+  const calls = body ? extractCalls2(body) : [];
+  return {
+    name,
+    visibility: modifiers.visibility,
+    parameters,
+    returnType: finalReturnType,
+    isAbstract: modifiers.isAbstract || !body,
+    isSuspend: false,
+    // Java doesn't have suspend
+    isExtension: false,
+    // Java doesn't have extension functions
+    receiverType: void 0,
+    isInline: false,
+    // Java doesn't have inline
+    isInfix: false,
+    // Java doesn't have infix
+    isOperator: false,
+    // Java doesn't have operator overloading via modifier
+    typeParameters: typeParameters.length > 0 ? typeParameters : void 0,
+    annotations,
+    location: nodeLocation2(node),
+    calls
+  };
+}
+function findDimensionsAfterName(node, nameNode) {
+  if (!nameNode) return 0;
+  let count = 0;
+  let foundName = false;
+  for (const child of node.children) {
+    if (child === nameNode) {
+      foundName = true;
+      continue;
+    }
+    if (foundName && child.type === "dimensions") {
+      count += (child.text.match(/\[\]/g) || []).length;
+    }
+  }
+  return count;
+}
+var init_extract_method = __esm({
+  "src/indexer/parsers/java/extractor/function/extract-method.ts"() {
+    "use strict";
+    init_ast_utils2();
+    init_modifiers2();
+    init_generics2();
+    init_extract_parameters2();
+    init_extract_return_type2();
+    init_calls2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/function/index.ts
+var init_function2 = __esm({
+  "src/indexer/parsers/java/extractor/function/index.ts"() {
+    "use strict";
+    init_extract_method();
+    init_extract_parameters2();
+    init_extract_return_type2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/property/extract-field.ts
+function extractFields(node) {
+  const fields = [];
+  const modifiers = extractModifiers2(node);
+  const annotations = extractAnnotations2(node);
+  const isVal = modifiers.isFinal ?? false;
+  const typeNode = findTypeNode2(node);
+  const baseType = typeNode ? extractFullTypeName(typeNode) : void 0;
+  const declarators = findChildrenByType(node, "variable_declarator");
+  for (const declarator of declarators) {
+    const field = extractSingleField(declarator, {
+      baseType,
+      visibility: modifiers.visibility,
+      isVal,
+      annotations,
+      declarationLocation: nodeLocation2(node)
+    });
+    if (field) fields.push(field);
+  }
+  return fields;
+}
+function extractSingleField(declarator, context) {
+  const nameNode = findChildByType2(declarator, "identifier");
+  if (!nameNode) return void 0;
+  const name = nameNode.text;
+  const dimensions = findChildrenByType(declarator, "dimensions");
+  let type = context.baseType;
+  if (dimensions.length > 0 && type) {
+    type = type + dimensions.map(() => "[]").join("");
+  }
+  const initNode = declarator.children.find((c) => c.type === "=");
+  let initializer;
+  if (initNode) {
+    const initIndex = declarator.children.indexOf(initNode);
+    const initParts = [];
+    for (let i = initIndex + 1; i < declarator.children.length; i++) {
+      const child = declarator.children[i];
+      if (child && child.type !== "," && child.type !== ";") {
+        initParts.push(child.text);
+      }
+    }
+    initializer = initParts.join("").trim() || void 0;
+  }
+  return {
+    name,
+    type,
+    visibility: context.visibility,
+    isVal: context.isVal,
+    initializer,
+    annotations: context.annotations,
+    location: context.declarationLocation
+  };
+}
+function findTypeNode2(node) {
+  return findChildByType2(node, "generic_type") ?? findChildByType2(node, "array_type") ?? findChildByType2(node, "type_identifier") ?? findChildByType2(node, "scoped_type_identifier") ?? findChildByType2(node, "integral_type") ?? findChildByType2(node, "floating_point_type") ?? findChildByType2(node, "boolean_type");
+}
+var init_extract_field = __esm({
+  "src/indexer/parsers/java/extractor/property/extract-field.ts"() {
+    "use strict";
+    init_ast_utils2();
+    init_modifiers2();
+    init_ast_utils2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/property/index.ts
+var init_property2 = __esm({
+  "src/indexer/parsers/java/extractor/property/index.ts"() {
+    "use strict";
+    init_extract_field();
+  }
+});
+
+// src/indexer/parsers/java/extractor/constructor/extract-constructor.ts
+function extractConstructor(node) {
+  const modifiers = extractModifiers2(node);
+  const annotations = extractAnnotations2(node);
+  const parameters = extractParameters2(node);
+  const delegatesTo = extractDelegation(node);
+  return {
+    parameters,
+    visibility: modifiers.visibility,
+    delegatesTo,
+    annotations,
+    location: nodeLocation2(node)
+  };
+}
+function extractDelegation(node) {
+  const body = findChildByType2(node, "constructor_body");
+  if (!body) return void 0;
+  const explicitInvocation = findChildByType2(body, "explicit_constructor_invocation");
+  if (!explicitInvocation) return void 0;
+  for (const child of explicitInvocation.children) {
+    if (child.type === "this") return "this";
+    if (child.type === "super") return "super";
+  }
+  return void 0;
+}
+var init_extract_constructor = __esm({
+  "src/indexer/parsers/java/extractor/constructor/extract-constructor.ts"() {
+    "use strict";
+    init_ast_utils2();
+    init_modifiers2();
+    init_extract_parameters2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/constructor/index.ts
+var init_constructor2 = __esm({
+  "src/indexer/parsers/java/extractor/constructor/index.ts"() {
+    "use strict";
+    init_extract_constructor();
+  }
+});
+
+// src/indexer/parsers/java/extractor/class/extract-class-body.ts
+function extractClassBody2(classBody, extractClass3) {
+  const properties = [];
+  const functions = [];
+  const nestedClasses = [];
+  const secondaryConstructors = [];
+  if (!classBody) {
+    return { properties, functions, nestedClasses, secondaryConstructors };
+  }
+  for (const child of classBody.children) {
+    switch (child.type) {
+      case "field_declaration":
+        properties.push(...extractFields(child));
+        break;
+      case "method_declaration":
+        functions.push(extractMethod(child));
+        break;
+      case "constructor_declaration":
+        secondaryConstructors.push(extractConstructor(child));
+        break;
+      // Nested type declarations
+      case "class_declaration":
+      case "interface_declaration":
+      case "enum_declaration":
+      case "annotation_type_declaration":
+      case "record_declaration":
+        nestedClasses.push(extractClass3(child));
+        break;
+      // Ignored for now
+      case "static_initializer":
+      case "instance_initializer":
+      case ";":
+      case "{":
+      case "}":
+        break;
+    }
+  }
+  return { properties, functions, nestedClasses, secondaryConstructors };
+}
+var init_extract_class_body2 = __esm({
+  "src/indexer/parsers/java/extractor/class/extract-class-body.ts"() {
+    "use strict";
+    init_function2();
+    init_property2();
+    init_constructor2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/class/extract-record-components.ts
+function extractRecordComponents(node) {
+  if (node.type !== "record_declaration") {
+    return [];
+  }
+  const formalParameters = findChildByType2(node, "formal_parameters");
+  if (!formalParameters) {
+    return [];
+  }
+  const properties = [];
+  for (const child of formalParameters.children) {
+    if (child.type === "formal_parameter") {
+      const property = extractRecordComponent(child);
+      if (property) {
+        properties.push(property);
+      }
+    }
+  }
+  return properties;
+}
+function extractRecordComponent(node) {
+  const nameNode = findChildByType2(node, "identifier");
+  if (!nameNode) return void 0;
+  const type = extractComponentType(node);
+  const annotations = extractComponentAnnotations(node);
+  return {
+    name: nameNode.text,
+    type,
+    visibility: "private",
+    // Record components are implicitly private
+    isVal: true,
+    // Record components are implicitly final (immutable)
+    annotations,
+    location: nodeLocation2(node)
+  };
+}
+function extractComponentType(node) {
+  for (const child of node.children) {
+    if (isTypeNode2(child)) {
+      let typeName = extractFullTypeName(child);
+      if (node.type === "spread_parameter" || node.children.some((c) => c.text === "...")) {
+        typeName += "...";
+      }
+      return typeName;
+    }
+  }
+  return void 0;
+}
+function isTypeNode2(node) {
+  const typeNodeTypes = [
+    "type_identifier",
+    "scoped_type_identifier",
+    "generic_type",
+    "array_type",
+    "integral_type",
+    "floating_point_type",
+    "boolean_type",
+    "void_type"
+  ];
+  return typeNodeTypes.includes(node.type);
+}
+function extractComponentAnnotations(node) {
+  return extractAnnotations2(node);
+}
+var init_extract_record_components = __esm({
+  "src/indexer/parsers/java/extractor/class/extract-record-components.ts"() {
+    "use strict";
+    init_ast_utils2();
+    init_extract_type_name2();
+    init_modifiers2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/class/extract-permits.ts
+function extractPermits(node) {
+  const permitsNode = findChildByType2(node, "permits");
+  if (!permitsNode) {
+    return void 0;
+  }
+  const typeList = findChildByType2(permitsNode, "type_list");
+  if (!typeList) {
+    return void 0;
+  }
+  const permittedTypes = [];
+  for (const child of typeList.children) {
+    if (child.type === ",") continue;
+    if (child.type === "type_identifier" || child.type === "scoped_type_identifier" || child.type === "generic_type") {
+      permittedTypes.push(extractFullTypeName(child));
+    }
+  }
+  return permittedTypes.length > 0 ? permittedTypes : void 0;
+}
+var init_extract_permits = __esm({
+  "src/indexer/parsers/java/extractor/class/extract-permits.ts"() {
+    "use strict";
+    init_ast_utils2();
+    init_extract_type_name2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/class/extract-class.ts
+function extractClass2(node) {
+  const kind = mapClassKind2(node);
+  const isRecord = isRecordDeclaration(node);
+  const nameNode = findChildByType2(node, "identifier");
+  const name = nameNode?.text ?? "<anonymous>";
+  const modifiers = extractModifiers2(node);
+  const annotations = extractAnnotations2(node);
+  const typeParameters = extractTypeParameters2(node);
+  const { superClass, interfaces } = extractSuperTypes2(node);
+  const bodyNode = findClassBody(node);
+  const recursiveExtractClass = (n) => extractClass2(n);
+  const { properties: bodyProperties, functions, nestedClasses, secondaryConstructors } = extractClassBody2(bodyNode, recursiveExtractClass);
+  const recordComponents = isRecord ? extractRecordComponents(node) : [];
+  const properties = [...recordComponents, ...bodyProperties];
+  const permittedSubclasses = modifiers.isSealed ? extractPermits(node) : void 0;
+  return {
+    name,
+    kind,
+    visibility: modifiers.visibility,
+    isAbstract: modifiers.isAbstract,
+    isData: isRecord,
+    // Records are mapped to isData: true
+    isSealed: modifiers.isSealed,
+    permittedSubclasses,
+    superClass,
+    interfaces,
+    typeParameters: typeParameters.length > 0 ? typeParameters : void 0,
+    annotations,
+    properties,
+    functions,
+    nestedClasses,
+    companionObject: void 0,
+    // Java doesn't have companion objects
+    secondaryConstructors: secondaryConstructors.length > 0 ? secondaryConstructors : void 0,
+    location: nodeLocation2(node)
+  };
+}
+function findClassBody(node) {
+  return findChildByType2(node, "class_body") ?? findChildByType2(node, "interface_body") ?? findChildByType2(node, "enum_body") ?? findChildByType2(node, "annotation_type_body") ?? findChildByType2(node, "record_body");
+}
+var init_extract_class2 = __esm({
+  "src/indexer/parsers/java/extractor/class/extract-class.ts"() {
+    "use strict";
+    init_ast_utils2();
+    init_modifiers2();
+    init_generics2();
+    init_map_class_kind2();
+    init_extract_super_types2();
+    init_extract_class_body2();
+    init_extract_record_components();
+    init_extract_permits();
+  }
+});
+
+// src/indexer/parsers/java/extractor/class/index.ts
+var init_class2 = __esm({
+  "src/indexer/parsers/java/extractor/class/index.ts"() {
+    "use strict";
+    init_map_class_kind2();
+    init_extract_super_types2();
+    init_extract_class_body2();
+    init_extract_class2();
+  }
+});
+
+// src/indexer/parsers/java/extractor/index.ts
+function extractClasses(root) {
+  const classes = [];
+  for (const child of root.children) {
+    if (TYPE_DECLARATION_TYPES.includes(child.type)) {
+      classes.push(extractClass2(child));
+    }
+  }
+  return classes;
+}
+function extractSymbols2(tree, filePath) {
+  const root = tree.rootNode;
+  return {
+    filePath,
+    language: "java",
+    packageName: extractPackageName2(root),
+    imports: extractImports2(root),
+    classes: extractClasses(root),
+    topLevelFunctions: [],
+    // Java doesn't have top-level functions
+    topLevelProperties: [],
+    // Java doesn't have top-level properties
+    typeAliases: [],
+    // Java doesn't have type aliases
+    destructuringDeclarations: [],
+    objectExpressions: []
+  };
+}
+var TYPE_DECLARATION_TYPES;
+var init_extractor2 = __esm({
+  "src/indexer/parsers/java/extractor/index.ts"() {
+    "use strict";
+    init_package2();
+    init_class2();
+    TYPE_DECLARATION_TYPES = [
+      "class_declaration",
+      "interface_declaration",
+      "enum_declaration",
+      "annotation_type_declaration",
+      "record_declaration"
+    ];
+  }
+});
+
+// src/indexer/parsers/java/index.ts
+var java_exports = {};
+__export(java_exports, {
+  javaParser: () => javaParser
+});
+function setFilePathInLocations2(parsed, filePath) {
+  for (const cls3 of parsed.classes) {
+    setFilePathInClass2(cls3, filePath);
+  }
+  for (const fn3 of parsed.topLevelFunctions) {
+    setFilePathInFunction2(fn3, filePath);
+  }
+  for (const prop of parsed.topLevelProperties) {
+    prop.location.filePath = filePath;
+  }
+}
+function setFilePathInClass2(cls3, filePath) {
+  cls3.location.filePath = filePath;
+  for (const fn3 of cls3.functions) {
+    setFilePathInFunction2(fn3, filePath);
+  }
+  for (const prop of cls3.properties) {
+    prop.location.filePath = filePath;
+  }
+  for (const nested of cls3.nestedClasses) {
+    setFilePathInClass2(nested, filePath);
+  }
+}
+function setFilePathInFunction2(fn3, filePath) {
+  fn3.location.filePath = filePath;
+  for (const call of fn3.calls) {
+    call.location.filePath = filePath;
+  }
+}
+var javaParser;
+var init_java = __esm({
+  "src/indexer/parsers/java/index.ts"() {
+    "use strict";
+    init_parser2();
+    init_extractor2();
+    javaParser = {
+      language: "java",
+      extensions: [".java"],
+      async parse(source, filePath) {
+        const tree = parseJava(source);
+        const parsed = extractSymbols2(tree, filePath);
+        setFilePathInLocations2(parsed, filePath);
         return parsed;
       }
     };
@@ -33247,6 +34471,9 @@ async function getParserForFile(filePath) {
   parserCache.set(registration.language, parser);
   return parser;
 }
+function getSupportedExtensions() {
+  return registeredParsers.flatMap((p) => p.extensions);
+}
 function isFileSupported(filePath) {
   const ext = getExtension(filePath);
   if (!ext) return false;
@@ -33260,6 +34487,10 @@ function getExtension(filePath) {
 registerParser("kotlin", [".kt", ".kts"], async () => {
   const { kotlinParser: kotlinParser2 } = await Promise.resolve().then(() => (init_kotlin(), kotlin_exports));
   return kotlinParser2;
+});
+registerParser("java", [".java"], async () => {
+  const { javaParser: javaParser2 } = await Promise.resolve().then(() => (init_java(), java_exports));
+  return javaParser2;
 });
 
 // src/indexer/resolver/stdlib/kotlin-stdlib.ts
@@ -34761,13 +35992,16 @@ function extractDomainFromPackage(pkg, segmentIndex) {
 
 // src/indexer/domain/inference/detect-primary-language.ts
 function detectPrimaryLanguage(files) {
+  if (files.length === 0) {
+    throw new Error("Cannot detect primary language: no files provided");
+  }
   const languageCounts = /* @__PURE__ */ new Map();
   for (const file of files) {
     const count = languageCounts.get(file.language) || 0;
     languageCounts.set(file.language, count + 1);
   }
   let maxCount = 0;
-  let primaryLanguage = "kotlin";
+  let primaryLanguage = files[0].language;
   for (const [language, count] of languageCounts) {
     if (count > maxCount) {
       maxCount = count;
@@ -34919,6 +36153,13 @@ function calculateDomainDependencies(files, domains) {
 
 // src/indexer/domain/index.ts
 async function analyzeDomains(files, options = {}) {
+  if (files.length === 0) {
+    return {
+      domains: [],
+      dependencies: [],
+      unassignedPackages: []
+    };
+  }
   const packages = /* @__PURE__ */ new Set();
   for (const file of files) {
     if (file.packageName) {
@@ -36147,6 +37388,7 @@ async function main() {
   const clearBefore = flags.includes("--clear");
   const dryRun = flags.includes("--dry-run");
   const excludeTests = flags.includes("--exclude-tests");
+  const verbose = flags.includes("--verbose");
   const result = {
     success: false,
     projectPath: "",
@@ -36161,7 +37403,7 @@ async function main() {
   };
   if (paths.length === 0) {
     result.errorMessage = "No project path provided";
-    result.hint = "Usage: npx tsx index-project.ts [--clear] [--exclude-tests] [--dry-run] <project-path>";
+    result.hint = "Usage: npx tsx index-project.ts [--clear] [--exclude-tests] [--dry-run] [--verbose] <project-path>";
     console.log(JSON.stringify(result));
     process.exit(1);
   }
@@ -36184,12 +37426,14 @@ async function main() {
   const files = await findSourceFiles(projectPath, excludeTests);
   result.filesFound = files.length;
   if (files.length === 0) {
+    const extensions = getSupportedExtensions().join(", ");
     result.errorMessage = "No supported source files found";
-    result.hint = "Currently supported: Kotlin (.kt, .kts). Make sure the project contains Kotlin files.";
+    result.hint = `Supported extensions: ${extensions}`;
     console.log(JSON.stringify(result));
     process.exit(0);
   }
   const parsedFiles = [];
+  const parseErrorDetails = [];
   for (const filePath of files) {
     try {
       const parser = await getParserForFile(filePath);
@@ -36197,11 +37441,20 @@ async function main() {
         const source = await (0, import_promises2.readFile)(filePath, "utf-8");
         parsedFiles.push(await parser.parse(source, filePath));
       }
-    } catch {
+    } catch (err) {
       result.parseErrors++;
+      if (verbose) {
+        parseErrorDetails.push({
+          filePath,
+          error: err instanceof Error ? err.message : String(err)
+        });
+      }
     }
   }
   result.filesParsed = parsedFiles.length;
+  if (verbose && parseErrorDetails.length > 0) {
+    result.parseErrorDetails = parseErrorDetails;
+  }
   const symbolTable = buildSymbolTable(parsedFiles);
   const resolvedFiles = resolveSymbols(parsedFiles, symbolTable);
   result.symbolsResolved = symbolTable.byFqn.size;

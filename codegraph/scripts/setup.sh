@@ -13,6 +13,9 @@ install_tree_sitter || exit 1
 if [ "$LANGUAGE" = "kotlin" ]; then
   source "${SCRIPT_DIR}/setup/lsp/kotlin.sh"
   install_kotlin_lsp || exit 1
+elif [ "$LANGUAGE" = "java" ]; then
+  source "${SCRIPT_DIR}/setup/lsp/java.sh"
+  install_java_lsp || exit 1
 fi
 
 # Run the main setup (Neo4j)
