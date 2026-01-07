@@ -1,6 +1,6 @@
 {
   "name": "codegraph",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Analyze and navigate codebases through a Neo4j-backed knowledge graph",
   "author": {
     "name": "Chakib Houd",

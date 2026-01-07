@@ -53294,12 +53294,13 @@ var CodeGraphServer = class {
         description: searchNodesDefinition.description,
         inputSchema: searchNodesDefinition.inputSchema
       },
-      async ({ query, node_types, exact_match, limit }) => {
+      async ({ query, node_types, exact_match, limit, project_path }) => {
         return await handleSearchNodes(this.neo4jClient, {
           query,
           node_types,
           exact_match: exact_match ?? false,
-          limit: limit ?? 20
+          limit: limit ?? 20,
+          project_path
         });
       }
     );
@@ -53310,11 +53311,12 @@ var CodeGraphServer = class {
         description: getCallersDefinition.description,
         inputSchema: getCallersDefinition.inputSchema
       },
-      async ({ function_name, class_name, depth }) => {
+      async ({ function_name, class_name, depth, project_path }) => {
         return await handleGetCallers(this.neo4jClient, {
           function_name,
           class_name,
-          depth: depth ?? 2
+          depth: depth ?? 2,
+          project_path
         });
       }
     );
@@ -53325,11 +53327,12 @@ var CodeGraphServer = class {
         description: getCalleesDefinition.description,
         inputSchema: getCalleesDefinition.inputSchema
       },
-      async ({ function_name, class_name, depth }) => {
+      async ({ function_name, class_name, depth, project_path }) => {
         return await handleGetCallees(this.neo4jClient, {
           function_name,
           class_name,
-          depth: depth ?? 2
+          depth: depth ?? 2,
+          project_path
         });
       }
     );
@@ -53340,12 +53343,13 @@ var CodeGraphServer = class {
         description: getNeighborsDefinition.description,
         inputSchema: getNeighborsDefinition.inputSchema
       },
-      async ({ node_name, direction, depth, include_external }) => {
+      async ({ node_name, direction, depth, include_external, project_path }) => {
         return await handleGetNeighbors(this.neo4jClient, {
           node_name,
           direction: direction ?? "both",
           depth: depth ?? 1,
-          include_external: include_external ?? false
+          include_external: include_external ?? false,
+          project_path
         });
       }
     );
@@ -53356,10 +53360,11 @@ var CodeGraphServer = class {
         description: getImplementationsDefinition.description,
         inputSchema: getImplementationsDefinition.inputSchema
       },
-      async ({ interface_name, include_indirect }) => {
+      async ({ interface_name, include_indirect, project_path }) => {
         return await handleGetImplementations(this.neo4jClient, {
           interface_name,
-          include_indirect: include_indirect ?? false
+          include_indirect: include_indirect ?? false,
+          project_path
         });
       }
     );
@@ -53370,11 +53375,12 @@ var CodeGraphServer = class {
         description: getImpactDefinition.description,
         inputSchema: getImpactDefinition.inputSchema
       },
-      async ({ node_name, node_type, depth }) => {
+      async ({ node_name, node_type, depth, project_path }) => {
         return await handleGetImpact(this.neo4jClient, {
           node_name,
           node_type,
-          depth: depth ?? 3
+          depth: depth ?? 3,
+          project_path
         });
       }
     );
@@ -53385,12 +53391,13 @@ var CodeGraphServer = class {
         description: findPathDefinition.description,
         inputSchema: findPathDefinition.inputSchema
       },
-      async ({ from_node, to_node, max_depth, relationship_types }) => {
+      async ({ from_node, to_node, max_depth, relationship_types, project_path }) => {
         return await handleFindPath(this.neo4jClient, {
           from_node,
           to_node,
           max_depth: max_depth ?? 5,
-          relationship_types
+          relationship_types,
+          project_path
         });
       }
     );
@@ -53401,10 +53408,11 @@ var CodeGraphServer = class {
         description: getFileSymbolsDefinition.description,
         inputSchema: getFileSymbolsDefinition.inputSchema
       },
-      async ({ file_path, include_private }) => {
+      async ({ file_path, include_private, project_path }) => {
         return await handleGetFileSymbols(this.neo4jClient, {
           file_path,
-          include_private: include_private ?? true
+          include_private: include_private ?? true,
+          project_path
         });
       }
     );
