@@ -44,9 +44,7 @@ Analyze and navigate codebases through a Neo4j-backed knowledge graph.
 Starts Neo4j and prepares the database.
 
 ```
-/codegraph:setup              # Neo4j only
-/codegraph:setup kotlin       # Neo4j + Kotlin LSP
-/codegraph:setup java         # Neo4j + Java LSP
+/codegraph:setup
 ```
 
 **What it does:**
@@ -55,7 +53,6 @@ Starts Neo4j and prepares the database.
 3. Waits for Neo4j to be ready
 4. Creates indexes and constraints
 5. Installs tree-sitter native dependencies (required for parsing)
-6. Installs Language Server if language specified (optional)
 
 **Result:** Neo4j available at http://localhost:7474
 
@@ -99,52 +96,13 @@ Shows Neo4j status and graph statistics.
 
 Once indexed, the following tools are available:
 
-### MCP tools (graph-based)
-
 | Tool | Description |
 |------|-------------|
 | `search_nodes` | Search by name or pattern |
+| `get_callers` | Who calls this function? |
 | `get_callees` | What functions are called? |
 | `get_neighbors` | Get dependencies and dependents of a class |
+| `get_implementations` | Find interface implementations |
 | `get_impact` | Analyze modification impact |
 | `find_path` | Find shortest path between two nodes |
 | `get_file_symbols` | List all symbols in a file |
-
-### LSP tools (semantic analysis - more accurate)
-
-| Tool | Description |
-|------|-------------|
-| `LSP incomingCalls` | Who calls this function? |
-| `LSP goToImplementation` | Find interface implementations |
-
----
-
-## Language Server (LSP)
-
-CodeGraph uses Language Servers for accurate code navigation (find callers, find implementations).
-
-### Supported LSP
-
-| Language | LSP Server | Status |
-|----------|------------|--------|
-| Kotlin | `kotlin-language-server` | ✅ Available |
-| Java | `jdtls` | ✅ Available |
-| TypeScript | `typescript-language-server` | 🔜 Coming soon |
-
-### Automatic installation
-
-```
-/codegraph:setup kotlin
-/codegraph:setup java
-```
-
-### Manual installation
-
-If you didn't add the option during setup:
-
-| OS | Command |
-|----|---------|
-| macOS | `brew install <lsp-server-name>` |
-| Linux (snap) | `sudo snap install <lsp-server-name> --classic` |
-| Linux (SDKMAN) | `sdk install <lsp-server-name>` |
-| Windows (Scoop) | `scoop install <lsp-server-name>` |
