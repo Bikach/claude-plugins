@@ -8,7 +8,7 @@ Analyze and navigate codebases through a Neo4j-backed knowledge graph.
 |----------|--------|
 | Kotlin | ✅ Available |
 | Java | ✅ Available |
-| TypeScript | 🔜 Coming soon |
+| TypeScript | ✅ Available |
 
 ## Prerequisites
 
@@ -70,7 +70,7 @@ Indexes a project into the Neo4j graph.
 ```
 
 **What it does:**
-1. Scans source files (.kt, .java)
+1. Scans source files (.kt, .java, .ts, .tsx)
 2. Parses with tree-sitter
 3. Resolves cross-file symbols
 4. Writes the graph to Neo4j

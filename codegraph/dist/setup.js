@@ -6,8 +6,8 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __esm = (fn3, res) => function __init() {
-  return fn3 && (res = (0, fn3[__getOwnPropNames(fn3)[0]])(fn3 = 0)), res;
+var __esm = (fn6, res) => function __init() {
+  return fn6 && (res = (0, fn6[__getOwnPropNames(fn6)[0]])(fn6 = 0)), res;
 };
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
@@ -2600,11 +2600,11 @@ var require_connection_holder = __commonJS({
     })();
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -2620,7 +2620,7 @@ var require_connection_holder = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -3052,11 +3052,11 @@ var require_transaction_executor = __commonJS({
     };
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -3072,7 +3072,7 @@ var require_transaction_executor = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -3221,8 +3221,8 @@ var require_transaction_executor = __commonJS({
               }
             }
           };
-          return new Promise(function(resolve2, reject) {
-            _this._executeTransactionInsidePromise(transactionCreator, transactionWork, resolve2, reject, transactionWrapper, context).catch(reject);
+          return new Promise(function(resolve3, reject) {
+            _this._executeTransactionInsidePromise(transactionCreator, transactionWork, resolve3, reject, transactionWrapper, context).catch(reject);
           }).catch(function(error) {
             var retryStartTimeMs = Date.now();
             var retryDelayMs = _this._initialRetryDelayMs;
@@ -3242,13 +3242,13 @@ var require_transaction_executor = __commonJS({
           if (elapsedTimeMs > this._maxRetryTimeMs || !(0, error_1.isRetriableError)(error)) {
             return Promise.reject(error);
           }
-          return new Promise(function(resolve2, reject) {
+          return new Promise(function(resolve3, reject) {
             var nextRetryTime = _this._computeDelayWithJitter(retryDelayMs);
             var timeoutId = _this._setTimeout(function() {
               _this._inFlightTimeoutIds = _this._inFlightTimeoutIds.filter(function(id) {
                 return id !== timeoutId;
               });
-              _this._executeTransactionInsidePromise(transactionCreator, transactionWork, resolve2, reject, transactionWrapper, executionContext).catch(reject);
+              _this._executeTransactionInsidePromise(transactionCreator, transactionWork, resolve3, reject, transactionWrapper, executionContext).catch(reject);
             }, nextRetryTime);
             _this._inFlightTimeoutIds.push(timeoutId);
           }).catch(function(error2) {
@@ -3256,7 +3256,7 @@ var require_transaction_executor = __commonJS({
             return _this._retryTransactionPromise(transactionCreator, transactionWork, error2, retryStartTime, nextRetryDelayMs, transactionWrapper, executionContext);
           });
         };
-        TransactionExecutor2.prototype._executeTransactionInsidePromise = function(transactionCreator, transactionWork, resolve2, reject, transactionWrapper, executionContext) {
+        TransactionExecutor2.prototype._executeTransactionInsidePromise = function(transactionCreator, transactionWork, resolve3, reject, transactionWrapper, executionContext) {
           return __awaiter(this, void 0, void 0, function() {
             var tx, txPromise, _a, error_2, wrap, wrappedTx, resultPromise;
             var _this = this;
@@ -3290,7 +3290,7 @@ var require_transaction_executor = __commonJS({
                   wrappedTx = wrap(tx);
                   resultPromise = this._safeExecuteTransactionWork(wrappedTx, transactionWork);
                   resultPromise.then(function(result) {
-                    return _this._handleTransactionWorkSuccess(result, tx, resolve2, reject);
+                    return _this._handleTransactionWorkSuccess(result, tx, resolve3, reject);
                   }).catch(function(error) {
                     return _this._handleTransactionWorkFailure(error, tx, reject);
                   });
@@ -3310,15 +3310,15 @@ var require_transaction_executor = __commonJS({
             return Promise.reject(error);
           }
         };
-        TransactionExecutor2.prototype._handleTransactionWorkSuccess = function(result, tx, resolve2, reject) {
+        TransactionExecutor2.prototype._handleTransactionWorkSuccess = function(result, tx, resolve3, reject) {
           if (tx.isOpen()) {
             tx.commit().then(function() {
-              resolve2(result);
+              resolve3(result);
             }).catch(function(error) {
               reject(error);
             });
           } else {
-            resolve2(result);
+            resolve3(result);
           }
         };
         TransactionExecutor2.prototype._handleTransactionWorkFailure = function(error, tx, reject) {
@@ -3725,8 +3725,8 @@ var require_configured_custom_resolver = __commonJS({
         }
         ConfiguredCustomResolver2.prototype.resolve = function(seedRouter) {
           var _this = this;
-          return new Promise(function(resolve2) {
-            return resolve2(_this._resolverFunction(seedRouter.asHostPort()));
+          return new Promise(function(resolve3) {
+            return resolve3(_this._resolverFunction(seedRouter.asHostPort()));
           }).then(function(resolved) {
             if (!Array.isArray(resolved)) {
               throw new TypeError("Configured resolver function should either return an array of addresses or a Promise resolved with an array of addresses." + // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -3892,11 +3892,11 @@ var require_pool = __commonJS({
     "use strict";
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -3912,7 +3912,7 @@ var require_pool = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -4056,7 +4056,7 @@ var require_pool = __commonJS({
                   if (requests == null) {
                     allRequests[key] = [];
                   }
-                  return [4, new Promise(function(resolve2, reject) {
+                  return [4, new Promise(function(resolve3, reject) {
                     var timeoutId = setTimeout(function() {
                       var pendingRequests = allRequests[key];
                       if (pendingRequests != null) {
@@ -4074,7 +4074,7 @@ var require_pool = __commonJS({
                     if (typeof timeoutId === "object") {
                       timeoutId.unref();
                     }
-                    var request = new PendingRequest(key, acquisitionContext, config, resolve2, reject, timeoutId, _this._log);
+                    var request = new PendingRequest(key, acquisitionContext, config, resolve3, reject, timeoutId, _this._log);
                     allRequests[key].push(request);
                     _this._processPendingAcquireRequests(address);
                   })];
@@ -4462,10 +4462,10 @@ var require_pool = __commonJS({
     var PendingRequest = (
       /** @class */
       (function() {
-        function PendingRequest2(key, context, config, resolve2, reject, timeoutId, log) {
+        function PendingRequest2(key, context, config, resolve3, reject, timeoutId, log) {
           this._key = key;
           this._context = context;
-          this._resolve = resolve2;
+          this._resolve = resolve3;
           this._reject = reject;
           this._timeoutId = timeoutId;
           this._log = log;
@@ -5211,11 +5211,11 @@ var require_result = __commonJS({
     "use strict";
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -5231,7 +5231,7 @@ var require_result = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -5347,11 +5347,11 @@ var require_result = __commonJS({
           } else if (this._error !== null) {
             return Promise.reject(this._error);
           }
-          return new Promise(function(resolve2, reject) {
+          return new Promise(function(resolve3, reject) {
             _this._streamObserverPromise.then(function(observer) {
               return observer.subscribe(_this._decorateObserver({
                 onKeys: function(keys) {
-                  return resolve2(keys);
+                  return resolve3(keys);
                 },
                 onError: function(err) {
                   return reject(err);
@@ -5367,14 +5367,14 @@ var require_result = __commonJS({
           } else if (this._error !== null) {
             return Promise.reject(this._error);
           }
-          return new Promise(function(resolve2, reject) {
+          return new Promise(function(resolve3, reject) {
             _this._streamObserverPromise.then(function(o) {
               o.cancel();
               o.subscribe(_this._decorateObserver({
                 // This type casting is needed since we are defining the number type of
                 // summary in Result template
                 onCompleted: function(summary) {
-                  return resolve2(summary);
+                  return resolve3(summary);
                 },
                 onError: function(err) {
                   return reject(err);
@@ -5386,14 +5386,14 @@ var require_result = __commonJS({
         Result2.prototype._getOrCreatePromise = function() {
           var _this = this;
           if (this._p == null) {
-            this._p = new Promise(function(resolve2, reject) {
+            this._p = new Promise(function(resolve3, reject) {
               var records = [];
               var observer = {
                 onNext: function(record) {
                   records.push(record);
                 },
                 onCompleted: function(summary) {
-                  resolve2({ records, summary });
+                  resolve3({ records, summary });
                 },
                 onError: function(error) {
                   reject(error);
@@ -5639,8 +5639,8 @@ var require_result = __commonJS({
           var _this = this;
           function createResolvablePromise() {
             var resolvablePromise = {};
-            resolvablePromise.promise = new Promise(function(resolve2, reject) {
-              resolvablePromise.resolve = resolve2;
+            resolvablePromise.promise = new Promise(function(resolve3, reject) {
+              resolvablePromise.resolve = resolve3;
               resolvablePromise.reject = reject;
             });
             return resolvablePromise;
@@ -5915,11 +5915,11 @@ var require_transaction = __commonJS({
     "use strict";
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -5935,7 +5935,7 @@ var require_transaction = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -6044,8 +6044,8 @@ var require_transaction = __commonJS({
           this._apiTelemetryConfig = apiTelemetryConfig;
           this._acceptActive = function() {
           };
-          this._activePromise = new Promise(function(resolve2, reject) {
-            _this._acceptActive = resolve2;
+          this._activePromise = new Promise(function(resolve3, reject) {
+            _this._acceptActive = resolve3;
           });
         }
         Transaction2.prototype._begin = function(getBookmarks, txConfig, events) {
@@ -6133,10 +6133,10 @@ var require_transaction = __commonJS({
           });
           this._state = committed.state;
           this._onClose();
-          return new Promise(function(resolve2, reject) {
+          return new Promise(function(resolve3, reject) {
             committed.result.subscribe({
               onCompleted: function() {
-                return resolve2();
+                return resolve3();
               },
               onError: function(error) {
                 return reject(error);
@@ -6155,10 +6155,10 @@ var require_transaction = __commonJS({
           });
           this._state = rolledback.state;
           this._onClose();
-          return new Promise(function(resolve2, reject) {
+          return new Promise(function(resolve3, reject) {
             rolledback.result.subscribe({
               onCompleted: function() {
-                return resolve2();
+                return resolve3();
               },
               onError: function(error) {
                 return reject(error);
@@ -6583,14 +6583,14 @@ var require_transaction_promise = __commonJS({
         TransactionPromise2.prototype._getOrCreateBeginPromise = function() {
           var _this = this;
           if (this._beginPromise == null) {
-            this._beginPromise = new Promise(function(resolve2, reject) {
-              _this._resolve = resolve2;
+            this._beginPromise = new Promise(function(resolve3, reject) {
+              _this._resolve = resolve3;
               _this._reject = reject;
               if (_this._beginError != null) {
                 reject(_this._beginError);
               }
               if (_this._beginMetadata != null) {
-                resolve2(_this._toTransaction());
+                resolve3(_this._toTransaction());
               }
             });
           }
@@ -6665,11 +6665,11 @@ var require_session = __commonJS({
     "use strict";
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -6685,7 +6685,7 @@ var require_session = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -7160,11 +7160,11 @@ var require_bookmark_manager = __commonJS({
     "use strict";
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -7180,7 +7180,7 @@ var require_bookmark_manager = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -7429,11 +7429,11 @@ var require_result_transformers = __commonJS({
     "use strict";
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -7449,7 +7449,7 @@ var require_result_transformers = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -7585,7 +7585,7 @@ var require_result_transformers = __commonJS({
           return __generator(this, function(_a) {
             switch (_a.label) {
               case 0:
-                return [4, new Promise(function(resolve2, reject) {
+                return [4, new Promise(function(resolve3, reject) {
                   var state = { records: [], keys: [] };
                   result.subscribe({
                     onKeys: function(keys) {
@@ -7603,10 +7603,10 @@ var require_result_transformers = __commonJS({
                     },
                     onCompleted: function(summary2) {
                       if (config.collect != null) {
-                        resolve2(config.collect(state.records, summary2, state.keys));
+                        resolve3(config.collect(state.records, summary2, state.keys));
                       } else {
                         var obj = { records: state.records, summary: summary2, keys: state.keys };
-                        resolve2(obj);
+                        resolve3(obj);
                       }
                     },
                     onError: function(error) {
@@ -7679,11 +7679,11 @@ var require_query_executor = __commonJS({
     "use strict";
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -7699,7 +7699,7 @@ var require_query_executor = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -7931,11 +7931,11 @@ var require_driver = __commonJS({
     };
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -7951,7 +7951,7 @@ var require_driver = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -8437,11 +8437,11 @@ var require_auth_token_manager = __commonJS({
     "use strict";
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -8457,7 +8457,7 @@ var require_auth_token_manager = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -8698,9 +8698,9 @@ var require_auth_token_manager = __commonJS({
             return __generator(this, function(_a) {
               switch (_a.label) {
                 case 0:
-                  return [4, new Promise(function(resolve2, reject) {
+                  return [4, new Promise(function(resolve3, reject) {
                     _this._scheduleRefreshAuthToken({
-                      onCompleted: resolve2,
+                      onCompleted: resolve3,
                       onError: reject
                     });
                   })];
@@ -9841,8 +9841,8 @@ var require_Subscriber = __commonJS({
     })(Subscription_1.Subscription);
     exports2.Subscriber = Subscriber;
     var _bind = Function.prototype.bind;
-    function bind(fn3, thisArg) {
-      return _bind.call(fn3, thisArg);
+    function bind(fn6, thisArg) {
+      return _bind.call(fn6, thisArg);
     }
     var ConsumerObserver = (function() {
       function ConsumerObserver2(partialObserver) {
@@ -9988,8 +9988,8 @@ var require_pipe = __commonJS({
         return fns[0];
       }
       return function piped(input) {
-        return fns.reduce(function(prev, fn3) {
-          return fn3(prev);
+        return fns.reduce(function(prev, fn6) {
+          return fn6(prev);
         }, input);
       };
     }
@@ -10041,7 +10041,7 @@ var require_Observable = __commonJS({
       Observable2.prototype.forEach = function(next, promiseCtor) {
         var _this = this;
         promiseCtor = getPromiseCtor(promiseCtor);
-        return new promiseCtor(function(resolve2, reject) {
+        return new promiseCtor(function(resolve3, reject) {
           var subscriber = new Subscriber_1.SafeSubscriber({
             next: function(value) {
               try {
@@ -10052,7 +10052,7 @@ var require_Observable = __commonJS({
               }
             },
             error: reject,
-            complete: resolve2
+            complete: resolve3
           });
           _this.subscribe(subscriber);
         });
@@ -10074,14 +10074,14 @@ var require_Observable = __commonJS({
       Observable2.prototype.toPromise = function(promiseCtor) {
         var _this = this;
         promiseCtor = getPromiseCtor(promiseCtor);
-        return new promiseCtor(function(resolve2, reject) {
+        return new promiseCtor(function(resolve3, reject) {
           var value;
           _this.subscribe(function(x) {
             return value = x;
           }, function(err) {
             return reject(err);
           }, function() {
-            return resolve2(value);
+            return resolve3(value);
           });
         });
       };
@@ -12177,11 +12177,11 @@ var require_innerFrom = __commonJS({
     "use strict";
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -12197,7 +12197,7 @@ var require_innerFrom = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -12279,14 +12279,14 @@ var require_innerFrom = __commonJS({
       }, i);
       function verb(n) {
         i[n] = o[n] && function(v) {
-          return new Promise(function(resolve2, reject) {
-            v = o[n](v), settle(resolve2, reject, v.done, v.value);
+          return new Promise(function(resolve3, reject) {
+            v = o[n](v), settle(resolve3, reject, v.done, v.value);
           });
         };
       }
-      function settle(resolve2, reject, d, v) {
+      function settle(resolve3, reject, d, v) {
         Promise.resolve(v).then(function(v2) {
-          resolve2({ value: v2, done: d });
+          resolve3({ value: v2, done: d });
         }, reject);
       }
     };
@@ -12905,7 +12905,7 @@ var require_lastValueFrom = __commonJS({
     var EmptyError_1 = require_EmptyError();
     function lastValueFrom(source, config) {
       var hasConfig = typeof config === "object";
-      return new Promise(function(resolve2, reject) {
+      return new Promise(function(resolve3, reject) {
         var _hasValue = false;
         var _value;
         source.subscribe({
@@ -12916,9 +12916,9 @@ var require_lastValueFrom = __commonJS({
           error: reject,
           complete: function() {
             if (_hasValue) {
-              resolve2(_value);
+              resolve3(_value);
             } else if (hasConfig) {
-              resolve2(config.defaultValue);
+              resolve3(config.defaultValue);
             } else {
               reject(new EmptyError_1.EmptyError());
             }
@@ -12940,16 +12940,16 @@ var require_firstValueFrom = __commonJS({
     var Subscriber_1 = require_Subscriber();
     function firstValueFrom(source, config) {
       var hasConfig = typeof config === "object";
-      return new Promise(function(resolve2, reject) {
+      return new Promise(function(resolve3, reject) {
         var subscriber = new Subscriber_1.SafeSubscriber({
           next: function(value) {
-            resolve2(value);
+            resolve3(value);
             subscriber.unsubscribe();
           },
           error: reject,
           complete: function() {
             if (hasConfig) {
-              resolve2(config.defaultValue);
+              resolve3(config.defaultValue);
             } else {
               reject(new EmptyError_1.EmptyError());
             }
@@ -13145,12 +13145,12 @@ var require_mapOneOrManyArgs = __commonJS({
     exports2.mapOneOrManyArgs = void 0;
     var map_1 = require_map();
     var isArray = Array.isArray;
-    function callOrApply(fn3, args) {
-      return isArray(args) ? fn3.apply(void 0, __spreadArray([], __read(args))) : fn3(args);
+    function callOrApply(fn6, args) {
+      return isArray(args) ? fn6.apply(void 0, __spreadArray([], __read(args))) : fn6(args);
     }
-    function mapOneOrManyArgs(fn3) {
+    function mapOneOrManyArgs(fn6) {
       return map_1.map(function(args) {
-        return callOrApply(fn3, args);
+        return callOrApply(fn6, args);
       });
     }
     exports2.mapOneOrManyArgs = mapOneOrManyArgs;
@@ -19252,11 +19252,11 @@ var require_result_rx = __commonJS({
     "use strict";
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -19272,7 +19272,7 @@ var require_result_rx = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -20805,12 +20805,12 @@ var require_node_channel = __commonJS({
         };
         NodeChannel2.prototype.close = function() {
           var _this = this;
-          return new Promise(function(resolve2, reject) {
+          return new Promise(function(resolve3, reject) {
             var cleanup = function() {
               if (!_this._conn.destroyed) {
                 _this._conn.destroy();
               }
-              resolve2();
+              resolve3();
             };
             if (_this._open) {
               _this._open = false;
@@ -20873,15 +20873,15 @@ var require_node_host_name_resolver = __commonJS({
           return _super !== null && _super.apply(this, arguments) || this;
         }
         NodeHostNameResolver2.prototype.resolve = function(address) {
-          return new Promise(function(resolve2) {
+          return new Promise(function(resolve3) {
             dns_1.default.lookup(address.host(), { all: true }, function(error, resolvedTo) {
               if (error) {
-                resolve2([address]);
+                resolve3([address]);
               } else {
                 var resolvedAddresses = resolvedTo.map(function(a) {
                   return address.resolveWith(a.address);
                 });
-                resolve2(resolvedAddresses);
+                resolve3(resolvedAddresses);
               }
             });
           });
@@ -20899,11 +20899,11 @@ var require_node_client_certificates_loader = __commonJS({
     "use strict";
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -20919,7 +20919,7 @@ var require_node_client_certificates_loader = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -21016,12 +21016,12 @@ var require_node_client_certificates_loader = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     var fs_1 = __importDefault(require("fs"));
     function readFile2(file) {
-      return new Promise(function(resolve2, reject) {
+      return new Promise(function(resolve3, reject) {
         return fs_1.default.readFile(file, function(err, data) {
           if (err) {
             return reject(err);
           }
-          return resolve2(data);
+          return resolve3(data);
         });
       });
     }
@@ -21597,13 +21597,13 @@ var require_handshake = __commonJS({
           break;
         }
       }
-      return new Promise(function(resolve2, reject) {
+      return new Promise(function(resolve3, reject) {
         try {
           var selectionBuffer = (0, channel_1.alloc)(5);
           selectionBuffer.writeInt32(minor << 8 | major);
           selectionBuffer.writeVarInt(capabilites);
           channel.write(selectionBuffer);
-          resolve2({
+          resolve3({
             protocolVersion: Number(major + "." + minor),
             capabilites,
             consumeRemainingBuffer: function(consumer) {
@@ -21637,7 +21637,7 @@ var require_handshake = __commonJS({
     exports2.default = handshake;
     function initialHandshake(channel, log) {
       var _this = this;
-      return new Promise(function(resolve2, reject) {
+      return new Promise(function(resolve3, reject) {
         var handshakeErrorHandler = function(error) {
           reject(error);
         };
@@ -21648,7 +21648,7 @@ var require_handshake = __commonJS({
         channel.onmessage = function(buffer) {
           try {
             var protocolVersion = parseNegotiatedResponse(buffer, log);
-            resolve2({
+            resolve3({
               protocolVersion,
               capabilites: 0,
               buffer,
@@ -27532,11 +27532,11 @@ var require_connection_channel = __commonJS({
     })();
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -27552,7 +27552,7 @@ var require_connection_channel = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -27823,7 +27823,7 @@ var require_connection_channel = __commonJS({
                   return [2, _a.sent()];
                 case 2:
                   if (!waitReAuth) return [3, 4];
-                  return [4, new Promise(function(resolve2, reject) {
+                  return [4, new Promise(function(resolve3, reject) {
                     _this._protocol.logoff({
                       onError: reject
                     });
@@ -27831,7 +27831,7 @@ var require_connection_channel = __commonJS({
                       authToken,
                       onError: reject,
                       onComplete: function() {
-                        return resolve2(_this);
+                        return resolve3(_this);
                       },
                       flush: true
                     });
@@ -27849,7 +27849,7 @@ var require_connection_channel = __commonJS({
         ChannelConnection2.prototype._initialize = function(userAgent, boltAgent, authToken) {
           var _this = this;
           var self = this;
-          return new Promise(function(resolve2, reject) {
+          return new Promise(function(resolve3, reject) {
             _this._protocol.initialize({
               userAgent,
               boltAgent,
@@ -27887,7 +27887,7 @@ var require_connection_channel = __commonJS({
                   }
                   _this._ssrCallback((_a = _this.SSREnabledHint) !== null && _a !== void 0 ? _a : false, "OPEN");
                 }
-                resolve2(self);
+                resolve3(self);
               }
             });
           });
@@ -27957,7 +27957,7 @@ var require_connection_channel = __commonJS({
         };
         ChannelConnection2.prototype.resetAndFlush = function() {
           var _this = this;
-          return new Promise(function(resolve2, reject) {
+          return new Promise(function(resolve3, reject) {
             _this._reset({
               onError: function(error) {
                 if (_this._isBroken) {
@@ -27968,7 +27968,7 @@ var require_connection_channel = __commonJS({
                 }
               },
               onComplete: function() {
-                resolve2();
+                resolve3();
               }
             });
           });
@@ -28373,11 +28373,11 @@ var require_authentication_provider = __commonJS({
     "use strict";
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -28393,7 +28393,7 @@ var require_authentication_provider = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -28528,11 +28528,11 @@ var require_liveness_check_provider = __commonJS({
     "use strict";
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -28548,7 +28548,7 @@ var require_liveness_check_provider = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -28675,11 +28675,11 @@ var require_client_certificate_holder = __commonJS({
     "use strict";
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -28695,7 +28695,7 @@ var require_client_certificate_holder = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -28845,11 +28845,11 @@ var require_connection_provider_pooled = __commonJS({
     })();
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -28865,7 +28865,7 @@ var require_connection_provider_pooled = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -29327,11 +29327,11 @@ var require_connection_provider_direct = __commonJS({
     })();
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -29347,7 +29347,7 @@ var require_connection_provider_direct = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -29517,8 +29517,8 @@ var require_connection_provider_direct = __commonJS({
         };
         DirectConnectionProvider2.prototype.getNegotiatedProtocolVersion = function() {
           var _this = this;
-          return new Promise(function(resolve2, reject) {
-            _this._hasProtocolVersion(resolve2).catch(reject);
+          return new Promise(function(resolve3, reject) {
+            _this._hasProtocolVersion(resolve3).catch(reject);
           });
         };
         DirectConnectionProvider2.prototype.supportsTransactionConfig = function() {
@@ -29784,7 +29784,7 @@ var require_rediscovery = __commonJS({
         };
         Rediscovery2.prototype._requestRawRoutingTable = function(connection, session, database, routerAddress, impersonatedUser) {
           var _this = this;
-          return new Promise(function(resolve2, reject) {
+          return new Promise(function(resolve3, reject) {
             connection.protocol().requestRoutingInformation({
               routingContext: _this._routingContext,
               databaseName: database,
@@ -29795,7 +29795,7 @@ var require_rediscovery = __commonJS({
                 database: session._database,
                 afterComplete: session._onComplete
               },
-              onCompleted: resolve2,
+              onCompleted: resolve3,
               onError: reject
             });
           });
@@ -29887,11 +29887,11 @@ var require_connection_provider_routing = __commonJS({
     };
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -29907,7 +29907,7 @@ var require_connection_provider_routing = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -30303,8 +30303,8 @@ var require_connection_provider_routing = __commonJS({
         };
         RoutingConnectionProvider2.prototype.getNegotiatedProtocolVersion = function() {
           var _this = this;
-          return new Promise(function(resolve2, reject) {
-            _this._hasProtocolVersion(resolve2).catch(reject);
+          return new Promise(function(resolve3, reject) {
+            _this._hasProtocolVersion(resolve3).catch(reject);
           });
         };
         RoutingConnectionProvider2.prototype.verifyAuthentication = function(_a2) {
@@ -30924,11 +30924,11 @@ var require_lib3 = __commonJS({
     "use strict";
     var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve2) {
-          resolve2(value);
+        return value instanceof P ? value : new P(function(resolve3) {
+          resolve3(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve2, reject) {
+      return new (P || (P = Promise))(function(resolve3, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -30944,7 +30944,7 @@ var require_lib3 = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -31594,11 +31594,11 @@ function extractImports(root) {
     if (child.type === "import_header") {
       const identifier = findChildByType(child, "identifier");
       if (identifier) {
-        const path2 = identifier.text;
-        const isWildcard = path2.endsWith("*") || child.children.some((c) => c.type === "STAR" || c.type === "wildcard_import");
+        const path5 = identifier.text;
+        const isWildcard = path5.endsWith("*") || child.children.some((c) => c.type === "STAR" || c.type === "wildcard_import");
         const aliasNode = findChildByType(child, "import_alias");
         imports.push({
-          path: path2.replace(/\.\*$/, ""),
+          path: path5.replace(/\.\*$/, ""),
           alias: aliasNode ? (findChildByType(aliasNode, "type_identifier") ?? findChildByType(aliasNode, "simple_identifier"))?.text : void 0,
           isWildcard
         });
@@ -32423,7 +32423,7 @@ var init_advanced = __esm({
 });
 
 // src/indexer/parsers/kotlin/extractor/object-expressions/extract-object-expression.ts
-function extractObjectExpression(node, extractClassBody3) {
+function extractObjectExpression(node, extractClassBody4) {
   const superTypes = [];
   for (const child of node.children) {
     if (child.type === "delegation_specifier") {
@@ -32437,7 +32437,7 @@ function extractObjectExpression(node, extractClassBody3) {
     }
   }
   const classBody = findChildByType(node, "class_body");
-  const { properties, functions } = extractClassBody3(classBody);
+  const { properties, functions } = extractClassBody4(classBody);
   return {
     superTypes,
     properties,
@@ -32453,11 +32453,11 @@ var init_extract_object_expression = __esm({
 });
 
 // src/indexer/parsers/kotlin/extractor/object-expressions/extract-all-object-expressions.ts
-function extractAllObjectExpressions(root, extractClassBody3) {
+function extractAllObjectExpressions(root, extractClassBody4) {
   const expressions = [];
   traverseNode(root, (node) => {
     if (node.type === "object_literal") {
-      const expr = extractObjectExpression(node, extractClassBody3);
+      const expr = extractObjectExpression(node, extractClassBody4);
       if (expr) {
         expressions.push(expr);
       }
@@ -32654,13 +32654,13 @@ var init_is_companion_object = __esm({
 });
 
 // src/indexer/parsers/kotlin/extractor/companion/extract-companion-object.ts
-function extractCompanionObject(node, extractClassBody3) {
+function extractCompanionObject(node, extractClassBody4) {
   const nameNode = findChildByType(node, "type_identifier") ?? findChildByType(node, "simple_identifier");
   const name = nameNode?.text ?? "Companion";
   const modifiers = extractModifiers(node);
   const annotations = extractAnnotations(node);
   const classBody = findChildByType(node, "class_body");
-  const { properties, functions, nestedClasses } = extractClassBody3(classBody);
+  const { properties, functions, nestedClasses } = extractClassBody4(classBody);
   return {
     name,
     kind: "object",
@@ -32695,7 +32695,7 @@ var init_companion = __esm({
 });
 
 // src/indexer/parsers/kotlin/extractor/class/extract-class-body.ts
-function extractClassBody(classBody, extractClass3, extractCompanionObject2) {
+function extractClassBody(classBody, extractClass4, extractCompanionObject2) {
   const properties = [];
   const functions = [];
   const nestedClasses = [];
@@ -32715,13 +32715,13 @@ function extractClassBody(classBody, extractClass3, extractCompanionObject2) {
       case "class_declaration":
       case "interface_declaration":
       case "enum_class_declaration":
-        nestedClasses.push(extractClass3(child));
+        nestedClasses.push(extractClass4(child));
         break;
       case "object_declaration":
         if (isCompanionObject(child)) {
-          companionObject = extractClass3(child);
+          companionObject = extractClass4(child);
         } else {
-          nestedClasses.push(extractClass3(child));
+          nestedClasses.push(extractClass4(child));
         }
         break;
       case "companion_object":
@@ -32829,6 +32829,8 @@ function extractSymbols(tree, filePath) {
     language: "kotlin",
     packageName: extractPackageName(root),
     imports: extractImports(root),
+    reexports: [],
+    // Kotlin doesn't have re-exports
     classes: [],
     topLevelFunctions: [],
     topLevelProperties: [],
@@ -32892,31 +32894,31 @@ __export(kotlin_exports, {
   kotlinParser: () => kotlinParser
 });
 function setFilePathInLocations(parsed, filePath) {
-  for (const cls3 of parsed.classes) {
-    setFilePathInClass(cls3, filePath);
+  for (const cls6 of parsed.classes) {
+    setFilePathInClass(cls6, filePath);
   }
-  for (const fn3 of parsed.topLevelFunctions) {
-    setFilePathInFunction(fn3, filePath);
+  for (const fn6 of parsed.topLevelFunctions) {
+    setFilePathInFunction(fn6, filePath);
   }
   for (const prop of parsed.topLevelProperties) {
     prop.location.filePath = filePath;
   }
 }
-function setFilePathInClass(cls3, filePath) {
-  cls3.location.filePath = filePath;
-  for (const fn3 of cls3.functions) {
-    setFilePathInFunction(fn3, filePath);
+function setFilePathInClass(cls6, filePath) {
+  cls6.location.filePath = filePath;
+  for (const fn6 of cls6.functions) {
+    setFilePathInFunction(fn6, filePath);
   }
-  for (const prop of cls3.properties) {
+  for (const prop of cls6.properties) {
     prop.location.filePath = filePath;
   }
-  for (const nested of cls3.nestedClasses) {
+  for (const nested of cls6.nestedClasses) {
     setFilePathInClass(nested, filePath);
   }
 }
-function setFilePathInFunction(fn3, filePath) {
-  fn3.location.filePath = filePath;
-  for (const call of fn3.calls) {
+function setFilePathInFunction(fn6, filePath) {
+  fn6.location.filePath = filePath;
+  for (const call of fn6.calls) {
     call.location.filePath = filePath;
   }
 }
@@ -33062,12 +33064,12 @@ function parseImportDeclaration(node) {
   const identifier = findChildByType2(node, "identifier");
   const pathNode = scopedId ?? identifier;
   if (!pathNode) return void 0;
-  let path2 = pathNode.text;
+  let path5 = pathNode.text;
   if (isStatic) {
-    path2 = `static:${path2}`;
+    path5 = `static:${path5}`;
   }
   return {
-    path: path2,
+    path: path5,
     alias: void 0,
     // Java doesn't have import aliases
     isWildcard
@@ -33853,7 +33855,7 @@ var init_constructor2 = __esm({
 });
 
 // src/indexer/parsers/java/extractor/class/extract-class-body.ts
-function extractClassBody2(classBody, extractClass3) {
+function extractClassBody2(classBody, extractClass4) {
   const properties = [];
   const functions = [];
   const nestedClasses = [];
@@ -33878,7 +33880,7 @@ function extractClassBody2(classBody, extractClass3) {
       case "enum_declaration":
       case "annotation_type_declaration":
       case "record_declaration":
-        nestedClasses.push(extractClass3(child));
+        nestedClasses.push(extractClass4(child));
         break;
       // Ignored for now
       case "static_initializer":
@@ -34083,6 +34085,8 @@ function extractSymbols2(tree, filePath) {
     language: "java",
     packageName: extractPackageName2(root),
     imports: extractImports2(root),
+    reexports: [],
+    // Java doesn't have re-exports
     classes: extractClasses(root),
     topLevelFunctions: [],
     // Java doesn't have top-level functions
@@ -34116,31 +34120,31 @@ __export(java_exports, {
   javaParser: () => javaParser
 });
 function setFilePathInLocations2(parsed, filePath) {
-  for (const cls3 of parsed.classes) {
-    setFilePathInClass2(cls3, filePath);
+  for (const cls6 of parsed.classes) {
+    setFilePathInClass2(cls6, filePath);
   }
-  for (const fn3 of parsed.topLevelFunctions) {
-    setFilePathInFunction2(fn3, filePath);
+  for (const fn6 of parsed.topLevelFunctions) {
+    setFilePathInFunction2(fn6, filePath);
   }
   for (const prop of parsed.topLevelProperties) {
     prop.location.filePath = filePath;
   }
 }
-function setFilePathInClass2(cls3, filePath) {
-  cls3.location.filePath = filePath;
-  for (const fn3 of cls3.functions) {
-    setFilePathInFunction2(fn3, filePath);
+function setFilePathInClass2(cls6, filePath) {
+  cls6.location.filePath = filePath;
+  for (const fn6 of cls6.functions) {
+    setFilePathInFunction2(fn6, filePath);
   }
-  for (const prop of cls3.properties) {
+  for (const prop of cls6.properties) {
     prop.location.filePath = filePath;
   }
-  for (const nested of cls3.nestedClasses) {
+  for (const nested of cls6.nestedClasses) {
     setFilePathInClass2(nested, filePath);
   }
 }
-function setFilePathInFunction2(fn3, filePath) {
-  fn3.location.filePath = filePath;
-  for (const call of fn3.calls) {
+function setFilePathInFunction2(fn6, filePath) {
+  fn6.location.filePath = filePath;
+  for (const call of fn6.calls) {
     call.location.filePath = filePath;
   }
 }
@@ -34163,10 +34167,3436 @@ var init_java = __esm({
   }
 });
 
+// src/indexer/parsers/typescript/parser.ts
+function getTypeScriptParser() {
+  if (!tsParser) {
+    tsParser = new import_tree_sitter3.default();
+    tsParser.setLanguage(import_tree_sitter_typescript.default.typescript);
+  }
+  return tsParser;
+}
+function getTSXParser() {
+  if (!tsxParser) {
+    tsxParser = new import_tree_sitter3.default();
+    tsxParser.setLanguage(import_tree_sitter_typescript.default.tsx);
+  }
+  return tsxParser;
+}
+function parseTypeScript(source, filePath) {
+  const isTsx = filePath.endsWith(".tsx") || filePath.endsWith(".jsx");
+  const parser = isTsx ? getTSXParser() : getTypeScriptParser();
+  return parser.parse(source);
+}
+var import_tree_sitter3, import_tree_sitter_typescript, tsParser, tsxParser;
+var init_parser3 = __esm({
+  "src/indexer/parsers/typescript/parser.ts"() {
+    "use strict";
+    import_tree_sitter3 = __toESM(require("tree-sitter"), 1);
+    import_tree_sitter_typescript = __toESM(require("tree-sitter-typescript"), 1);
+    tsParser = null;
+    tsxParser = null;
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/ast-utils/find-child-by-type.ts
+function findChildByType3(node, type) {
+  return node.children.find((c) => c.type === type);
+}
+function findChildrenByType2(node, type) {
+  return node.children.filter((c) => c.type === type);
+}
+function findChildByTypes(node, types) {
+  return node.children.find((c) => types.includes(c.type));
+}
+var init_find_child_by_type3 = __esm({
+  "src/indexer/parsers/typescript/extractor/ast-utils/find-child-by-type.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/ast-utils/traverse-node.ts
+function traverseNode3(node, visitor) {
+  const shouldContinue = visitor(node);
+  if (shouldContinue === false) return;
+  for (const child of node.children) {
+    traverseNode3(child, visitor);
+  }
+}
+var init_traverse_node3 = __esm({
+  "src/indexer/parsers/typescript/extractor/ast-utils/traverse-node.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/ast-utils/node-location.ts
+function nodeLocation3(node) {
+  return {
+    filePath: "",
+    // Will be set by caller
+    startLine: node.startPosition.row + 1,
+    startColumn: node.startPosition.column + 1,
+    endLine: node.endPosition.row + 1,
+    endColumn: node.endPosition.column + 1
+  };
+}
+var init_node_location3 = __esm({
+  "src/indexer/parsers/typescript/extractor/ast-utils/node-location.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/ast-utils/extract-type-name.ts
+function extractFullTypeName2(node) {
+  if (!node) return void 0;
+  if (node.type === "type_annotation") {
+    const typeChild = node.children.find((c) => c.type !== ":");
+    return typeChild?.text;
+  }
+  return node.text;
+}
+var init_extract_type_name3 = __esm({
+  "src/indexer/parsers/typescript/extractor/ast-utils/extract-type-name.ts"() {
+    "use strict";
+    init_find_child_by_type3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/ast-utils/find-initializer.ts
+function findInitializer(node) {
+  let foundEquals = false;
+  for (const child of node.children) {
+    if (foundEquals) {
+      return child;
+    }
+    if (child.type === "=") {
+      foundEquals = true;
+    }
+  }
+  return void 0;
+}
+var init_find_initializer = __esm({
+  "src/indexer/parsers/typescript/extractor/ast-utils/find-initializer.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/ast-utils/index.ts
+var init_ast_utils3 = __esm({
+  "src/indexer/parsers/typescript/extractor/ast-utils/index.ts"() {
+    "use strict";
+    init_find_child_by_type3();
+    init_traverse_node3();
+    init_node_location3();
+    init_extract_type_name3();
+    init_find_initializer();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/imports/extract-es-import.ts
+function extractEsImport(node) {
+  const imports = [];
+  const sourceNode = findChildByType3(node, "string");
+  if (!sourceNode) return imports;
+  const path5 = sourceNode.text.slice(1, -1);
+  const isTypeOnly = node.children.some((c) => c.type === "type");
+  const importClause = findChildByType3(node, "import_clause");
+  if (!importClause) {
+    imports.push({ path: path5, isTypeOnly: isTypeOnly || void 0 });
+    return imports;
+  }
+  for (const child of importClause.children) {
+    switch (child.type) {
+      case "identifier":
+        imports.push({
+          path: path5,
+          name: child.text,
+          isTypeOnly: isTypeOnly || void 0
+        });
+        break;
+      case "namespace_import":
+        {
+          const aliasNode = findChildByType3(child, "identifier");
+          imports.push({
+            path: path5,
+            alias: aliasNode?.text,
+            isWildcard: true,
+            isTypeOnly: isTypeOnly || void 0
+          });
+        }
+        break;
+      case "named_imports":
+        for (const specifier of child.children) {
+          if (specifier.type === "import_specifier") {
+            const names = specifier.children.filter((c) => c.type === "identifier");
+            const name = names[0]?.text;
+            const alias = names.length > 1 ? names[1]?.text : void 0;
+            if (name) {
+              imports.push({
+                path: path5,
+                name,
+                alias,
+                isTypeOnly: isTypeOnly || void 0
+              });
+            }
+          }
+        }
+        break;
+    }
+  }
+  return imports;
+}
+var init_extract_es_import = __esm({
+  "src/indexer/parsers/typescript/extractor/imports/extract-es-import.ts"() {
+    "use strict";
+    init_ast_utils3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/imports/extract-dynamic-import.ts
+function extractModuleSpecifier(argsNode) {
+  const stringNode = findChildByType3(argsNode, "string");
+  if (stringNode) {
+    return {
+      path: stringNode.text.slice(1, -1),
+      // Remove quotes
+      isTemplateLiteral: false
+    };
+  }
+  const templateNode = findChildByType3(argsNode, "template_string");
+  if (templateNode) {
+    return {
+      path: templateNode.text,
+      isTemplateLiteral: true
+    };
+  }
+  return void 0;
+}
+function extractDynamicImports(root) {
+  const imports = [];
+  traverseNode3(root, (node) => {
+    if (node.type === "call_expression") {
+      const funcNode = node.children[0];
+      if (funcNode?.type === "import") {
+        const argsNode = findChildByType3(node, "arguments");
+        if (argsNode) {
+          const result = extractModuleSpecifier(argsNode);
+          if (result) {
+            imports.push({
+              path: result.path,
+              isDynamic: true,
+              isTemplateLiteral: result.isTemplateLiteral || void 0
+            });
+          }
+        }
+      }
+    }
+  });
+  return imports;
+}
+var init_extract_dynamic_import = __esm({
+  "src/indexer/parsers/typescript/extractor/imports/extract-dynamic-import.ts"() {
+    "use strict";
+    init_ast_utils3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/imports/extract-commonjs-require.ts
+function extractCommonJsRequires(root) {
+  const imports = [];
+  traverseNode3(root, (node) => {
+    if (node.type === "call_expression") {
+      const funcName = node.children[0];
+      if (funcName?.type === "identifier" && funcName.text === "require") {
+        const args = findChildByType3(node, "arguments");
+        const pathNode = args?.children.find((c) => c.type === "string");
+        if (pathNode) {
+          const path5 = pathNode.text.slice(1, -1);
+          let name;
+          if (node.parent?.type === "variable_declarator") {
+            const idNode = findChildByType3(node.parent, "identifier");
+            if (idNode) {
+              name = idNode.text;
+            }
+          }
+          imports.push({ path: path5, name });
+        }
+      }
+    }
+  });
+  return imports;
+}
+var init_extract_commonjs_require = __esm({
+  "src/indexer/parsers/typescript/extractor/imports/extract-commonjs-require.ts"() {
+    "use strict";
+    init_ast_utils3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/imports/extract-imports.ts
+function extractImports3(root, options = {}) {
+  const { includeCommonJs = true } = options;
+  const imports = [];
+  for (const child of root.children) {
+    if (child.type === "import_statement") {
+      const extracted = extractEsImport(child);
+      imports.push(...extracted);
+    }
+  }
+  const dynamicImports = extractDynamicImports(root);
+  imports.push(...dynamicImports);
+  if (includeCommonJs) {
+    const commonJsImports = extractCommonJsRequires(root);
+    imports.push(...commonJsImports);
+  }
+  return imports;
+}
+var init_extract_imports3 = __esm({
+  "src/indexer/parsers/typescript/extractor/imports/extract-imports.ts"() {
+    "use strict";
+    init_extract_es_import();
+    init_extract_dynamic_import();
+    init_extract_commonjs_require();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/imports/extract-reexport.ts
+function isReexportStatement(node) {
+  if (node.type !== "export_statement") return false;
+  return node.children.some((c) => c.type === "from");
+}
+function extractReexport(node) {
+  if (!isReexportStatement(node)) return [];
+  const reexports = [];
+  const sourceNode = findChildByType3(node, "string");
+  if (!sourceNode) return reexports;
+  const sourcePath = sourceNode.text.slice(1, -1);
+  const isTypeOnly = node.children.some((c) => c.type === "type");
+  const namespaceExport = findChildByType3(node, "namespace_export");
+  if (namespaceExport) {
+    const aliasNode = findChildByType3(namespaceExport, "identifier");
+    reexports.push({
+      sourcePath,
+      exportedName: aliasNode?.text,
+      isNamespaceReexport: true,
+      isTypeOnly: isTypeOnly || void 0
+    });
+    return reexports;
+  }
+  const hasWildcard = node.children.some((c) => c.type === "*");
+  const hasExportClause = findChildByType3(node, "export_clause");
+  if (hasWildcard && !hasExportClause) {
+    reexports.push({
+      sourcePath,
+      isWildcard: true,
+      isTypeOnly: isTypeOnly || void 0
+    });
+    return reexports;
+  }
+  const exportClause = findChildByType3(node, "export_clause");
+  if (exportClause) {
+    for (const child of exportClause.children) {
+      if (child.type === "export_specifier") {
+        const identifiers = child.children.filter((c) => c.type === "identifier");
+        const originalName = identifiers[0]?.text;
+        const exportedName = identifiers.length > 1 ? identifiers[1]?.text : originalName;
+        if (originalName) {
+          reexports.push({
+            sourcePath,
+            originalName,
+            exportedName,
+            isTypeOnly: isTypeOnly || void 0
+          });
+        }
+      }
+    }
+  }
+  return reexports;
+}
+function extractReexports(root) {
+  const reexports = [];
+  for (const child of root.children) {
+    if (child.type === "export_statement" && isReexportStatement(child)) {
+      const extracted = extractReexport(child);
+      reexports.push(...extracted);
+    }
+  }
+  return reexports;
+}
+var init_extract_reexport = __esm({
+  "src/indexer/parsers/typescript/extractor/imports/extract-reexport.ts"() {
+    "use strict";
+    init_ast_utils3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/imports/index.ts
+var init_imports = __esm({
+  "src/indexer/parsers/typescript/extractor/imports/index.ts"() {
+    "use strict";
+    init_extract_imports3();
+    init_extract_es_import();
+    init_extract_commonjs_require();
+    init_extract_dynamic_import();
+    init_extract_reexport();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/modifiers/map-visibility.ts
+function mapVisibility3(modifier) {
+  switch (modifier) {
+    case "public":
+      return "public";
+    case "private":
+      return "private";
+    case "protected":
+      return "protected";
+    default:
+      return "public";
+  }
+}
+var init_map_visibility3 = __esm({
+  "src/indexer/parsers/typescript/extractor/modifiers/map-visibility.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/modifiers/types.ts
+var DEFAULT_TYPESCRIPT_MODIFIERS;
+var init_types2 = __esm({
+  "src/indexer/parsers/typescript/extractor/modifiers/types.ts"() {
+    "use strict";
+    DEFAULT_TYPESCRIPT_MODIFIERS = {
+      visibility: "public",
+      // public by default in TypeScript
+      isAbstract: false,
+      isStatic: false,
+      isReadonly: false,
+      isAsync: false,
+      isOverride: false,
+      isAccessor: false,
+      isExport: false,
+      isDefault: false,
+      isDeclare: false
+    };
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/modifiers/extract-modifiers.ts
+function extractModifiers3(node) {
+  const result = { ...DEFAULT_TYPESCRIPT_MODIFIERS };
+  for (const child of node.children) {
+    switch (child.type) {
+      // Accessibility modifiers
+      case "accessibility_modifier":
+        result.visibility = mapVisibility3(child.text);
+        break;
+      case "public":
+        result.visibility = "public";
+        break;
+      case "private":
+        result.visibility = "private";
+        break;
+      case "protected":
+        result.visibility = "protected";
+        break;
+      // Other modifiers
+      case "abstract":
+        result.isAbstract = true;
+        break;
+      case "static":
+        result.isStatic = true;
+        break;
+      case "readonly":
+        result.isReadonly = true;
+        break;
+      case "async":
+        result.isAsync = true;
+        break;
+      case "override":
+        result.isOverride = true;
+        break;
+      case "accessor":
+        result.isAccessor = true;
+        break;
+      case "export":
+        result.isExport = true;
+        break;
+      case "default":
+        result.isDefault = true;
+        break;
+      case "declare":
+        result.isDeclare = true;
+        break;
+    }
+  }
+  if (node.parent?.type === "export_statement") {
+    result.isExport = true;
+    for (const sibling of node.parent.children) {
+      if (sibling.type === "default") {
+        result.isDefault = true;
+        break;
+      }
+    }
+  }
+  return result;
+}
+var init_extract_modifiers3 = __esm({
+  "src/indexer/parsers/typescript/extractor/modifiers/extract-modifiers.ts"() {
+    "use strict";
+    init_map_visibility3();
+    init_types2();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/modifiers/index.ts
+var init_modifiers3 = __esm({
+  "src/indexer/parsers/typescript/extractor/modifiers/index.ts"() {
+    "use strict";
+    init_map_visibility3();
+    init_extract_modifiers3();
+    init_types2();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/decorators/extract-decorators.ts
+function extractDecorators(node) {
+  const decorators = [];
+  const decoratorNodes = findChildrenByType2(node, "decorator");
+  for (const decoratorNode of decoratorNodes) {
+    const annotation = extractSingleDecorator(decoratorNode);
+    if (annotation) {
+      decorators.push(annotation);
+    }
+  }
+  return decorators;
+}
+function extractSingleDecorator(decoratorNode) {
+  const expr = findChildByType3(decoratorNode, "call_expression") ?? findChildByType3(decoratorNode, "identifier") ?? findChildByType3(decoratorNode, "member_expression");
+  if (!expr) return void 0;
+  if (expr.type === "call_expression") {
+    const functionNode = findChildByType3(expr, "identifier") ?? findChildByType3(expr, "member_expression");
+    const name = functionNode?.text ?? expr.text;
+    const args = extractDecoratorArguments(expr);
+    return {
+      name: extractDecoratorName(name),
+      arguments: Object.keys(args).length > 0 ? args : void 0
+    };
+  }
+  return {
+    name: extractDecoratorName(expr.text)
+  };
+}
+function extractDecoratorArguments(callExpr) {
+  const args = {};
+  const argsNode = findChildByType3(callExpr, "arguments");
+  if (!argsNode) return args;
+  let argIndex = 0;
+  for (const child of argsNode.children) {
+    if (child.type === "(" || child.type === ")" || child.type === ",") continue;
+    if (child.type === "object") {
+      for (const pair of child.children) {
+        if (pair.type === "pair") {
+          const keyNode = pair.children[0];
+          const valueNode = pair.children.find(
+            (n) => n.type !== ":" && n !== keyNode && n.type !== "property_identifier"
+          );
+          if (keyNode && valueNode) {
+            const key = keyNode.text.replace(/['"`]/g, "");
+            args[key] = valueNode.text;
+          }
+        }
+      }
+    } else {
+      args[`arg${argIndex}`] = child.text;
+      argIndex++;
+    }
+  }
+  return args;
+}
+function extractDecoratorName(fullName) {
+  const parts = fullName.split(".");
+  return parts[parts.length - 1] ?? fullName;
+}
+var init_extract_decorators = __esm({
+  "src/indexer/parsers/typescript/extractor/decorators/extract-decorators.ts"() {
+    "use strict";
+    init_ast_utils3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/decorators/index.ts
+var init_decorators = __esm({
+  "src/indexer/parsers/typescript/extractor/decorators/index.ts"() {
+    "use strict";
+    init_extract_decorators();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/generics/extract-single-type-parameter.ts
+function extractSingleTypeParameter3(node) {
+  const nameNode = findChildByType3(node, "type_identifier");
+  if (!nameNode) return void 0;
+  const name = nameNode.text;
+  const bounds = [];
+  let variance;
+  for (const child of node.children) {
+    if (child.type === "in") {
+      variance = "in";
+    } else if (child.type === "out") {
+      variance = "out";
+    }
+  }
+  const constraint = findChildByType3(node, "constraint");
+  if (constraint) {
+    for (const child of constraint.children) {
+      if (child.type === "extends") continue;
+      const typeName = extractFullTypeName2(child);
+      if (typeName) {
+        bounds.push(typeName);
+      }
+    }
+  }
+  return {
+    name,
+    bounds: bounds.length > 0 ? bounds : void 0,
+    variance,
+    isReified: void 0
+    // TypeScript doesn't have reified types
+  };
+}
+var init_extract_single_type_parameter3 = __esm({
+  "src/indexer/parsers/typescript/extractor/generics/extract-single-type-parameter.ts"() {
+    "use strict";
+    init_ast_utils3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/generics/extract-type-parameters.ts
+function extractTypeParameters3(node) {
+  const typeParams = [];
+  const typeParamList = findChildByType3(node, "type_parameters");
+  if (!typeParamList) return typeParams;
+  for (const child of typeParamList.children) {
+    if (child.type === "type_parameter") {
+      const typeParam = extractSingleTypeParameter3(child);
+      if (typeParam) {
+        typeParams.push(typeParam);
+      }
+    }
+  }
+  return typeParams;
+}
+var init_extract_type_parameters3 = __esm({
+  "src/indexer/parsers/typescript/extractor/generics/extract-type-parameters.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_extract_single_type_parameter3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/generics/index.ts
+var init_generics3 = __esm({
+  "src/indexer/parsers/typescript/extractor/generics/index.ts"() {
+    "use strict";
+    init_extract_type_parameters3();
+    init_extract_single_type_parameter3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/class/map-class-kind.ts
+function mapClassKind3(node) {
+  switch (node.type) {
+    case "interface_declaration":
+      return "interface";
+    case "enum_declaration":
+      return "enum";
+    case "class_declaration":
+    case "abstract_class_declaration":
+    default:
+      return "class";
+  }
+}
+function isAbstractClass(node) {
+  if (node.type === "abstract_class_declaration") {
+    return true;
+  }
+  if (node.type === "class_declaration") {
+    return node.children.some((c) => c.type === "abstract");
+  }
+  return false;
+}
+var init_map_class_kind3 = __esm({
+  "src/indexer/parsers/typescript/extractor/class/map-class-kind.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/class/extract-super-types.ts
+function extractSuperTypes3(node) {
+  const result = { interfaces: [] };
+  const heritage = findChildByType3(node, "class_heritage");
+  if (!heritage) return result;
+  const extendsClause = findChildByType3(heritage, "extends_clause");
+  if (extendsClause) {
+    const typeNode = extendsClause.children.find((c) => isTypeNode3(c));
+    const typeArgs = findChildByType3(extendsClause, "type_arguments");
+    if (typeNode) {
+      const baseName = extractFullTypeName2(typeNode);
+      if (typeArgs) {
+        result.superClass = baseName + typeArgs.text;
+      } else {
+        result.superClass = baseName;
+      }
+    }
+  }
+  const implementsClause = findChildByType3(heritage, "implements_clause");
+  if (implementsClause) {
+    for (const child of implementsClause.children) {
+      if (child.type === "implements" || child.type === ",") continue;
+      if (isTypeNode3(child)) {
+        const typeName = extractFullTypeName2(child);
+        if (typeName) {
+          result.interfaces.push(typeName);
+        }
+      }
+    }
+  }
+  return result;
+}
+function extractInterfaceExtends(node) {
+  const interfaces = [];
+  const extendsClause = findChildByType3(node, "extends_type_clause");
+  if (!extendsClause) return interfaces;
+  for (const child of extendsClause.children) {
+    if (child.type === "extends" || child.type === ",") continue;
+    if (isTypeNode3(child)) {
+      const typeName = extractFullTypeName2(child);
+      if (typeName) {
+        interfaces.push(typeName);
+      }
+    }
+  }
+  return interfaces;
+}
+function isTypeNode3(node) {
+  return node.type === "type_identifier" || node.type === "identifier" || node.type === "generic_type" || node.type === "nested_type_identifier" || node.type === "member_expression";
+}
+var init_extract_super_types3 = __esm({
+  "src/indexer/parsers/typescript/extractor/class/extract-super-types.ts"() {
+    "use strict";
+    init_ast_utils3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/property/extract-variable.ts
+function extractVariable(node) {
+  const properties = [];
+  const isConst = node.children.some((c) => c.text === "const");
+  for (const declarator of node.children) {
+    if (declarator.type === "variable_declarator") {
+      const property = extractSingleVariable(declarator, isConst);
+      if (property) {
+        properties.push(property);
+      }
+    }
+  }
+  return properties;
+}
+function extractSingleVariable(declarator, isConst) {
+  const nameNode = findChildByType3(declarator, "identifier");
+  if (!nameNode) return void 0;
+  const typeAnnotation = findChildByType3(declarator, "type_annotation");
+  const initializer = findInitializer(declarator);
+  return {
+    name: nameNode.text,
+    type: extractFullTypeName2(typeAnnotation),
+    visibility: "public",
+    // Top-level variables are effectively public
+    isVal: isConst,
+    // const = immutable, let/var = mutable
+    initializer: initializer?.text,
+    annotations: [],
+    location: nodeLocation3(declarator)
+  };
+}
+function isVariableFunction(declarator) {
+  const initializer = findInitializer(declarator);
+  if (!initializer) return false;
+  return initializer.type === "arrow_function" || initializer.type === "function_expression" || initializer.type === "generator_function";
+}
+var init_extract_variable = __esm({
+  "src/indexer/parsers/typescript/extractor/property/extract-variable.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_extract_type_name3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/property/extract-class-property.ts
+function extractClassProperty(node) {
+  const nameNode = findChildByType3(node, "property_identifier") ?? findChildByType3(node, "private_property_identifier");
+  const name = nameNode?.text ?? "unknown";
+  const modifiers = extractModifiers3(node);
+  const decorators = extractDecorators(node);
+  const typeAnnotation = findChildByType3(node, "type_annotation");
+  let type;
+  if (typeAnnotation) {
+    const typeNode = typeAnnotation.children.find((c) => c.type !== ":");
+    type = extractFullTypeName2(typeNode);
+  }
+  const initializer = findInitializer2(node);
+  const isPrivateField = nameNode?.type === "private_property_identifier";
+  const visibility = isPrivateField ? "private" : modifiers.visibility;
+  const isReadonly = modifiers.isReadonly || node.children.some((c) => c.type === "readonly");
+  return {
+    name: name.replace(/^#/, ""),
+    // Remove # prefix for consistency
+    type,
+    visibility,
+    isVal: isReadonly,
+    // readonly maps to isVal (immutable)
+    initializer: initializer?.text,
+    annotations: decorators,
+    location: nodeLocation3(node)
+  };
+}
+function extractPropertySignature(node) {
+  const nameNode = findChildByType3(node, "property_identifier");
+  const name = nameNode?.text ?? "unknown";
+  const typeAnnotation = findChildByType3(node, "type_annotation");
+  let type;
+  if (typeAnnotation) {
+    const typeNode = typeAnnotation.children.find((c) => c.type !== ":");
+    type = extractFullTypeName2(typeNode);
+  }
+  const isReadonly = node.children.some((c) => c.type === "readonly");
+  return {
+    name,
+    type,
+    visibility: "public",
+    // Interface properties are always public
+    isVal: isReadonly,
+    initializer: void 0,
+    // Interface properties don't have initializers
+    annotations: [],
+    location: nodeLocation3(node)
+  };
+}
+function findInitializer2(node) {
+  let foundEquals = false;
+  for (const child of node.children) {
+    if (foundEquals) {
+      return child;
+    }
+    if (child.type === "=") {
+      foundEquals = true;
+    }
+  }
+  return void 0;
+}
+var init_extract_class_property = __esm({
+  "src/indexer/parsers/typescript/extractor/property/extract-class-property.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_modifiers3();
+    init_decorators();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/property/index.ts
+var init_property3 = __esm({
+  "src/indexer/parsers/typescript/extractor/property/index.ts"() {
+    "use strict";
+    init_extract_variable();
+    init_extract_class_property();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/calls/type-inference/is-expression-type.ts
+function isExpressionType2(type) {
+  return expressionTypes2.includes(type);
+}
+var expressionTypes2;
+var init_is_expression_type2 = __esm({
+  "src/indexer/parsers/typescript/extractor/calls/type-inference/is-expression-type.ts"() {
+    "use strict";
+    expressionTypes2 = [
+      // Literals
+      "number",
+      "string",
+      "true",
+      "false",
+      "null",
+      "undefined",
+      "regex",
+      "template_string",
+      // Expressions
+      "identifier",
+      "call_expression",
+      "member_expression",
+      "subscript_expression",
+      "new_expression",
+      "await_expression",
+      "unary_expression",
+      "binary_expression",
+      "ternary_expression",
+      "update_expression",
+      "assignment_expression",
+      "augmented_assignment_expression",
+      "parenthesized_expression",
+      "arrow_function",
+      "function_expression",
+      "class_expression",
+      "object",
+      "array",
+      "spread_element",
+      "yield_expression",
+      "as_expression",
+      "satisfies_expression",
+      "non_null_expression",
+      "type_assertion"
+    ];
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/calls/type-inference/find-first-expression.ts
+function findFirstExpression2(node) {
+  for (const child of node.children) {
+    if (child.type === "(" || child.type === ")" || child.type === "," || child.type === "...") {
+      continue;
+    }
+    if (isExpressionType2(child.type)) {
+      return child;
+    }
+    if (child.type === "spread_element") {
+      for (const spreadChild of child.children) {
+        if (isExpressionType2(spreadChild.type)) {
+          return spreadChild;
+        }
+      }
+    }
+  }
+  return void 0;
+}
+var init_find_first_expression2 = __esm({
+  "src/indexer/parsers/typescript/extractor/calls/type-inference/find-first-expression.ts"() {
+    "use strict";
+    init_is_expression_type2();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/calls/type-inference/infer-expression-type.ts
+function inferExpressionType2(expression) {
+  switch (expression.type) {
+    // Numeric literals
+    case "number":
+      return inferNumberType(expression.text);
+    // String literals
+    case "string":
+    case "template_string":
+      return "string";
+    // Boolean literals
+    case "true":
+    case "false":
+      return "boolean";
+    // Null and undefined
+    case "null":
+      return "null";
+    case "undefined":
+      return "undefined";
+    // Regex
+    case "regex":
+      return "RegExp";
+    // Array literal
+    case "array":
+      return inferArrayType(expression);
+    // Object literal
+    case "object":
+      return "object";
+    // Arrow function or function expression
+    case "arrow_function":
+    case "function_expression":
+      return "Function";
+    // Class expression
+    case "class_expression":
+      return "Function";
+    // Classes are functions in JS/TS
+    // New expression - returns instance of the class
+    case "new_expression":
+      return inferNewExpressionType(expression);
+    // Await expression - unwrap the promise type
+    case "await_expression":
+      return "unknown";
+    // Would need full type system to resolve
+    // Parenthesized expression - unwrap
+    case "parenthesized_expression":
+      return inferParenthesizedType(expression);
+    // Binary expressions
+    case "binary_expression":
+      return inferBinaryExpressionType(expression);
+    // Unary expressions
+    case "unary_expression":
+      return inferUnaryExpressionType(expression);
+    // Ternary expression
+    case "ternary_expression":
+      return "unknown";
+    // Would need type unification
+    // Type assertion (as expression)
+    case "as_expression":
+    case "type_assertion":
+      return inferTypeAssertionType(expression);
+    // Satisfies expression - returns the original type
+    case "satisfies_expression":
+      return inferSatisfiesType(expression);
+    // Non-null assertion (x!)
+    case "non_null_expression":
+      return inferNonNullType(expression);
+    // For identifiers, calls, member expressions - need context
+    case "identifier":
+    case "call_expression":
+    case "member_expression":
+    case "subscript_expression":
+      return "unknown";
+    // Default: cannot infer
+    default:
+      return "unknown";
+  }
+}
+function inferNumberType(text) {
+  if (text.endsWith("n")) {
+    return "bigint";
+  }
+  return "number";
+}
+function inferArrayType(node) {
+  const elements = [];
+  for (const child of node.children) {
+    if (child.type === "[" || child.type === "]" || child.type === ",") continue;
+    if (child.type === "spread_element") {
+      return "Array<unknown>";
+    }
+    const elementType = inferExpressionType2(child);
+    if (elementType !== "unknown") {
+      elements.push(elementType);
+    }
+  }
+  if (elements.length === 0) {
+    return "Array<unknown>";
+  }
+  const uniqueTypes = [...new Set(elements)];
+  if (uniqueTypes.length === 1 && uniqueTypes[0]) {
+    return `Array<${uniqueTypes[0]}>`;
+  }
+  return "Array<unknown>";
+}
+function inferNewExpressionType(node) {
+  for (const child of node.children) {
+    if (child.type === "identifier") {
+      return child.text;
+    }
+    if (child.type === "member_expression") {
+      const parts = extractMemberExpressionParts(child);
+      return parts[parts.length - 1] ?? "unknown";
+    }
+  }
+  return "unknown";
+}
+function extractMemberExpressionParts(node) {
+  const parts = [];
+  let current = node;
+  while (current) {
+    if (current.type === "member_expression") {
+      for (const child of current.children) {
+        if (child.type === "property_identifier") {
+          parts.unshift(child.text);
+        }
+      }
+      current = current.children[0];
+    } else if (current.type === "identifier") {
+      parts.unshift(current.text);
+      break;
+    } else {
+      break;
+    }
+  }
+  return parts;
+}
+function inferParenthesizedType(node) {
+  for (const child of node.children) {
+    if (child.type !== "(" && child.type !== ")") {
+      return inferExpressionType2(child);
+    }
+  }
+  return "unknown";
+}
+function inferBinaryExpressionType(node) {
+  let operator;
+  for (const child of node.children) {
+    if (child.type === "+" || child.type === "-" || child.type === "*" || child.type === "/" || child.type === "%" || child.type === "**" || child.type === "==" || child.type === "!=" || child.type === "===" || child.type === "!==" || child.type === "<" || child.type === ">" || child.type === "<=" || child.type === ">=" || child.type === "&&" || child.type === "||" || child.type === "??" || child.type === "&" || child.type === "|" || child.type === "^" || child.type === "<<" || child.type === ">>" || child.type === ">>>" || child.type === "instanceof" || child.type === "in") {
+      operator = child.type;
+      break;
+    }
+  }
+  if (!operator) return "unknown";
+  if (["==", "!=", "===", "!==", "<", ">", "<=", ">=", "&&", "||", "instanceof", "in"].includes(
+    operator
+  )) {
+    return "boolean";
+  }
+  if (operator === "??") {
+    return "unknown";
+  }
+  if (["+", "-", "*", "/", "%", "**"].includes(operator)) {
+    if (operator === "+") {
+      const left = node.children[0];
+      const right = node.children[2];
+      if (left && right) {
+        const leftType = inferExpressionType2(left);
+        const rightType = inferExpressionType2(right);
+        if (leftType === "string" || rightType === "string") {
+          return "string";
+        }
+      }
+    }
+    return "number";
+  }
+  if (["&", "|", "^", "<<", ">>", ">>>"].includes(operator)) {
+    return "number";
+  }
+  return "unknown";
+}
+function inferUnaryExpressionType(node) {
+  let operator;
+  for (const child of node.children) {
+    if (child.type === "!" || child.type === "~" || child.type === "+" || child.type === "-" || child.type === "typeof" || child.type === "void" || child.type === "delete") {
+      operator = child.type;
+      break;
+    }
+  }
+  if (!operator) return "unknown";
+  switch (operator) {
+    case "!":
+      return "boolean";
+    case "~":
+    case "+":
+    case "-":
+      return "number";
+    case "typeof":
+      return "string";
+    case "void":
+      return "undefined";
+    case "delete":
+      return "boolean";
+    default:
+      return "unknown";
+  }
+}
+function inferTypeAssertionType(node) {
+  for (const child of node.children) {
+    if (child.type === "type_identifier") {
+      return child.text;
+    }
+    if (child.type === "generic_type") {
+      for (const genericChild of child.children) {
+        if (genericChild.type === "type_identifier") {
+          return genericChild.text;
+        }
+      }
+    }
+    if (child.type === "predefined_type") {
+      return child.text;
+    }
+  }
+  return "unknown";
+}
+function inferSatisfiesType(node) {
+  const expression = node.children[0];
+  if (expression) {
+    return inferExpressionType2(expression);
+  }
+  return "unknown";
+}
+function inferNonNullType(node) {
+  const expression = node.children[0];
+  if (expression) {
+    return inferExpressionType2(expression);
+  }
+  return "unknown";
+}
+var init_infer_expression_type2 = __esm({
+  "src/indexer/parsers/typescript/extractor/calls/type-inference/infer-expression-type.ts"() {
+    "use strict";
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/calls/type-inference/infer-argument-type.ts
+function inferArgumentType2(argumentNode) {
+  if (argumentNode.type === "number" || argumentNode.type === "string" || argumentNode.type === "true" || argumentNode.type === "false" || argumentNode.type === "null" || argumentNode.type === "undefined" || argumentNode.type === "identifier" || argumentNode.type === "array" || argumentNode.type === "object" || argumentNode.type === "arrow_function" || argumentNode.type === "function_expression" || argumentNode.type === "call_expression" || argumentNode.type === "member_expression" || argumentNode.type === "new_expression" || argumentNode.type === "template_string" || argumentNode.type === "binary_expression" || argumentNode.type === "unary_expression" || argumentNode.type === "ternary_expression" || argumentNode.type === "parenthesized_expression" || argumentNode.type === "as_expression" || argumentNode.type === "await_expression" || argumentNode.type === "regex") {
+    return inferExpressionType2(argumentNode);
+  }
+  const expression = findFirstExpression2(argumentNode);
+  if (!expression) return "unknown";
+  return inferExpressionType2(expression);
+}
+var init_infer_argument_type2 = __esm({
+  "src/indexer/parsers/typescript/extractor/calls/type-inference/infer-argument-type.ts"() {
+    "use strict";
+    init_find_first_expression2();
+    init_infer_expression_type2();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/calls/type-inference/extract-argument-types.ts
+function extractArgumentTypes(args) {
+  const types = [];
+  for (const child of args.children) {
+    if (child.type === "(" || child.type === ")" || child.type === ",") {
+      continue;
+    }
+    const argType = inferArgumentType2(child);
+    types.push(argType);
+  }
+  return types;
+}
+var init_extract_argument_types = __esm({
+  "src/indexer/parsers/typescript/extractor/calls/type-inference/extract-argument-types.ts"() {
+    "use strict";
+    init_infer_argument_type2();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/calls/type-inference/index.ts
+var init_type_inference2 = __esm({
+  "src/indexer/parsers/typescript/extractor/calls/type-inference/index.ts"() {
+    "use strict";
+    init_is_expression_type2();
+    init_find_first_expression2();
+    init_infer_expression_type2();
+    init_infer_argument_type2();
+    init_extract_argument_types();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/calls/extract-call-expression.ts
+function extractCallExpression2(node) {
+  const args = findChildByType3(node, "arguments");
+  if (!args) return void 0;
+  const functionNode = node.children[0];
+  if (!functionNode) return void 0;
+  let name;
+  let receiver;
+  let isSafeCall = false;
+  if (functionNode.type === "member_expression") {
+    const { receiverPath, methodName, hasSafeCall } = extractMemberExpression(functionNode);
+    receiver = receiverPath;
+    name = methodName;
+    isSafeCall = hasSafeCall;
+  } else if (functionNode.type === "identifier") {
+    name = functionNode.text;
+  } else if (functionNode.type === "call_expression") {
+    name = "<chained>";
+    receiver = functionNode.text;
+  } else {
+    name = functionNode.text ?? "<unknown>";
+  }
+  const argumentCount = countArguments3(args);
+  const argumentTypes = extractArgumentTypes(args);
+  return {
+    name,
+    receiver,
+    receiverType: void 0,
+    // Will be resolved later
+    argumentCount,
+    argumentTypes: argumentTypes.length > 0 ? argumentTypes : void 0,
+    isSafeCall: isSafeCall || void 0,
+    location: nodeLocation3(node)
+  };
+}
+function extractMemberExpression(node) {
+  let hasSafeCall = false;
+  const parts = [];
+  let current = node;
+  while (current && current.type === "member_expression") {
+    if (current.children.some((c) => c.type === "?.")) {
+      hasSafeCall = true;
+    }
+    const property = findChildByType3(current, "property_identifier");
+    if (property) {
+      parts.unshift(property.text);
+    }
+    const objectNode = current.children[0];
+    if (objectNode?.type === "member_expression") {
+      current = objectNode;
+    } else {
+      if (objectNode) {
+        parts.unshift(objectNode.text);
+      }
+      break;
+    }
+  }
+  const methodName = parts.pop() ?? "<unknown>";
+  const receiverPath = parts.length > 0 ? parts.join(".") : void 0;
+  return { receiverPath, methodName, hasSafeCall };
+}
+function countArguments3(args) {
+  let count = 0;
+  for (const child of args.children) {
+    if (child.type !== "(" && child.type !== ")" && child.type !== ",") {
+      count++;
+    }
+  }
+  return count;
+}
+var init_extract_call_expression2 = __esm({
+  "src/indexer/parsers/typescript/extractor/calls/extract-call-expression.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_type_inference2();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/calls/extract-new-expression.ts
+function extractNewExpression(node) {
+  let constructorNode;
+  for (const child of node.children) {
+    if (child.type !== "new" && child.type !== "type_arguments" && child.type !== "arguments") {
+      constructorNode = child;
+      break;
+    }
+  }
+  if (!constructorNode) return void 0;
+  let name;
+  let receiver;
+  if (constructorNode.type === "identifier") {
+    name = constructorNode.text;
+  } else if (constructorNode.type === "member_expression") {
+    const { receiverPath, className } = extractMemberExpressionForNew(constructorNode);
+    name = className;
+    receiver = receiverPath;
+  } else {
+    name = constructorNode.text ?? "<unknown>";
+  }
+  const args = findChildByType3(node, "arguments");
+  const argumentCount = args ? countArguments4(args) : 0;
+  const argumentTypes = args ? extractArgumentTypes(args) : [];
+  return {
+    name,
+    receiver,
+    receiverType: void 0,
+    // Will be resolved later
+    argumentCount,
+    argumentTypes: argumentTypes.length > 0 ? argumentTypes : void 0,
+    isConstructorCall: true,
+    location: nodeLocation3(node)
+  };
+}
+function extractMemberExpressionForNew(node) {
+  const parts = [];
+  let current = node;
+  while (current && current.type === "member_expression") {
+    const property = findChildByType3(current, "property_identifier");
+    if (property) {
+      parts.unshift(property.text);
+    }
+    const objectNode = current.children[0];
+    if (objectNode?.type === "member_expression") {
+      current = objectNode;
+    } else {
+      if (objectNode) {
+        parts.unshift(objectNode.text);
+      }
+      break;
+    }
+  }
+  const className = parts.pop() ?? "<unknown>";
+  const receiverPath = parts.length > 0 ? parts.join(".") : void 0;
+  return { receiverPath, className };
+}
+function countArguments4(args) {
+  let count = 0;
+  for (const child of args.children) {
+    if (child.type !== "(" && child.type !== ")" && child.type !== ",") {
+      count++;
+    }
+  }
+  return count;
+}
+var init_extract_new_expression = __esm({
+  "src/indexer/parsers/typescript/extractor/calls/extract-new-expression.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_type_inference2();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/calls/extract-calls.ts
+function extractCalls3(body) {
+  const calls = [];
+  traverseNode3(body, (node) => {
+    if (node.type === "call_expression") {
+      const call = extractCallExpression2(node);
+      if (call) {
+        calls.push(call);
+      }
+    } else if (node.type === "new_expression") {
+      const call = extractNewExpression(node);
+      if (call) {
+        calls.push(call);
+      }
+    }
+  });
+  return calls;
+}
+var init_extract_calls3 = __esm({
+  "src/indexer/parsers/typescript/extractor/calls/extract-calls.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_extract_call_expression2();
+    init_extract_new_expression();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/calls/index.ts
+var init_calls3 = __esm({
+  "src/indexer/parsers/typescript/extractor/calls/index.ts"() {
+    "use strict";
+    init_extract_call_expression2();
+    init_extract_calls3();
+    init_extract_new_expression();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/function/extract-parameters.ts
+function extractParameters3(params) {
+  const result = [];
+  for (const child of params.children) {
+    switch (child.type) {
+      case "required_parameter":
+        result.push(extractRequiredParameter(child));
+        break;
+      case "optional_parameter":
+        result.push(extractOptionalParameter(child));
+        break;
+      case "rest_parameter":
+        result.push(extractRestParameter(child));
+        break;
+    }
+  }
+  return result;
+}
+function extractRequiredParameter(node) {
+  const restPattern = findChildByType3(node, "rest_pattern");
+  if (restPattern) {
+    return extractRestPatternParameter(restPattern, node);
+  }
+  const nameNode = findChildByType3(node, "identifier") ?? findChildByType3(node, "shorthand_property_identifier_pattern");
+  const typeAnnotation = findChildByType3(node, "type_annotation");
+  const initializer = findInitializer3(node);
+  const decorators = extractDecorators(node);
+  return {
+    name: nameNode?.text ?? "unknown",
+    type: extractFullTypeName2(typeAnnotation),
+    // A required parameter with an initializer becomes optional
+    defaultValue: initializer?.text,
+    annotations: decorators
+  };
+}
+function extractRestPatternParameter(restPattern, parentNode) {
+  const nameNode = findChildByType3(restPattern, "identifier");
+  const typeAnnotation = findChildByType3(parentNode, "type_annotation");
+  const decorators = extractDecorators(parentNode);
+  return {
+    name: nameNode?.text ?? "rest",
+    type: extractFullTypeName2(typeAnnotation),
+    defaultValue: void 0,
+    annotations: decorators
+  };
+}
+function extractOptionalParameter(node) {
+  const nameNode = findChildByType3(node, "identifier") ?? findChildByType3(node, "shorthand_property_identifier_pattern");
+  const typeAnnotation = findChildByType3(node, "type_annotation");
+  const initializer = findInitializer3(node);
+  const decorators = extractDecorators(node);
+  return {
+    name: nameNode?.text ?? "unknown",
+    type: extractFullTypeName2(typeAnnotation),
+    defaultValue: initializer?.text,
+    annotations: decorators
+  };
+}
+function extractRestParameter(node) {
+  const nameNode = findChildByType3(node, "identifier");
+  const typeAnnotation = findChildByType3(node, "type_annotation");
+  const decorators = extractDecorators(node);
+  return {
+    name: nameNode?.text ?? "rest",
+    type: extractFullTypeName2(typeAnnotation),
+    defaultValue: void 0,
+    annotations: decorators
+  };
+}
+function findInitializer3(node) {
+  let foundEquals = false;
+  for (const child of node.children) {
+    if (foundEquals) {
+      return child;
+    }
+    if (child.type === "=") {
+      foundEquals = true;
+    }
+  }
+  return void 0;
+}
+var init_extract_parameters3 = __esm({
+  "src/indexer/parsers/typescript/extractor/function/extract-parameters.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_extract_type_name3();
+    init_decorators();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/function/extract-return-type.ts
+function extractReturnType3(node) {
+  let foundParams = false;
+  for (const child of node.children) {
+    if (child.type === "formal_parameters") {
+      foundParams = true;
+      continue;
+    }
+    if (foundParams && child.type === "type_annotation") {
+      return extractFullTypeName2(child);
+    }
+    if (child.type === "statement_block" || child.type === "=>") {
+      break;
+    }
+  }
+  return void 0;
+}
+function extractArrowReturnType(arrowFunc) {
+  let foundParams = false;
+  for (const child of arrowFunc.children) {
+    if (child.type === "formal_parameters") {
+      foundParams = true;
+      continue;
+    }
+    if (foundParams && child.type === "type_annotation") {
+      return extractFullTypeName2(child);
+    }
+    if (child.type === "=>") {
+      break;
+    }
+  }
+  return void 0;
+}
+var init_extract_return_type3 = __esm({
+  "src/indexer/parsers/typescript/extractor/function/extract-return-type.ts"() {
+    "use strict";
+    init_extract_type_name3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/function/extract-function.ts
+function extractFunction2(node) {
+  const nameNode = findChildByType3(node, "identifier");
+  const name = nameNode?.text ?? "<anonymous>";
+  const modifiers = extractModifiers3(node);
+  const decorators = extractDecorators(node);
+  const typeParameters = extractTypeParameters3(node);
+  const params = findChildByType3(node, "formal_parameters");
+  const parameters = params ? extractParameters3(params) : [];
+  const returnType = extractReturnType3(node);
+  const body = findChildByType3(node, "statement_block");
+  const calls = body ? extractCalls3(body) : [];
+  const isAsync = node.children.some((c) => c.type === "async");
+  return {
+    name,
+    visibility: modifiers.visibility,
+    parameters,
+    returnType,
+    isAbstract: modifiers.isAbstract,
+    isSuspend: isAsync,
+    // Map async to isSuspend for consistency with Kotlin
+    isExtension: false,
+    // TypeScript doesn't have extension functions
+    receiverType: void 0,
+    isInline: void 0,
+    // TypeScript doesn't have inline functions
+    isInfix: void 0,
+    // TypeScript doesn't have infix functions
+    isOperator: void 0,
+    // TypeScript doesn't have operator functions
+    typeParameters: typeParameters.length > 0 ? typeParameters : void 0,
+    annotations: decorators,
+    location: nodeLocation3(node),
+    calls
+  };
+}
+function extractMethod2(node) {
+  const nameNode = findChildByType3(node, "property_identifier") ?? findChildByType3(node, "private_property_identifier");
+  const name = nameNode?.text?.replace(/^#/, "") ?? "<anonymous>";
+  const modifiers = extractModifiers3(node);
+  const decorators = extractDecorators(node);
+  const typeParameters = extractTypeParameters3(node);
+  const params = findChildByType3(node, "formal_parameters");
+  const parameters = params ? extractParameters3(params) : [];
+  const returnType = extractReturnType3(node);
+  const body = findChildByType3(node, "statement_block");
+  const calls = body ? extractCalls3(body) : [];
+  const isAsync = node.children.some((c) => c.type === "async");
+  const isAbstractNode = node.type === "abstract_method_signature";
+  const hasAbstractKeyword = node.children.some((c) => c.type === "abstract");
+  const isAbstract2 = modifiers.isAbstract || isAbstractNode || hasAbstractKeyword;
+  const isPrivateField = nameNode?.type === "private_property_identifier";
+  const visibility = isPrivateField ? "private" : modifiers.visibility;
+  return {
+    name,
+    visibility,
+    parameters,
+    returnType,
+    isAbstract: isAbstract2,
+    isSuspend: isAsync,
+    isExtension: false,
+    receiverType: void 0,
+    isInline: void 0,
+    isInfix: void 0,
+    isOperator: void 0,
+    typeParameters: typeParameters.length > 0 ? typeParameters : void 0,
+    annotations: decorators,
+    location: nodeLocation3(node),
+    calls
+  };
+}
+function extractFunctionSignature(node) {
+  const nameNode = findChildByType3(node, "identifier");
+  const name = nameNode?.text ?? "<anonymous>";
+  const modifiers = extractModifiers3(node);
+  const decorators = extractDecorators(node);
+  const typeParameters = extractTypeParameters3(node);
+  const params = findChildByType3(node, "formal_parameters");
+  const parameters = params ? extractParameters3(params) : [];
+  const returnType = extractReturnType3(node);
+  const isAsync = node.children.some((c) => c.type === "async");
+  return {
+    name,
+    visibility: modifiers.visibility,
+    parameters,
+    returnType,
+    isAbstract: false,
+    isSuspend: isAsync,
+    isExtension: false,
+    receiverType: void 0,
+    isInline: void 0,
+    isInfix: void 0,
+    isOperator: void 0,
+    typeParameters: typeParameters.length > 0 ? typeParameters : void 0,
+    annotations: decorators,
+    location: nodeLocation3(node),
+    calls: [],
+    // Signatures have no body, so no calls
+    isOverloadSignature: true
+  };
+}
+function extractMethodSignature(node) {
+  const nameNode = findChildByType3(node, "property_identifier") ?? findChildByType3(node, "private_property_identifier");
+  const name = nameNode?.text?.replace(/^#/, "") ?? "<anonymous>";
+  const modifiers = extractModifiers3(node);
+  const decorators = extractDecorators(node);
+  const typeParameters = extractTypeParameters3(node);
+  const params = findChildByType3(node, "formal_parameters");
+  const parameters = params ? extractParameters3(params) : [];
+  const returnType = extractReturnType3(node);
+  const isAsync = node.children.some((c) => c.type === "async");
+  const isPrivateField = nameNode?.type === "private_property_identifier";
+  const visibility = isPrivateField ? "private" : modifiers.visibility;
+  return {
+    name,
+    visibility,
+    parameters,
+    returnType,
+    isAbstract: false,
+    isSuspend: isAsync,
+    isExtension: false,
+    receiverType: void 0,
+    isInline: void 0,
+    isInfix: void 0,
+    isOperator: void 0,
+    typeParameters: typeParameters.length > 0 ? typeParameters : void 0,
+    annotations: decorators,
+    location: nodeLocation3(node),
+    calls: [],
+    // Signatures have no body, so no calls
+    isOverloadSignature: true
+  };
+}
+function toOverloadSignature(func) {
+  return {
+    parameters: func.parameters,
+    returnType: func.returnType,
+    typeParameters: func.typeParameters,
+    location: func.location
+  };
+}
+function linkOverloadsToImplementations(functions) {
+  const byName = /* @__PURE__ */ new Map();
+  for (const func of functions) {
+    const existing = byName.get(func.name) ?? [];
+    existing.push(func);
+    byName.set(func.name, existing);
+  }
+  const result = [];
+  for (const [, funcs] of byName) {
+    if (funcs.length === 1) {
+      result.push(funcs[0]);
+      continue;
+    }
+    const signatures = funcs.filter((f) => f.isOverloadSignature);
+    const implementations = funcs.filter((f) => !f.isOverloadSignature);
+    if (implementations.length === 1 && signatures.length > 0) {
+      const impl = implementations[0];
+      impl.overloads = signatures.map(toOverloadSignature);
+      result.push(impl);
+    } else if (implementations.length === 0 && signatures.length > 0) {
+      result.push(...signatures);
+    } else {
+      result.push(...funcs);
+    }
+  }
+  return result;
+}
+var init_extract_function2 = __esm({
+  "src/indexer/parsers/typescript/extractor/function/extract-function.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_modifiers3();
+    init_decorators();
+    init_generics3();
+    init_calls3();
+    init_extract_parameters3();
+    init_extract_return_type3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/function/extract-arrow-function.ts
+function extractArrowFunction(declarator, arrowFunc) {
+  const nameNode = findChildByType3(declarator, "identifier");
+  const name = nameNode?.text ?? "<anonymous>";
+  const isAsync = arrowFunc.children.some((c) => c.type === "async");
+  const typeParameters = extractTypeParameters3(arrowFunc);
+  const paramsNode = findChildByType3(arrowFunc, "formal_parameters");
+  let parameters;
+  if (paramsNode) {
+    parameters = extractParameters3(paramsNode);
+  } else {
+    const singleParam = arrowFunc.children.find((c) => c.type === "identifier" && c.nextSibling?.type === "=>");
+    if (singleParam) {
+      parameters = [
+        {
+          name: singleParam.text,
+          type: void 0,
+          defaultValue: void 0,
+          annotations: []
+        }
+      ];
+    } else {
+      parameters = [];
+    }
+  }
+  const returnType = extractArrowReturnType(arrowFunc);
+  const body = findChildByType3(arrowFunc, "statement_block") ?? arrowFunc.children.find(
+    (c) => c.type !== "formal_parameters" && c.type !== "=>" && c.type !== "type_annotation" && c.type !== "type_parameters" && c.type !== "async" && c.type !== "identifier"
+  );
+  const calls = body ? extractCalls3(body) : [];
+  return {
+    name,
+    visibility: "public",
+    // Variables don't have visibility modifiers
+    parameters,
+    returnType,
+    isAbstract: false,
+    isSuspend: isAsync,
+    isExtension: false,
+    receiverType: void 0,
+    isInline: void 0,
+    isInfix: void 0,
+    isOperator: void 0,
+    typeParameters: typeParameters.length > 0 ? typeParameters : void 0,
+    annotations: [],
+    location: nodeLocation3(arrowFunc),
+    calls
+  };
+}
+function isArrowFunctionDeclarator(declarator) {
+  return !!findChildByType3(declarator, "arrow_function");
+}
+function getArrowFunction(declarator) {
+  return findChildByType3(declarator, "arrow_function");
+}
+var init_extract_arrow_function = __esm({
+  "src/indexer/parsers/typescript/extractor/function/extract-arrow-function.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_generics3();
+    init_calls3();
+    init_extract_parameters3();
+    init_extract_return_type3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/function/index.ts
+var init_function3 = __esm({
+  "src/indexer/parsers/typescript/extractor/function/index.ts"() {
+    "use strict";
+    init_extract_function2();
+    init_extract_arrow_function();
+    init_extract_parameters3();
+    init_extract_return_type3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/class/extract-constructor-properties.ts
+function isParameterProperty(paramNode) {
+  return paramNode.children.some(
+    (child) => child.type === "accessibility_modifier" || child.type === "readonly"
+  );
+}
+function extractParameterVisibility(paramNode) {
+  const accessibilityModifier = findChildByType3(paramNode, "accessibility_modifier");
+  if (accessibilityModifier) {
+    const modifier = accessibilityModifier.text;
+    if (modifier === "private") return "private";
+    if (modifier === "protected") return "protected";
+  }
+  return "public";
+}
+function isReadonlyParameter(paramNode) {
+  return paramNode.children.some((child) => child.type === "readonly");
+}
+function extractParameterProperty(paramNode) {
+  const nameNode = findChildByType3(paramNode, "identifier");
+  const name = nameNode?.text ?? "unknown";
+  const typeAnnotation = findChildByType3(paramNode, "type_annotation");
+  const type = extractFullTypeName2(typeAnnotation);
+  const visibility = extractParameterVisibility(paramNode);
+  const isReadonly = isReadonlyParameter(paramNode);
+  const decorators = extractDecorators(paramNode);
+  let initializer;
+  let foundEquals = false;
+  for (const child of paramNode.children) {
+    if (foundEquals) {
+      initializer = child.text;
+      break;
+    }
+    if (child.type === "=") {
+      foundEquals = true;
+    }
+  }
+  return {
+    name,
+    type,
+    visibility,
+    isVal: isReadonly,
+    initializer,
+    annotations: decorators,
+    location: nodeLocation3(paramNode)
+  };
+}
+function extractConstructorProperties(classBody) {
+  if (!classBody) {
+    return [];
+  }
+  const properties = [];
+  for (const child of classBody.children) {
+    if (child.type === "method_definition") {
+      const nameNode = findChildByType3(child, "property_identifier");
+      if (nameNode?.text === "constructor") {
+        const formalParams = findChildByType3(child, "formal_parameters");
+        if (formalParams) {
+          for (const param of formalParams.children) {
+            if ((param.type === "required_parameter" || param.type === "optional_parameter") && isParameterProperty(param)) {
+              properties.push(extractParameterProperty(param));
+            }
+          }
+        }
+        break;
+      }
+    }
+  }
+  return properties;
+}
+var init_extract_constructor_properties = __esm({
+  "src/indexer/parsers/typescript/extractor/class/extract-constructor-properties.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_decorators();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/class/extract-class-body.ts
+function extractClassBody3(classBody, extractClass4) {
+  const functions = [];
+  const nestedClasses = [];
+  if (!classBody) {
+    return { properties: [], functions, nestedClasses };
+  }
+  const constructorProperties = extractConstructorProperties(classBody);
+  const properties = [...constructorProperties];
+  let pendingDecorators = [];
+  for (const child of classBody.children) {
+    switch (child.type) {
+      // Decorators - collect them for the next declaration
+      case "decorator": {
+        const singleDecorator = extractSingleDecorator(child);
+        if (singleDecorator) {
+          pendingDecorators.push(singleDecorator);
+        }
+        break;
+      }
+      // Property definitions
+      case "public_field_definition":
+      case "field_definition": {
+        const property = extractClassProperty(child);
+        property.annotations = [...pendingDecorators, ...property.annotations];
+        properties.push(property);
+        pendingDecorators = [];
+        break;
+      }
+      // Method definitions
+      case "method_definition": {
+        const method = extractMethod2(child);
+        method.annotations = [...pendingDecorators, ...method.annotations];
+        functions.push(method);
+        pendingDecorators = [];
+        break;
+      }
+      // Abstract method signatures
+      case "abstract_method_signature": {
+        const method = extractMethod2(child);
+        method.annotations = [...pendingDecorators, ...method.annotations];
+        functions.push(method);
+        pendingDecorators = [];
+        break;
+      }
+      // Method overload signatures (non-abstract)
+      case "method_signature": {
+        const method = extractMethodSignature(child);
+        method.annotations = [...pendingDecorators, ...method.annotations];
+        functions.push(method);
+        pendingDecorators = [];
+        break;
+      }
+      // Getter/setter (treat as methods for now)
+      case "getter_declaration":
+      case "setter_declaration": {
+        const method = extractMethod2(child);
+        method.annotations = [...pendingDecorators, ...method.annotations];
+        functions.push(method);
+        pendingDecorators = [];
+        break;
+      }
+      // Nested type declarations
+      case "class_declaration":
+      case "abstract_class_declaration":
+      case "interface_declaration":
+      case "enum_declaration":
+        nestedClasses.push(extractClass4(child));
+        pendingDecorators = [];
+        break;
+      // Constructor - will be handled separately in extract-class.ts
+      case "constructor_declaration":
+        pendingDecorators = [];
+        break;
+      // Static blocks (TypeScript 4.4+)
+      case "static_block":
+        pendingDecorators = [];
+        break;
+      // Punctuation and comments
+      case ";":
+      case "{":
+      case "}":
+      case "comment":
+        break;
+    }
+  }
+  const linkedFunctions = linkOverloadsToImplementations(functions);
+  return { properties, functions: linkedFunctions, nestedClasses };
+}
+var init_extract_class_body3 = __esm({
+  "src/indexer/parsers/typescript/extractor/class/extract-class-body.ts"() {
+    "use strict";
+    init_property3();
+    init_function3();
+    init_extract_constructor_properties();
+    init_decorators();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/class/extract-class.ts
+function extractClass3(node) {
+  const kind = mapClassKind3(node);
+  const nameNode = findChildByType3(node, "type_identifier");
+  const name = nameNode?.text ?? "<anonymous>";
+  const modifiers = extractModifiers3(node);
+  const decorators = extractDecorators(node);
+  const isAbstract2 = isAbstractClass(node);
+  const typeParameters = extractTypeParameters3(node);
+  const { superClass, interfaces } = extractSuperTypes3(node);
+  const classBody = findChildByType3(node, "class_body");
+  const recursiveExtractClass = (n) => extractClass3(n);
+  const { properties, functions, nestedClasses } = extractClassBody3(classBody, recursiveExtractClass);
+  return {
+    name,
+    kind,
+    visibility: modifiers.visibility,
+    isAbstract: isAbstract2,
+    isData: false,
+    // TypeScript doesn't have data classes
+    isSealed: false,
+    // TypeScript doesn't have sealed classes
+    superClass,
+    interfaces,
+    typeParameters: typeParameters.length > 0 ? typeParameters : void 0,
+    annotations: decorators,
+    properties,
+    functions,
+    nestedClasses,
+    companionObject: void 0,
+    // TypeScript doesn't have companion objects
+    secondaryConstructors: void 0,
+    // TypeScript classes have single constructor
+    location: nodeLocation3(node)
+  };
+}
+var init_extract_class3 = __esm({
+  "src/indexer/parsers/typescript/extractor/class/extract-class.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_modifiers3();
+    init_decorators();
+    init_generics3();
+    init_map_class_kind3();
+    init_extract_super_types3();
+    init_extract_class_body3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/class/extract-interface-body.ts
+function extractInterfaceBody(interfaceBody) {
+  const properties = [];
+  const functions = [];
+  if (!interfaceBody) {
+    return { properties, functions };
+  }
+  for (const child of interfaceBody.children) {
+    switch (child.type) {
+      // Property signatures
+      case "property_signature":
+        properties.push(extractPropertySignature(child));
+        break;
+      // Method signatures
+      case "method_signature":
+        functions.push(extractMethodSignature(child));
+        break;
+      // Call signatures (callable interface)
+      case "call_signature":
+        functions.push({
+          name: "[[call]]",
+          visibility: "public",
+          parameters: [],
+          // Would need proper extraction
+          isAbstract: true,
+          isSuspend: false,
+          isExtension: false,
+          annotations: [],
+          location: nodeLocation3(child),
+          calls: []
+        });
+        break;
+      // Construct signatures (newable interface)
+      case "construct_signature":
+        functions.push({
+          name: "[[construct]]",
+          visibility: "public",
+          parameters: [],
+          isAbstract: true,
+          isSuspend: false,
+          isExtension: false,
+          annotations: [],
+          location: nodeLocation3(child),
+          calls: []
+        });
+        break;
+      // Index signatures [key: string]: value
+      case "index_signature":
+        properties.push({
+          name: "[[index]]",
+          type: child.text,
+          visibility: "public",
+          isVal: false,
+          annotations: [],
+          location: nodeLocation3(child)
+        });
+        break;
+      // Punctuation and comments
+      case ";":
+      case "{":
+      case "}":
+      case ",":
+      case "comment":
+        break;
+    }
+  }
+  return { properties, functions };
+}
+var init_extract_interface_body = __esm({
+  "src/indexer/parsers/typescript/extractor/class/extract-interface-body.ts"() {
+    "use strict";
+    init_property3();
+    init_function3();
+    init_ast_utils3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/class/extract-interface.ts
+function extractInterface(node) {
+  const nameNode = findChildByType3(node, "type_identifier");
+  const name = nameNode?.text ?? "<anonymous>";
+  const modifiers = extractModifiers3(node);
+  const typeParameters = extractTypeParameters3(node);
+  const interfaces = extractInterfaceExtends(node);
+  const interfaceBody = findChildByType3(node, "interface_body") ?? findChildByType3(node, "object_type");
+  const { properties, functions } = extractInterfaceBody(interfaceBody);
+  return {
+    name,
+    kind: "interface",
+    visibility: modifiers.visibility,
+    isAbstract: true,
+    // Interfaces are implicitly abstract
+    isData: false,
+    isSealed: false,
+    superClass: void 0,
+    // Interfaces don't have a superclass
+    interfaces,
+    typeParameters: typeParameters.length > 0 ? typeParameters : void 0,
+    annotations: [],
+    // TypeScript interfaces can't have decorators
+    properties,
+    functions,
+    nestedClasses: [],
+    // TypeScript interfaces can't have nested classes
+    companionObject: void 0,
+    secondaryConstructors: void 0,
+    location: nodeLocation3(node)
+  };
+}
+var init_extract_interface = __esm({
+  "src/indexer/parsers/typescript/extractor/class/extract-interface.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_modifiers3();
+    init_generics3();
+    init_extract_super_types3();
+    init_extract_interface_body();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/class/extract-enum.ts
+function extractEnum(node) {
+  const nameNode = findChildByType3(node, "identifier");
+  const name = nameNode?.text ?? "<anonymous>";
+  const modifiers = extractModifiers3(node);
+  const isConst = node.children.some((c) => c.type === "const");
+  const enumBody = findChildByType3(node, "enum_body");
+  const properties = extractEnumMembers(enumBody);
+  return {
+    name,
+    kind: "enum",
+    visibility: modifiers.visibility,
+    isAbstract: false,
+    isData: false,
+    isSealed: isConst,
+    // Use isSealed to indicate const enum
+    superClass: void 0,
+    interfaces: [],
+    typeParameters: void 0,
+    annotations: [],
+    // TypeScript enums can't have decorators
+    properties,
+    functions: [],
+    nestedClasses: [],
+    companionObject: void 0,
+    secondaryConstructors: void 0,
+    location: nodeLocation3(node)
+  };
+}
+function extractEnumMembers(enumBody) {
+  const members = [];
+  if (!enumBody) return members;
+  for (const child of enumBody.children) {
+    if (child.type === "{" || child.type === "}" || child.type === ",") continue;
+    if (child.type === "enum_assignment") {
+      const nameNode = findChildByType3(child, "property_identifier") ?? findChildByType3(child, "identifier");
+      const name = nameNode?.text ?? "<unknown>";
+      const valueNode = child.children.find(
+        (c) => c.type !== "=" && c.type !== "property_identifier" && c.type !== "identifier" && c.type !== "comment"
+      );
+      members.push({
+        name,
+        type: "number",
+        // TypeScript enum values are typically numbers
+        visibility: "public",
+        isVal: true,
+        // Enum members are readonly
+        initializer: valueNode?.text,
+        annotations: [],
+        location: nodeLocation3(child)
+      });
+    } else if (child.type === "property_identifier" || child.type === "identifier") {
+      members.push({
+        name: child.text,
+        type: "number",
+        visibility: "public",
+        isVal: true,
+        initializer: void 0,
+        annotations: [],
+        location: nodeLocation3(child)
+      });
+    }
+  }
+  return members;
+}
+var init_extract_enum = __esm({
+  "src/indexer/parsers/typescript/extractor/class/extract-enum.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_modifiers3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/destructuring/extract-destructuring.ts
+function isDestructuringDeclarator(declarator) {
+  const pattern = findChildByType3(declarator, "object_pattern") ?? findChildByType3(declarator, "array_pattern");
+  return pattern !== void 0;
+}
+function extractDestructuring(declarationNode, declarator) {
+  const objectPattern = findChildByType3(declarator, "object_pattern");
+  const arrayPattern = findChildByType3(declarator, "array_pattern");
+  if (!objectPattern && !arrayPattern) {
+    return void 0;
+  }
+  const pattern = objectPattern ?? arrayPattern;
+  const isObjectDestructuring = objectPattern !== void 0;
+  const componentNames = [];
+  const componentTypes = [];
+  if (isObjectDestructuring) {
+    extractObjectPatternComponents(pattern, componentNames, componentTypes);
+  } else {
+    extractArrayPatternComponents(pattern, componentNames, componentTypes);
+  }
+  if (componentNames.length === 0) {
+    return void 0;
+  }
+  const isConst = declarationNode.children.some((c) => c.text === "const");
+  const typeAnnotation = findChildByType3(declarator, "type_annotation");
+  if (typeAnnotation && componentTypes.every((t) => t === void 0)) {
+  }
+  const initializer = findInitializer(declarator);
+  return {
+    componentNames,
+    componentTypes: componentTypes.some((t) => t !== void 0) ? componentTypes : void 0,
+    initializer: initializer?.text,
+    visibility: "public",
+    // Top-level variables are effectively public in TS/JS
+    isVal: isConst,
+    location: nodeLocation3(declarator)
+  };
+}
+function extractObjectPatternComponents(pattern, names, types) {
+  for (const child of pattern.children) {
+    switch (child.type) {
+      case "shorthand_property_identifier_pattern": {
+        names.push(child.text);
+        types.push(extractTypeFromPattern(child));
+        break;
+      }
+      case "pair_pattern": {
+        const key = findChildByType3(child, "property_identifier");
+        const value = findChildByTypes(child, [
+          "identifier",
+          "shorthand_property_identifier_pattern",
+          "object_pattern",
+          "array_pattern"
+        ]);
+        if (value) {
+          if (value.type === "identifier") {
+            names.push(value.text);
+          } else if (value.type === "object_pattern" || value.type === "array_pattern") {
+            const nestedNames = [];
+            const nestedTypes = [];
+            if (value.type === "object_pattern") {
+              extractObjectPatternComponents(value, nestedNames, nestedTypes);
+            } else {
+              extractArrayPatternComponents(value, nestedNames, nestedTypes);
+            }
+            names.push(...nestedNames);
+            types.push(...nestedTypes);
+            continue;
+          } else {
+            names.push(value.text);
+          }
+          types.push(extractTypeFromPattern(value));
+        } else if (key) {
+          names.push(key.text);
+          types.push(void 0);
+        }
+        break;
+      }
+      case "object_assignment_pattern": {
+        const left = child.children[0];
+        if (left) {
+          if (left.type === "shorthand_property_identifier_pattern") {
+            names.push(left.text);
+            types.push(extractTypeFromPattern(left));
+          } else if (left.type === "identifier") {
+            names.push(left.text);
+            types.push(extractTypeFromPattern(left));
+          }
+        }
+        break;
+      }
+      case "rest_pattern": {
+        const restIdentifier = findChildByType3(child, "identifier");
+        if (restIdentifier) {
+          names.push(restIdentifier.text);
+          types.push(void 0);
+        }
+        break;
+      }
+    }
+  }
+}
+function extractArrayPatternComponents(pattern, names, types) {
+  for (const child of pattern.children) {
+    switch (child.type) {
+      case "identifier": {
+        names.push(child.text);
+        types.push(extractTypeFromPattern(child));
+        break;
+      }
+      case "assignment_pattern": {
+        const left = child.children[0];
+        if (left?.type === "identifier") {
+          names.push(left.text);
+          types.push(extractTypeFromPattern(left));
+        }
+        break;
+      }
+      case "rest_pattern": {
+        const restIdentifier = findChildByType3(child, "identifier");
+        if (restIdentifier) {
+          names.push(restIdentifier.text);
+          types.push(void 0);
+        }
+        break;
+      }
+      case "object_pattern": {
+        const nestedNames = [];
+        const nestedTypes = [];
+        extractObjectPatternComponents(child, nestedNames, nestedTypes);
+        names.push(...nestedNames);
+        types.push(...nestedTypes);
+        break;
+      }
+      case "array_pattern": {
+        const nestedNames = [];
+        const nestedTypes = [];
+        extractArrayPatternComponents(child, nestedNames, nestedTypes);
+        names.push(...nestedNames);
+        types.push(...nestedTypes);
+        break;
+      }
+      // Skip commas and brackets
+      case ",":
+      case "[":
+      case "]":
+        break;
+    }
+  }
+}
+function extractTypeFromPattern(node) {
+  const typeAnnotation = findChildByType3(node, "type_annotation");
+  if (typeAnnotation) {
+    return extractFullTypeName2(typeAnnotation);
+  }
+  return void 0;
+}
+var init_extract_destructuring = __esm({
+  "src/indexer/parsers/typescript/extractor/destructuring/extract-destructuring.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_extract_type_name3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/destructuring/index.ts
+var init_destructuring = __esm({
+  "src/indexer/parsers/typescript/extractor/destructuring/index.ts"() {
+    "use strict";
+    init_extract_destructuring();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/object-expression/extract-object-expression.ts
+function extractObjectExpression2(node) {
+  const properties = [];
+  const functions = [];
+  for (const child of node.children) {
+    switch (child.type) {
+      case "pair":
+        extractPair(child, properties, functions);
+        break;
+      case "method_definition":
+        functions.push(extractObjectMethod(child));
+        break;
+      case "shorthand_property_identifier":
+        properties.push(extractShorthandProperty(child));
+        break;
+      // Skip structural tokens and unsupported constructs
+      case "{":
+      case "}":
+      case ",":
+      case "spread_element":
+        break;
+    }
+  }
+  return {
+    superTypes: [],
+    // TypeScript object literals don't implement interfaces
+    properties,
+    functions,
+    location: nodeLocation3(node)
+  };
+}
+function extractPair(node, properties, functions) {
+  const keyNode = findPropertyKey(node);
+  if (!keyNode) return;
+  const name = extractKeyName(keyNode);
+  const valueNode = findPairValue(node);
+  if (!valueNode) {
+    properties.push(createProperty(name, void 0, node));
+    return;
+  }
+  if (valueNode.type === "arrow_function") {
+    functions.push(extractArrowFunctionValue(name, valueNode));
+  } else if (valueNode.type === "function_expression" || valueNode.type === "function" || valueNode.type === "generator_function" || valueNode.type === "generator_function_declaration") {
+    functions.push(extractFunctionExpressionValue(name, valueNode));
+  } else {
+    properties.push(createProperty(name, valueNode.text, node));
+  }
+}
+function findPropertyKey(pairNode) {
+  for (const child of pairNode.children) {
+    if (child.type === "property_identifier" || child.type === "string" || child.type === "computed_property_name") {
+      return child;
+    }
+  }
+  return void 0;
+}
+function extractKeyName(keyNode) {
+  if (keyNode.type === "string") {
+    return keyNode.text.slice(1, -1);
+  }
+  if (keyNode.type === "computed_property_name") {
+    return keyNode.text;
+  }
+  return keyNode.text;
+}
+function findPairValue(pairNode) {
+  let foundColon = false;
+  for (const child of pairNode.children) {
+    if (foundColon) {
+      return child;
+    }
+    if (child.type === ":") {
+      foundColon = true;
+    }
+  }
+  return void 0;
+}
+function createProperty(name, initializer, node) {
+  return {
+    name,
+    type: void 0,
+    // Object literal properties don't have explicit type annotations
+    visibility: "public",
+    isVal: true,
+    // Object properties are effectively const within the object
+    initializer,
+    annotations: [],
+    location: nodeLocation3(node)
+  };
+}
+function extractArrowFunctionValue(name, arrowFunc) {
+  const isAsync = arrowFunc.children.some((c) => c.type === "async");
+  const paramsNode = findChildByType3(arrowFunc, "formal_parameters");
+  let parameters;
+  if (paramsNode) {
+    parameters = extractParameters3(paramsNode);
+  } else {
+    const singleParam = arrowFunc.children.find(
+      (c) => c.type === "identifier" && c.nextSibling?.type === "=>"
+    );
+    if (singleParam) {
+      parameters = [
+        {
+          name: singleParam.text,
+          type: void 0,
+          defaultValue: void 0,
+          annotations: []
+        }
+      ];
+    } else {
+      parameters = [];
+    }
+  }
+  const returnType = extractArrowReturnType(arrowFunc);
+  const body = findChildByType3(arrowFunc, "statement_block") ?? arrowFunc.children.find(
+    (c) => c.type !== "formal_parameters" && c.type !== "=>" && c.type !== "type_annotation" && c.type !== "type_parameters" && c.type !== "async" && c.type !== "identifier"
+  );
+  const calls = body ? extractCalls3(body) : [];
+  return {
+    name,
+    visibility: "public",
+    parameters,
+    returnType,
+    isAbstract: false,
+    isSuspend: isAsync,
+    isExtension: false,
+    annotations: [],
+    location: nodeLocation3(arrowFunc),
+    calls
+  };
+}
+function extractFunctionExpressionValue(name, funcExpr) {
+  const isAsync = funcExpr.children.some((c) => c.type === "async");
+  const paramsNode = findChildByType3(funcExpr, "formal_parameters");
+  const parameters = paramsNode ? extractParameters3(paramsNode) : [];
+  const typeAnnotation = findChildByType3(funcExpr, "type_annotation");
+  const returnType = typeAnnotation ? extractFullTypeName2(typeAnnotation) : void 0;
+  const body = findChildByType3(funcExpr, "statement_block");
+  const calls = body ? extractCalls3(body) : [];
+  return {
+    name,
+    visibility: "public",
+    parameters,
+    returnType,
+    isAbstract: false,
+    isSuspend: isAsync,
+    isExtension: false,
+    annotations: [],
+    location: nodeLocation3(funcExpr),
+    calls
+  };
+}
+function extractObjectMethod(node) {
+  const nameNode = findChildByType3(node, "property_identifier");
+  const name = nameNode?.text ?? "<unknown>";
+  const isAsync = node.children.some((c) => c.type === "async");
+  const isGetter = node.children.some((c) => c.text === "get");
+  const isSetter = node.children.some((c) => c.text === "set");
+  const methodName = isGetter ? `get ${name}` : isSetter ? `set ${name}` : name;
+  const paramsNode = findChildByType3(node, "formal_parameters");
+  const parameters = paramsNode ? extractParameters3(paramsNode) : [];
+  const typeAnnotation = findChildByType3(node, "type_annotation");
+  const returnType = typeAnnotation ? extractFullTypeName2(typeAnnotation) : void 0;
+  const body = findChildByType3(node, "statement_block");
+  const calls = body ? extractCalls3(body) : [];
+  return {
+    name: methodName,
+    visibility: "public",
+    parameters,
+    returnType,
+    isAbstract: false,
+    isSuspend: isAsync,
+    isExtension: false,
+    annotations: [],
+    location: nodeLocation3(node),
+    calls
+  };
+}
+function extractShorthandProperty(node) {
+  return {
+    name: node.text,
+    type: void 0,
+    visibility: "public",
+    isVal: true,
+    initializer: node.text,
+    // Shorthand property value equals the key
+    annotations: [],
+    location: nodeLocation3(node)
+  };
+}
+function findObjectExpressions(node) {
+  const objects = [];
+  function traverse(n) {
+    if (n.type === "object") {
+      objects.push(n);
+    }
+    for (const child of n.children) {
+      traverse(child);
+    }
+  }
+  traverse(node);
+  return objects;
+}
+var init_extract_object_expression2 = __esm({
+  "src/indexer/parsers/typescript/extractor/object-expression/extract-object-expression.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_calls3();
+    init_extract_parameters3();
+    init_extract_return_type3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/object-expression/index.ts
+var init_object_expression = __esm({
+  "src/indexer/parsers/typescript/extractor/object-expression/index.ts"() {
+    "use strict";
+    init_extract_object_expression2();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/types/extract-type-alias.ts
+function extractTypeAlias2(node) {
+  const nameNode = findChildByType3(node, "type_identifier");
+  const name = nameNode?.text ?? "<anonymous>";
+  const typeParameters = extractTypeParameters3(node);
+  let aliasedType;
+  let foundEquals = false;
+  for (const child of node.children) {
+    if (foundEquals) {
+      aliasedType = child.text;
+      break;
+    }
+    if (child.type === "=") {
+      foundEquals = true;
+    }
+  }
+  return {
+    name,
+    aliasedType: aliasedType ?? "",
+    visibility: "public",
+    // TypeScript type aliases are always public (module-level visibility)
+    typeParameters: typeParameters.length > 0 ? typeParameters : void 0,
+    location: nodeLocation3(node)
+  };
+}
+var init_extract_type_alias2 = __esm({
+  "src/indexer/parsers/typescript/extractor/types/extract-type-alias.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_generics3();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/types/index.ts
+var init_types3 = __esm({
+  "src/indexer/parsers/typescript/extractor/types/index.ts"() {
+    "use strict";
+    init_extract_type_alias2();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/container/extract-container-body.ts
+function extractContainerBody(body, options = {}) {
+  const result = {
+    functions: [],
+    properties: [],
+    nestedClasses: [],
+    typeAliases: []
+  };
+  if (!body) return result;
+  const skipTypes = /* @__PURE__ */ new Set(["{", "}", ...options.skipTypes ?? []]);
+  for (const child of body.children) {
+    if (skipTypes.has(child.type)) continue;
+    if (child.type === "export_statement") {
+      extractFromExportStatement(child, result, options);
+      continue;
+    }
+    extractContainerMember(child, result, options);
+  }
+  return result;
+}
+function extractFromExportStatement(exportNode, result, options) {
+  for (const child of exportNode.children) {
+    if (child.type === "export" || child.type === "default" || child.type === "type" || child.type === "{" || child.type === "}" || child.type === "export_clause" || child.type === "from" || child.type === "string" || child.type === ";") {
+      continue;
+    }
+    extractContainerMember(child, result, options);
+  }
+}
+function extractContainerMember(node, result, options) {
+  switch (node.type) {
+    // Classes
+    case "class_declaration":
+    case "abstract_class_declaration":
+      result.nestedClasses.push(extractClass3(node));
+      break;
+    // Interfaces
+    case "interface_declaration":
+      result.nestedClasses.push(extractInterface(node));
+      break;
+    // Enums
+    case "enum_declaration":
+      result.nestedClasses.push(extractEnum(node));
+      break;
+    // Functions
+    case "function_declaration":
+    case "generator_function_declaration":
+      result.functions.push(extractFunction2(node));
+      break;
+    // Function signatures (optional, enabled for ambient modules)
+    case "function_signature":
+      if (options.handleFunctionSignatures) {
+        const func = extractFunction2(node);
+        func.isOverloadSignature = true;
+        result.functions.push(func);
+      }
+      break;
+    // Variables
+    case "lexical_declaration":
+    case "variable_declaration":
+      result.properties.push(...extractVariable(node));
+      break;
+    // Type aliases
+    case "type_alias_declaration":
+      result.typeAliases.push(extractTypeAlias2(node));
+      break;
+    // Nested containers (handled by the caller's custom extractor)
+    default:
+      if (options.extractNestedContainer) {
+        const nested = options.extractNestedContainer(node);
+        if (nested) {
+          result.nestedClasses.push(nested);
+        }
+      }
+      break;
+  }
+}
+var init_extract_container_body = __esm({
+  "src/indexer/parsers/typescript/extractor/container/extract-container-body.ts"() {
+    "use strict";
+    init_extract_class3();
+    init_extract_interface();
+    init_extract_enum();
+    init_extract_function2();
+    init_extract_variable();
+    init_extract_type_alias2();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/container/index.ts
+var init_container = __esm({
+  "src/indexer/parsers/typescript/extractor/container/index.ts"() {
+    "use strict";
+    init_extract_container_body();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/namespace/extract-namespace.ts
+function isNamespaceNode(node) {
+  return node.type === "internal_module" || node.type === "module";
+}
+function unwrapNamespaceFromExpression(node) {
+  if (isNamespaceNode(node)) {
+    return node;
+  }
+  if (node.type === "expression_statement") {
+    const inner = findChildByType3(node, "internal_module");
+    if (inner) return inner;
+  }
+  return void 0;
+}
+function extractNamespace(node) {
+  const nameNode = findChildByType3(node, "identifier");
+  const name = nameNode?.text ?? "<anonymous>";
+  const modifiers = extractModifiers3(node);
+  const isLegacyModule = node.type === "module";
+  const body = findChildByType3(node, "statement_block");
+  const bodyResult = extractContainerBody(body, {
+    extractNestedContainer: (childNode) => {
+      if (childNode.type === "internal_module" || childNode.type === "module") {
+        return extractNamespace(childNode);
+      }
+      if (childNode.type === "expression_statement") {
+        const innerNamespace = findChildByType3(childNode, "internal_module");
+        if (innerNamespace) {
+          return extractNamespace(innerNamespace);
+        }
+      }
+      return void 0;
+    }
+  });
+  return {
+    name,
+    kind: "object",
+    // Namespaces are conceptually similar to objects/modules
+    visibility: modifiers.visibility,
+    isAbstract: false,
+    isData: false,
+    isSealed: false,
+    superClass: void 0,
+    interfaces: [],
+    typeParameters: void 0,
+    annotations: isLegacyModule ? [{ name: "module" }] : [],
+    // Mark legacy module syntax
+    properties: bodyResult.properties,
+    functions: bodyResult.functions,
+    nestedClasses: bodyResult.nestedClasses,
+    companionObject: void 0,
+    secondaryConstructors: void 0,
+    location: nodeLocation3(node)
+  };
+}
+var init_extract_namespace = __esm({
+  "src/indexer/parsers/typescript/extractor/namespace/extract-namespace.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_modifiers3();
+    init_container();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/namespace/index.ts
+var init_namespace = __esm({
+  "src/indexer/parsers/typescript/extractor/namespace/index.ts"() {
+    "use strict";
+    init_extract_namespace();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/ambient/extract-ambient-module.ts
+function isAmbientModuleNode(node) {
+  if (node.type !== "ambient_declaration") {
+    return false;
+  }
+  return hasModuleChild(node) || hasGlobalChild(node);
+}
+function hasModuleChild(node) {
+  return node.children.some((c) => c.type === "module");
+}
+function hasGlobalChild(node) {
+  return node.children.some((c) => c.type === "global");
+}
+function extractAmbientModule(node) {
+  const isGlobal = hasGlobalChild(node);
+  let name;
+  let body;
+  if (isGlobal) {
+    name = "global";
+    body = findChildByType3(node, "statement_block");
+  } else {
+    const moduleNode = findChildByType3(node, "module");
+    name = extractModuleName(moduleNode);
+    body = moduleNode ? findChildByType3(moduleNode, "statement_block") : void 0;
+  }
+  const bodyResult = extractContainerBody(body, {
+    handleFunctionSignatures: true,
+    // Ambient modules commonly have function signatures
+    extractNestedContainer: (childNode) => {
+      if (childNode.type === "ambient_declaration" && isAmbientModuleNode(childNode)) {
+        return extractAmbientModule(childNode);
+      }
+      return void 0;
+    }
+  });
+  return {
+    name,
+    kind: "interface",
+    // Ambient modules are similar to interfaces (declaration merging)
+    visibility: "public",
+    isAbstract: true,
+    isData: false,
+    isSealed: false,
+    superClass: void 0,
+    interfaces: [],
+    typeParameters: void 0,
+    annotations: isGlobal ? [{ name: "global" }] : [{ name: "ambient-module" }],
+    properties: bodyResult.properties,
+    functions: bodyResult.functions,
+    nestedClasses: bodyResult.nestedClasses,
+    companionObject: void 0,
+    secondaryConstructors: void 0,
+    location: nodeLocation3(node)
+  };
+}
+function extractModuleName(moduleNode) {
+  if (!moduleNode) return "<unknown>";
+  const stringNode = findChildByType3(moduleNode, "string");
+  if (!stringNode) return "<unknown>";
+  const fragmentNode = findChildByType3(stringNode, "string_fragment");
+  if (fragmentNode) {
+    return fragmentNode.text;
+  }
+  const text = stringNode.text;
+  if (text.startsWith("'") && text.endsWith("'") || text.startsWith('"') && text.endsWith('"')) {
+    return text.slice(1, -1);
+  }
+  return text;
+}
+var init_extract_ambient_module = __esm({
+  "src/indexer/parsers/typescript/extractor/ambient/extract-ambient-module.ts"() {
+    "use strict";
+    init_ast_utils3();
+    init_container();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/ambient/index.ts
+var init_ambient = __esm({
+  "src/indexer/parsers/typescript/extractor/ambient/index.ts"() {
+    "use strict";
+    init_extract_ambient_module();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/extract-symbols.ts
+function extractSymbols3(tree, filePath) {
+  const root = tree.rootNode;
+  const result = {
+    filePath,
+    language: "typescript",
+    packageName: void 0,
+    // TypeScript doesn't have package declarations
+    imports: extractImports3(root),
+    reexports: extractReexports(root),
+    classes: [],
+    topLevelFunctions: [],
+    topLevelProperties: [],
+    typeAliases: [],
+    destructuringDeclarations: [],
+    objectExpressions: []
+  };
+  traverseTopLevel(root, result);
+  result.topLevelFunctions = linkOverloadsToImplementations(result.topLevelFunctions);
+  extractObjectExpressions(root, result);
+  return result;
+}
+function traverseTopLevel(root, result) {
+  for (const child of root.children) {
+    if (child.type === "export_statement") {
+      extractFromExportStatement2(child, result);
+      continue;
+    }
+    extractDeclaration(child, result);
+  }
+}
+function extractFromExportStatement2(exportNode, result) {
+  for (const child of exportNode.children) {
+    if (child.type === "export" || child.type === "default" || child.type === "type" || child.type === "{" || child.type === "}" || child.type === "export_clause" || child.type === "from" || child.type === "string") {
+      continue;
+    }
+    extractDeclaration(child, result);
+  }
+}
+function extractDeclaration(node, result) {
+  switch (node.type) {
+    // Classes
+    case "class_declaration":
+    case "abstract_class_declaration":
+      result.classes.push(extractClass3(node));
+      break;
+    // Interfaces
+    case "interface_declaration":
+      result.classes.push(extractInterface(node));
+      break;
+    // Enums
+    case "enum_declaration":
+      result.classes.push(extractEnum(node));
+      break;
+    // Functions
+    case "function_declaration":
+    case "generator_function_declaration":
+      result.topLevelFunctions.push(extractFunction2(node));
+      break;
+    // Function overload signatures
+    case "function_signature":
+      result.topLevelFunctions.push(extractFunctionSignature(node));
+      break;
+    // Variables (const, let, var) - may contain arrow functions
+    case "lexical_declaration":
+    case "variable_declaration":
+      extractVariableOrFunction(node, result);
+      break;
+    // Type aliases (type Foo = ...)
+    case "type_alias_declaration":
+      result.typeAliases.push(extractTypeAlias2(node));
+      break;
+    // Ambient declarations (declare ...)
+    case "ambient_declaration":
+      extractAmbientDeclaration(node, result);
+      break;
+    // Namespaces (namespace/module keyword)
+    case "internal_module":
+    case "module":
+      result.classes.push(extractNamespace(node));
+      break;
+    // Expression statements may contain namespaces
+    case "expression_statement": {
+      const namespaceNode = unwrapNamespaceFromExpression(node);
+      if (namespaceNode) {
+        result.classes.push(extractNamespace(namespaceNode));
+      }
+      break;
+    }
+  }
+}
+function extractVariableOrFunction(node, result) {
+  for (const child of node.children) {
+    if (child.type === "variable_declarator") {
+      if (isDestructuringDeclarator(child)) {
+        const destructuring = extractDestructuring(node, child);
+        if (destructuring) {
+          result.destructuringDeclarations.push(destructuring);
+        }
+        continue;
+      }
+      if (isArrowFunctionDeclarator(child)) {
+        const arrowFunc = getArrowFunction(child);
+        if (arrowFunc) {
+          result.topLevelFunctions.push(extractArrowFunction(child, arrowFunc));
+        }
+        continue;
+      }
+      if (isVariableFunction(child)) {
+        continue;
+      }
+      const properties = extractVariable(node);
+      result.topLevelProperties.push(...properties);
+      return;
+    }
+  }
+}
+function extractAmbientDeclaration(node, result) {
+  if (isAmbientModuleNode(node)) {
+    result.classes.push(extractAmbientModule(node));
+    return;
+  }
+  for (const child of node.children) {
+    if (child.type === "declare") continue;
+    extractDeclaration(child, result);
+  }
+}
+function extractObjectExpressions(root, result) {
+  const objects = findObjectExpressions(root);
+  for (const objectNode of objects) {
+    if (isTopLevelObjectExpression(objectNode)) {
+      result.objectExpressions.push(extractObjectExpression2(objectNode));
+    }
+  }
+}
+function isTopLevelObjectExpression(objectNode) {
+  const parent = objectNode.parent;
+  if (!parent) return false;
+  if (parent.type === "variable_declarator") {
+    return true;
+  }
+  if (parent.type === "pair") {
+    return false;
+  }
+  return false;
+}
+var init_extract_symbols2 = __esm({
+  "src/indexer/parsers/typescript/extractor/extract-symbols.ts"() {
+    "use strict";
+    init_imports();
+    init_extract_class3();
+    init_extract_interface();
+    init_extract_enum();
+    init_extract_function2();
+    init_extract_arrow_function();
+    init_extract_variable();
+    init_destructuring();
+    init_object_expression();
+    init_types3();
+    init_namespace();
+    init_ambient();
+  }
+});
+
+// src/indexer/parsers/typescript/extractor/index.ts
+var init_extractor3 = __esm({
+  "src/indexer/parsers/typescript/extractor/index.ts"() {
+    "use strict";
+    init_extract_symbols2();
+  }
+});
+
+// src/indexer/file-filter/should-parse-file.ts
+function shouldScanDirectory(dirName, options = {}, fullPath) {
+  const allExcludedDirs = options.additionalExcludedDirs ? [...EXCLUDED_DIRECTORIES, ...options.additionalExcludedDirs] : EXCLUDED_DIRECTORIES;
+  if (allExcludedDirs.includes(dirName)) {
+    return false;
+  }
+  if (fullPath) {
+    const normalizedPath = fullPath.replace(/\\/g, "/");
+    if ((normalizedPath.includes("/ios/") || normalizedPath.includes("/android/")) && dirName === "public") {
+      return false;
+    }
+    if (normalizedPath.includes("/.angular/")) {
+      return false;
+    }
+  }
+  return true;
+}
+function shouldParseFile(filePath, options = {}) {
+  const normalizedPath = normalizePath(filePath);
+  const basename2 = path.basename(normalizedPath);
+  if (isInExcludedDirectory(normalizedPath, options.additionalExcludedDirs)) {
+    return false;
+  }
+  if (!options.includeConfigFiles && isExcludedConfigFile(basename2)) {
+    return false;
+  }
+  if (!options.includeConfigFiles && CONFIG_FILE_PATTERN.test(basename2)) {
+    return false;
+  }
+  if (isGeneratedFile(basename2, options.includeDeclarationFiles)) {
+    return false;
+  }
+  if (options.additionalExcludedPatterns?.some((pattern) => pattern.test(normalizedPath))) {
+    return false;
+  }
+  if (options.includeTestFiles === false && isTestFile(normalizedPath)) {
+    return false;
+  }
+  return true;
+}
+function isTestFile(filePath) {
+  const normalizedPath = normalizePath(filePath);
+  return TEST_PATTERNS.some((pattern) => pattern.test(normalizedPath));
+}
+function normalizePath(filePath) {
+  return filePath.replace(/\\/g, "/");
+}
+function isInExcludedDirectory(normalizedPath, additionalDirs) {
+  const allExcludedDirs = additionalDirs ? [...EXCLUDED_DIRECTORIES, ...additionalDirs] : EXCLUDED_DIRECTORIES;
+  for (const dir of allExcludedDirs) {
+    if (normalizedPath.includes(`/${dir}/`) || normalizedPath.startsWith(`${dir}/`)) {
+      return true;
+    }
+  }
+  return false;
+}
+function isExcludedConfigFile(basename2) {
+  return EXCLUDED_CONFIG_FILES.includes(basename2);
+}
+function isGeneratedFile(basename2, includeDeclarationFiles) {
+  for (const pattern of GENERATED_FILE_PATTERNS) {
+    if (includeDeclarationFiles && pattern.source.includes("\\.d\\.")) {
+      continue;
+    }
+    if (pattern.test(basename2)) {
+      return true;
+    }
+  }
+  return false;
+}
+var path, EXCLUDED_DIRECTORIES, CONFIG_FILE_PATTERN, EXCLUDED_CONFIG_FILES, GENERATED_FILE_PATTERNS, TEST_PATTERNS;
+var init_should_parse_file = __esm({
+  "src/indexer/file-filter/should-parse-file.ts"() {
+    "use strict";
+    path = __toESM(require("path"), 1);
+    EXCLUDED_DIRECTORIES = [
+      // Package managers
+      "node_modules",
+      // Version control
+      ".git",
+      // Common build outputs
+      "dist",
+      "build",
+      "out",
+      "target",
+      // IDE/Editor configs
+      ".idea",
+      ".vscode",
+      // JavaScript/TypeScript frameworks
+      ".next",
+      ".nuxt",
+      ".angular",
+      ".turbo",
+      ".vercel",
+      ".output",
+      ".svelte-kit",
+      ".astro",
+      // iOS/macOS (Xcode)
+      "DerivedData",
+      "Pods",
+      ".xcbuild",
+      "xcuserdata",
+      // Android (Gradle)
+      ".gradle",
+      ".m2",
+      // Web build outputs
+      "www",
+      "public",
+      // Test coverage
+      "coverage",
+      "__coverage__",
+      // Cache directories
+      ".cache",
+      ".tmp",
+      ".temp",
+      // Generated API clients
+      ".tmp",
+      // Monorepo tools
+      ".nx",
+      ".pnpm",
+      // Python
+      "__pycache__",
+      ".venv",
+      "venv",
+      ".tox",
+      // Ruby
+      "vendor/bundle",
+      // Rust
+      "target/debug",
+      "target/release"
+    ];
+    CONFIG_FILE_PATTERN = /\.(config|setup)\.(ts|js|mjs|cjs)$/;
+    EXCLUDED_CONFIG_FILES = [
+      // ESLint
+      ".eslintrc.js",
+      ".eslintrc.cjs",
+      ".eslintrc.mjs",
+      "eslint.config.js",
+      "eslint.config.mjs",
+      // Prettier
+      "prettier.config.js",
+      "prettier.config.cjs",
+      "prettier.config.mjs",
+      ".prettierrc.js",
+      ".prettierrc.cjs",
+      // Tailwind CSS
+      "tailwind.config.js",
+      "tailwind.config.ts",
+      // PostCSS
+      "postcss.config.js",
+      "postcss.config.cjs",
+      "postcss.config.mjs",
+      // Next.js
+      "next.config.js",
+      "next.config.mjs",
+      "next.config.ts",
+      // Nuxt.js
+      "nuxt.config.js",
+      "nuxt.config.ts",
+      // Vite
+      "vite.config.js",
+      "vite.config.ts",
+      // Vitest
+      "vitest.config.js",
+      "vitest.config.ts",
+      // Jest
+      "jest.config.js",
+      "jest.config.ts",
+      // Webpack
+      "webpack.config.js",
+      "webpack.config.ts",
+      // Rollup
+      "rollup.config.js",
+      "rollup.config.ts",
+      // Babel
+      "babel.config.js",
+      "babel.config.cjs",
+      ".babelrc.js",
+      // TypeScript/JavaScript configs
+      "tsconfig.json",
+      "jsconfig.json",
+      // Package managers
+      "package.json",
+      "package-lock.json",
+      "yarn.lock",
+      "pnpm-lock.yaml",
+      "bun.lockb",
+      // Capacitor/Cordova
+      "capacitor.config.ts",
+      "capacitor.config.js",
+      // Angular
+      "angular.json",
+      "karma.conf.js",
+      "protractor.conf.js",
+      // Metro (React Native)
+      "metro.config.js",
+      "metro.config.ts",
+      // Expo
+      "app.config.js",
+      "app.config.ts",
+      "eas.json",
+      // Gradle
+      "build.gradle",
+      "build.gradle.kts",
+      "settings.gradle",
+      "settings.gradle.kts",
+      "gradle.properties",
+      // Xcode
+      "Podfile",
+      "Podfile.lock"
+    ];
+    GENERATED_FILE_PATTERNS = [
+      /\.d\.ts$/,
+      // TypeScript declaration files
+      /\.d\.mts$/,
+      // ES module TypeScript declaration files
+      /\.d\.cts$/,
+      // CommonJS TypeScript declaration files
+      /\.min\.js$/,
+      // Minified JavaScript
+      /\.min\.css$/,
+      // Minified CSS
+      /\.bundle\.js$/,
+      // Bundled JavaScript
+      /\.chunk\.js$/,
+      // Code-split chunks
+      /\.generated\.(ts|js)$/,
+      // Explicitly generated files
+      /\.g\.dart$/,
+      // Generated Dart files
+      /-lock\.json$/
+      // Lock files
+    ];
+    TEST_PATTERNS = [
+      // File suffixes
+      /\.test\.(ts|tsx|js|jsx|mjs|cjs)$/,
+      /\.spec\.(ts|tsx|js|jsx|mjs|cjs)$/,
+      /\.tests\.(ts|tsx|js|jsx|mjs|cjs)$/,
+      /\.specs\.(ts|tsx|js|jsx|mjs|cjs)$/,
+      /Test\.(kt|java)$/,
+      /Tests\.(kt|java)$/,
+      /Spec\.(kt|java)$/,
+      // Test directories
+      /\/__tests__\//,
+      /\/test\//,
+      /\/tests\//,
+      /\/spec\//,
+      /\/specs\//,
+      // Android test directories
+      /\/androidTest\//,
+      /\/androidTestDebug\//,
+      // iOS test directories
+      /\/xctest\//,
+      /Tests\.swift$/
+    ];
+  }
+});
+
+// src/indexer/file-filter/index.ts
+var init_file_filter = __esm({
+  "src/indexer/file-filter/index.ts"() {
+    "use strict";
+    init_should_parse_file();
+  }
+});
+
+// src/indexer/parsers/typescript/index.ts
+var typescript_exports = {};
+__export(typescript_exports, {
+  EXCLUDED_CONFIG_FILES: () => EXCLUDED_CONFIG_FILES,
+  EXCLUDED_DIRECTORIES: () => EXCLUDED_DIRECTORIES,
+  isTestFile: () => isTestFile,
+  javascriptParser: () => javascriptParser,
+  shouldParseFile: () => shouldParseFile,
+  shouldScanDirectory: () => shouldScanDirectory,
+  typescriptParser: () => typescriptParser
+});
+function setFilePathInLocations3(parsed, filePath) {
+  for (const cls6 of parsed.classes) {
+    setFilePathInClass3(cls6, filePath);
+  }
+  for (const fn6 of parsed.topLevelFunctions) {
+    setFilePathInFunction3(fn6, filePath);
+  }
+  for (const prop of parsed.topLevelProperties) {
+    prop.location.filePath = filePath;
+  }
+  for (const typeAlias of parsed.typeAliases) {
+    typeAlias.location.filePath = filePath;
+  }
+  for (const destructuring of parsed.destructuringDeclarations) {
+    destructuring.location.filePath = filePath;
+  }
+  for (const objectExpr of parsed.objectExpressions) {
+    objectExpr.location.filePath = filePath;
+    for (const prop of objectExpr.properties) {
+      prop.location.filePath = filePath;
+    }
+    for (const fn6 of objectExpr.functions) {
+      setFilePathInFunction3(fn6, filePath);
+    }
+  }
+}
+function setFilePathInClass3(cls6, filePath) {
+  cls6.location.filePath = filePath;
+  for (const fn6 of cls6.functions) {
+    setFilePathInFunction3(fn6, filePath);
+  }
+  for (const prop of cls6.properties) {
+    prop.location.filePath = filePath;
+  }
+  for (const nested of cls6.nestedClasses) {
+    setFilePathInClass3(nested, filePath);
+  }
+  if (cls6.companionObject) {
+    setFilePathInClass3(cls6.companionObject, filePath);
+  }
+  if (cls6.secondaryConstructors) {
+    for (const ctor of cls6.secondaryConstructors) {
+      ctor.location.filePath = filePath;
+    }
+  }
+}
+function setFilePathInFunction3(fn6, filePath) {
+  fn6.location.filePath = filePath;
+  for (const call of fn6.calls) {
+    call.location.filePath = filePath;
+  }
+}
+var typescriptParser, javascriptParser;
+var init_typescript = __esm({
+  "src/indexer/parsers/typescript/index.ts"() {
+    "use strict";
+    init_parser3();
+    init_extractor3();
+    init_file_filter();
+    typescriptParser = {
+      language: "typescript",
+      extensions: [".ts", ".tsx"],
+      async parse(source, filePath) {
+        const tree = parseTypeScript(source, filePath);
+        const parsed = extractSymbols3(tree, filePath);
+        setFilePathInLocations3(parsed, filePath);
+        return parsed;
+      }
+    };
+    javascriptParser = {
+      language: "javascript",
+      extensions: [".js", ".jsx", ".mjs", ".cjs"],
+      async parse(source, filePath) {
+        const tree = parseTypeScript(source, filePath);
+        const parsed = extractSymbols3(tree, filePath);
+        parsed.language = "javascript";
+        setFilePathInLocations3(parsed, filePath);
+        return parsed;
+      }
+    };
+  }
+});
+
 // src/scripts/setup.ts
 var import_child_process = require("child_process");
 var import_fs2 = require("fs");
-var import_path3 = require("path");
+var import_path4 = require("path");
 
 // src/neo4j/neo4j.ts
 var import_neo4j_driver = __toESM(require_lib3(), 1);
@@ -34323,7 +37753,7 @@ var Neo4jClient = class {
    *   return { classes: classes.records, interfaces: interfaces.records };
    * });
    */
-  async readTransaction(fn3, options = {}) {
+  async readTransaction(fn6, options = {}) {
     if (!this.driver) {
       throw new Error("Neo4j driver not connected. Call connect() first.");
     }
@@ -34332,7 +37762,7 @@ var Neo4jClient = class {
       defaultAccessMode: import_neo4j_driver.default.session.READ
     });
     try {
-      return await session.executeRead((tx) => fn3(tx));
+      return await session.executeRead((tx) => fn6(tx));
     } finally {
       await session.close();
     }
@@ -34352,7 +37782,7 @@ var Neo4jClient = class {
    *   await tx.run('MATCH (a:Class {name: "Class1"}), (b:Class {name: "Class2"}) CREATE (a)-[:DEPENDS_ON]->(b)');
    * });
    */
-  async writeTransaction(fn3, options = {}) {
+  async writeTransaction(fn6, options = {}) {
     if (!this.driver) {
       throw new Error("Neo4j driver not connected. Call connect() first.");
     }
@@ -34361,7 +37791,7 @@ var Neo4jClient = class {
       defaultAccessMode: import_neo4j_driver.default.session.WRITE
     });
     try {
-      return await session.executeWrite((tx) => fn3(tx));
+      return await session.executeWrite((tx) => fn6(tx));
     } finally {
       await session.close();
     }
@@ -34467,6 +37897,14 @@ registerParser("kotlin", [".kt", ".kts"], async () => {
 registerParser("java", [".java"], async () => {
   const { javaParser: javaParser2 } = await Promise.resolve().then(() => (init_java(), java_exports));
   return javaParser2;
+});
+registerParser("typescript", [".ts", ".tsx"], async () => {
+  const { typescriptParser: typescriptParser2 } = await Promise.resolve().then(() => (init_typescript(), typescript_exports));
+  return typescriptParser2;
+});
+registerParser("javascript", [".js", ".jsx", ".mjs", ".cjs"], async () => {
+  const { javascriptParser: javascriptParser2 } = await Promise.resolve().then(() => (init_typescript(), typescript_exports));
+  return javascriptParser2;
 });
 
 // src/indexer/resolver/stdlib/kotlin-stdlib.ts
@@ -35048,6 +38486,854 @@ var JavaStdlibProvider = class {
   }
 };
 
+// src/indexer/resolver/stdlib/typescript-stdlib.ts
+var STDLIB_LOC3 = {
+  filePath: "<typescript-stdlib>",
+  startLine: 0,
+  startColumn: 0,
+  endLine: 0,
+  endColumn: 0
+};
+function fn3(name, fqn, opts = {}) {
+  return {
+    name,
+    fqn,
+    kind: "function",
+    filePath: "<typescript-stdlib>",
+    location: STDLIB_LOC3,
+    packageName: "global",
+    parameterTypes: opts.parameterTypes || [],
+    returnType: opts.returnType,
+    declaringTypeFqn: opts.declaringTypeFqn,
+    isExtension: false
+  };
+}
+function cls3(name, fqn, kind = "class", opts = {}) {
+  return {
+    name,
+    fqn,
+    kind,
+    filePath: "<typescript-stdlib>",
+    location: STDLIB_LOC3,
+    packageName: "global",
+    superClass: opts.superClass,
+    interfaces: opts.interfaces || [],
+    isAbstract: opts.isAbstract
+  };
+}
+var TYPESCRIPT_BUILTIN_TYPES = /* @__PURE__ */ new Set([
+  // Primitive types
+  "string",
+  "number",
+  "boolean",
+  "symbol",
+  "bigint",
+  "undefined",
+  "null",
+  "void",
+  "never",
+  "unknown",
+  "any",
+  "object"
+]);
+var TYPESCRIPT_STDLIB_CLASSES = /* @__PURE__ */ new Map([
+  // Core Object types
+  ["Object", cls3("Object", "Object", "class")],
+  ["Function", cls3("Function", "Function", "class")],
+  ["Boolean", cls3("Boolean", "Boolean", "class")],
+  ["Symbol", cls3("Symbol", "Symbol", "class")],
+  // Number types
+  ["Number", cls3("Number", "Number", "class")],
+  ["BigInt", cls3("BigInt", "BigInt", "class")],
+  ["Math", cls3("Math", "Math", "object")],
+  // String types
+  ["String", cls3("String", "String", "class")],
+  ["RegExp", cls3("RegExp", "RegExp", "class")],
+  // Collections
+  ["Array", cls3("Array", "Array", "class")],
+  ["Map", cls3("Map", "Map", "class")],
+  ["Set", cls3("Set", "Set", "class")],
+  ["WeakMap", cls3("WeakMap", "WeakMap", "class")],
+  ["WeakSet", cls3("WeakSet", "WeakSet", "class")],
+  // Typed Arrays
+  ["Int8Array", cls3("Int8Array", "Int8Array", "class")],
+  ["Uint8Array", cls3("Uint8Array", "Uint8Array", "class")],
+  ["Uint8ClampedArray", cls3("Uint8ClampedArray", "Uint8ClampedArray", "class")],
+  ["Int16Array", cls3("Int16Array", "Int16Array", "class")],
+  ["Uint16Array", cls3("Uint16Array", "Uint16Array", "class")],
+  ["Int32Array", cls3("Int32Array", "Int32Array", "class")],
+  ["Uint32Array", cls3("Uint32Array", "Uint32Array", "class")],
+  ["Float32Array", cls3("Float32Array", "Float32Array", "class")],
+  ["Float64Array", cls3("Float64Array", "Float64Array", "class")],
+  ["BigInt64Array", cls3("BigInt64Array", "BigInt64Array", "class")],
+  ["BigUint64Array", cls3("BigUint64Array", "BigUint64Array", "class")],
+  ["ArrayBuffer", cls3("ArrayBuffer", "ArrayBuffer", "class")],
+  ["SharedArrayBuffer", cls3("SharedArrayBuffer", "SharedArrayBuffer", "class")],
+  ["DataView", cls3("DataView", "DataView", "class")],
+  // Async types
+  ["Promise", cls3("Promise", "Promise", "class")],
+  ["AsyncIterable", cls3("AsyncIterable", "AsyncIterable", "interface")],
+  ["AsyncIterator", cls3("AsyncIterator", "AsyncIterator", "interface")],
+  ["AsyncIterableIterator", cls3("AsyncIterableIterator", "AsyncIterableIterator", "interface")],
+  // Iterator types
+  ["Iterable", cls3("Iterable", "Iterable", "interface")],
+  ["Iterator", cls3("Iterator", "Iterator", "interface")],
+  ["IterableIterator", cls3("IterableIterator", "IterableIterator", "interface")],
+  ["Generator", cls3("Generator", "Generator", "interface")],
+  ["AsyncGenerator", cls3("AsyncGenerator", "AsyncGenerator", "interface")],
+  // Error types
+  ["Error", cls3("Error", "Error", "class")],
+  ["EvalError", cls3("EvalError", "EvalError", "class", { superClass: "Error" })],
+  ["RangeError", cls3("RangeError", "RangeError", "class", { superClass: "Error" })],
+  ["ReferenceError", cls3("ReferenceError", "ReferenceError", "class", { superClass: "Error" })],
+  ["SyntaxError", cls3("SyntaxError", "SyntaxError", "class", { superClass: "Error" })],
+  ["TypeError", cls3("TypeError", "TypeError", "class", { superClass: "Error" })],
+  ["URIError", cls3("URIError", "URIError", "class", { superClass: "Error" })],
+  ["AggregateError", cls3("AggregateError", "AggregateError", "class", { superClass: "Error" })],
+  // Date
+  ["Date", cls3("Date", "Date", "class")],
+  // JSON
+  ["JSON", cls3("JSON", "JSON", "object")],
+  // Console
+  ["Console", cls3("Console", "Console", "interface")],
+  // Reflect and Proxy
+  ["Reflect", cls3("Reflect", "Reflect", "object")],
+  ["Proxy", cls3("Proxy", "Proxy", "class")],
+  // Intl
+  ["Intl", cls3("Intl", "Intl", "object")],
+  // TypeScript utility types (treated as interfaces)
+  ["Partial", cls3("Partial", "Partial", "interface")],
+  ["Required", cls3("Required", "Required", "interface")],
+  ["Readonly", cls3("Readonly", "Readonly", "interface")],
+  ["Record", cls3("Record", "Record", "interface")],
+  ["Pick", cls3("Pick", "Pick", "interface")],
+  ["Omit", cls3("Omit", "Omit", "interface")],
+  ["Exclude", cls3("Exclude", "Exclude", "interface")],
+  ["Extract", cls3("Extract", "Extract", "interface")],
+  ["NonNullable", cls3("NonNullable", "NonNullable", "interface")],
+  ["Parameters", cls3("Parameters", "Parameters", "interface")],
+  ["ConstructorParameters", cls3("ConstructorParameters", "ConstructorParameters", "interface")],
+  ["ReturnType", cls3("ReturnType", "ReturnType", "interface")],
+  ["InstanceType", cls3("InstanceType", "InstanceType", "interface")],
+  ["ThisParameterType", cls3("ThisParameterType", "ThisParameterType", "interface")],
+  ["OmitThisParameter", cls3("OmitThisParameter", "OmitThisParameter", "interface")],
+  ["ThisType", cls3("ThisType", "ThisType", "interface")],
+  ["Awaited", cls3("Awaited", "Awaited", "interface")],
+  ["Uppercase", cls3("Uppercase", "Uppercase", "interface")],
+  ["Lowercase", cls3("Lowercase", "Lowercase", "interface")],
+  ["Capitalize", cls3("Capitalize", "Capitalize", "interface")],
+  ["Uncapitalize", cls3("Uncapitalize", "Uncapitalize", "interface")]
+]);
+var TYPESCRIPT_STDLIB_FUNCTIONS = /* @__PURE__ */ new Map([
+  // Global functions
+  ["parseInt", fn3("parseInt", "parseInt", { parameterTypes: ["string", "number?"], returnType: "number" })],
+  ["parseFloat", fn3("parseFloat", "parseFloat", { parameterTypes: ["string"], returnType: "number" })],
+  ["isNaN", fn3("isNaN", "isNaN", { parameterTypes: ["number"], returnType: "boolean" })],
+  ["isFinite", fn3("isFinite", "isFinite", { parameterTypes: ["number"], returnType: "boolean" })],
+  ["encodeURI", fn3("encodeURI", "encodeURI", { parameterTypes: ["string"], returnType: "string" })],
+  ["encodeURIComponent", fn3("encodeURIComponent", "encodeURIComponent", { parameterTypes: ["string"], returnType: "string" })],
+  ["decodeURI", fn3("decodeURI", "decodeURI", { parameterTypes: ["string"], returnType: "string" })],
+  ["decodeURIComponent", fn3("decodeURIComponent", "decodeURIComponent", { parameterTypes: ["string"], returnType: "string" })],
+  ["eval", fn3("eval", "eval", { parameterTypes: ["string"], returnType: "any" })],
+  // console methods
+  ["console.log", fn3("log", "console.log", { declaringTypeFqn: "Console", parameterTypes: ["...any[]"], returnType: "void" })],
+  ["console.error", fn3("error", "console.error", { declaringTypeFqn: "Console", parameterTypes: ["...any[]"], returnType: "void" })],
+  ["console.warn", fn3("warn", "console.warn", { declaringTypeFqn: "Console", parameterTypes: ["...any[]"], returnType: "void" })],
+  ["console.info", fn3("info", "console.info", { declaringTypeFqn: "Console", parameterTypes: ["...any[]"], returnType: "void" })],
+  ["console.debug", fn3("debug", "console.debug", { declaringTypeFqn: "Console", parameterTypes: ["...any[]"], returnType: "void" })],
+  ["console.trace", fn3("trace", "console.trace", { declaringTypeFqn: "Console", parameterTypes: ["...any[]"], returnType: "void" })],
+  ["console.dir", fn3("dir", "console.dir", { declaringTypeFqn: "Console", parameterTypes: ["any", "object?"], returnType: "void" })],
+  ["console.table", fn3("table", "console.table", { declaringTypeFqn: "Console", parameterTypes: ["any", "string[]?"], returnType: "void" })],
+  ["console.time", fn3("time", "console.time", { declaringTypeFqn: "Console", parameterTypes: ["string?"], returnType: "void" })],
+  ["console.timeEnd", fn3("timeEnd", "console.timeEnd", { declaringTypeFqn: "Console", parameterTypes: ["string?"], returnType: "void" })],
+  ["console.assert", fn3("assert", "console.assert", { declaringTypeFqn: "Console", parameterTypes: ["boolean?", "...any[]"], returnType: "void" })],
+  ["console.clear", fn3("clear", "console.clear", { declaringTypeFqn: "Console", parameterTypes: [], returnType: "void" })],
+  // Array static methods
+  ["Array.isArray", fn3("isArray", "Array.isArray", { declaringTypeFqn: "Array", parameterTypes: ["any"], returnType: "boolean" })],
+  ["Array.from", fn3("from", "Array.from", { declaringTypeFqn: "Array", parameterTypes: ["ArrayLike<T>", "((v: T, k: number) => U)?"], returnType: "U[]" })],
+  ["Array.of", fn3("of", "Array.of", { declaringTypeFqn: "Array", parameterTypes: ["...T[]"], returnType: "T[]" })],
+  // Object static methods
+  ["Object.keys", fn3("keys", "Object.keys", { declaringTypeFqn: "Object", parameterTypes: ["object"], returnType: "string[]" })],
+  ["Object.values", fn3("values", "Object.values", { declaringTypeFqn: "Object", parameterTypes: ["object"], returnType: "any[]" })],
+  ["Object.entries", fn3("entries", "Object.entries", { declaringTypeFqn: "Object", parameterTypes: ["object"], returnType: "[string, any][]" })],
+  ["Object.assign", fn3("assign", "Object.assign", { declaringTypeFqn: "Object", parameterTypes: ["T", "...U[]"], returnType: "T & U" })],
+  ["Object.freeze", fn3("freeze", "Object.freeze", { declaringTypeFqn: "Object", parameterTypes: ["T"], returnType: "Readonly<T>" })],
+  ["Object.seal", fn3("seal", "Object.seal", { declaringTypeFqn: "Object", parameterTypes: ["T"], returnType: "T" })],
+  ["Object.create", fn3("create", "Object.create", { declaringTypeFqn: "Object", parameterTypes: ["object | null", "PropertyDescriptorMap?"], returnType: "any" })],
+  ["Object.defineProperty", fn3("defineProperty", "Object.defineProperty", { declaringTypeFqn: "Object", parameterTypes: ["T", "PropertyKey", "PropertyDescriptor"], returnType: "T" })],
+  ["Object.defineProperties", fn3("defineProperties", "Object.defineProperties", { declaringTypeFqn: "Object", parameterTypes: ["T", "PropertyDescriptorMap"], returnType: "T" })],
+  ["Object.getOwnPropertyNames", fn3("getOwnPropertyNames", "Object.getOwnPropertyNames", { declaringTypeFqn: "Object", parameterTypes: ["any"], returnType: "string[]" })],
+  ["Object.getOwnPropertyDescriptor", fn3("getOwnPropertyDescriptor", "Object.getOwnPropertyDescriptor", { declaringTypeFqn: "Object", parameterTypes: ["any", "PropertyKey"], returnType: "PropertyDescriptor | undefined" })],
+  ["Object.getPrototypeOf", fn3("getPrototypeOf", "Object.getPrototypeOf", { declaringTypeFqn: "Object", parameterTypes: ["any"], returnType: "any" })],
+  ["Object.setPrototypeOf", fn3("setPrototypeOf", "Object.setPrototypeOf", { declaringTypeFqn: "Object", parameterTypes: ["any", "object | null"], returnType: "any" })],
+  ["Object.fromEntries", fn3("fromEntries", "Object.fromEntries", { declaringTypeFqn: "Object", parameterTypes: ["Iterable<readonly [PropertyKey, T]>"], returnType: "{ [k: string]: T }" })],
+  ["Object.hasOwn", fn3("hasOwn", "Object.hasOwn", { declaringTypeFqn: "Object", parameterTypes: ["object", "PropertyKey"], returnType: "boolean" })],
+  // JSON methods
+  ["JSON.parse", fn3("parse", "JSON.parse", { declaringTypeFqn: "JSON", parameterTypes: ["string", "((key: string, value: any) => any)?"], returnType: "any" })],
+  ["JSON.stringify", fn3("stringify", "JSON.stringify", { declaringTypeFqn: "JSON", parameterTypes: ["any", "((key: string, value: any) => any)?", "string | number?"], returnType: "string" })],
+  // Math methods
+  ["Math.abs", fn3("abs", "Math.abs", { declaringTypeFqn: "Math", parameterTypes: ["number"], returnType: "number" })],
+  ["Math.ceil", fn3("ceil", "Math.ceil", { declaringTypeFqn: "Math", parameterTypes: ["number"], returnType: "number" })],
+  ["Math.floor", fn3("floor", "Math.floor", { declaringTypeFqn: "Math", parameterTypes: ["number"], returnType: "number" })],
+  ["Math.round", fn3("round", "Math.round", { declaringTypeFqn: "Math", parameterTypes: ["number"], returnType: "number" })],
+  ["Math.max", fn3("max", "Math.max", { declaringTypeFqn: "Math", parameterTypes: ["...number[]"], returnType: "number" })],
+  ["Math.min", fn3("min", "Math.min", { declaringTypeFqn: "Math", parameterTypes: ["...number[]"], returnType: "number" })],
+  ["Math.pow", fn3("pow", "Math.pow", { declaringTypeFqn: "Math", parameterTypes: ["number", "number"], returnType: "number" })],
+  ["Math.sqrt", fn3("sqrt", "Math.sqrt", { declaringTypeFqn: "Math", parameterTypes: ["number"], returnType: "number" })],
+  ["Math.random", fn3("random", "Math.random", { declaringTypeFqn: "Math", parameterTypes: [], returnType: "number" })],
+  ["Math.sign", fn3("sign", "Math.sign", { declaringTypeFqn: "Math", parameterTypes: ["number"], returnType: "number" })],
+  ["Math.trunc", fn3("trunc", "Math.trunc", { declaringTypeFqn: "Math", parameterTypes: ["number"], returnType: "number" })],
+  ["Math.log", fn3("log", "Math.log", { declaringTypeFqn: "Math", parameterTypes: ["number"], returnType: "number" })],
+  ["Math.log10", fn3("log10", "Math.log10", { declaringTypeFqn: "Math", parameterTypes: ["number"], returnType: "number" })],
+  ["Math.log2", fn3("log2", "Math.log2", { declaringTypeFqn: "Math", parameterTypes: ["number"], returnType: "number" })],
+  ["Math.exp", fn3("exp", "Math.exp", { declaringTypeFqn: "Math", parameterTypes: ["number"], returnType: "number" })],
+  ["Math.sin", fn3("sin", "Math.sin", { declaringTypeFqn: "Math", parameterTypes: ["number"], returnType: "number" })],
+  ["Math.cos", fn3("cos", "Math.cos", { declaringTypeFqn: "Math", parameterTypes: ["number"], returnType: "number" })],
+  ["Math.tan", fn3("tan", "Math.tan", { declaringTypeFqn: "Math", parameterTypes: ["number"], returnType: "number" })],
+  // Number static methods
+  ["Number.isInteger", fn3("isInteger", "Number.isInteger", { declaringTypeFqn: "Number", parameterTypes: ["unknown"], returnType: "boolean" })],
+  ["Number.isNaN", fn3("isNaN", "Number.isNaN", { declaringTypeFqn: "Number", parameterTypes: ["unknown"], returnType: "boolean" })],
+  ["Number.isFinite", fn3("isFinite", "Number.isFinite", { declaringTypeFqn: "Number", parameterTypes: ["unknown"], returnType: "boolean" })],
+  ["Number.isSafeInteger", fn3("isSafeInteger", "Number.isSafeInteger", { declaringTypeFqn: "Number", parameterTypes: ["unknown"], returnType: "boolean" })],
+  ["Number.parseFloat", fn3("parseFloat", "Number.parseFloat", { declaringTypeFqn: "Number", parameterTypes: ["string"], returnType: "number" })],
+  ["Number.parseInt", fn3("parseInt", "Number.parseInt", { declaringTypeFqn: "Number", parameterTypes: ["string", "number?"], returnType: "number" })],
+  // String static methods
+  ["String.fromCharCode", fn3("fromCharCode", "String.fromCharCode", { declaringTypeFqn: "String", parameterTypes: ["...number[]"], returnType: "string" })],
+  ["String.fromCodePoint", fn3("fromCodePoint", "String.fromCodePoint", { declaringTypeFqn: "String", parameterTypes: ["...number[]"], returnType: "string" })],
+  ["String.raw", fn3("raw", "String.raw", { declaringTypeFqn: "String", parameterTypes: ["TemplateStringsArray", "...any[]"], returnType: "string" })],
+  // Promise static methods
+  ["Promise.resolve", fn3("resolve", "Promise.resolve", { declaringTypeFqn: "Promise", parameterTypes: ["T | PromiseLike<T>"], returnType: "Promise<T>" })],
+  ["Promise.reject", fn3("reject", "Promise.reject", { declaringTypeFqn: "Promise", parameterTypes: ["any?"], returnType: "Promise<never>" })],
+  ["Promise.all", fn3("all", "Promise.all", { declaringTypeFqn: "Promise", parameterTypes: ["Iterable<T | PromiseLike<T>>"], returnType: "Promise<T[]>" })],
+  ["Promise.allSettled", fn3("allSettled", "Promise.allSettled", { declaringTypeFqn: "Promise", parameterTypes: ["Iterable<T | PromiseLike<T>>"], returnType: "Promise<PromiseSettledResult<T>[]>" })],
+  ["Promise.race", fn3("race", "Promise.race", { declaringTypeFqn: "Promise", parameterTypes: ["Iterable<T | PromiseLike<T>>"], returnType: "Promise<T>" })],
+  ["Promise.any", fn3("any", "Promise.any", { declaringTypeFqn: "Promise", parameterTypes: ["Iterable<T | PromiseLike<T>>"], returnType: "Promise<T>" })],
+  // Date static methods
+  ["Date.now", fn3("now", "Date.now", { declaringTypeFqn: "Date", parameterTypes: [], returnType: "number" })],
+  ["Date.parse", fn3("parse", "Date.parse", { declaringTypeFqn: "Date", parameterTypes: ["string"], returnType: "number" })],
+  ["Date.UTC", fn3("UTC", "Date.UTC", { declaringTypeFqn: "Date", parameterTypes: ["number", "number?", "number?", "number?", "number?", "number?", "number?"], returnType: "number" })],
+  // Symbol methods
+  ["Symbol.for", fn3("for", "Symbol.for", { declaringTypeFqn: "Symbol", parameterTypes: ["string"], returnType: "symbol" })],
+  ["Symbol.keyFor", fn3("keyFor", "Symbol.keyFor", { declaringTypeFqn: "Symbol", parameterTypes: ["symbol"], returnType: "string | undefined" })],
+  // Reflect methods
+  ["Reflect.get", fn3("get", "Reflect.get", { declaringTypeFqn: "Reflect", parameterTypes: ["object", "PropertyKey", "any?"], returnType: "any" })],
+  ["Reflect.set", fn3("set", "Reflect.set", { declaringTypeFqn: "Reflect", parameterTypes: ["object", "PropertyKey", "any", "any?"], returnType: "boolean" })],
+  ["Reflect.has", fn3("has", "Reflect.has", { declaringTypeFqn: "Reflect", parameterTypes: ["object", "PropertyKey"], returnType: "boolean" })],
+  ["Reflect.deleteProperty", fn3("deleteProperty", "Reflect.deleteProperty", { declaringTypeFqn: "Reflect", parameterTypes: ["object", "PropertyKey"], returnType: "boolean" })],
+  ["Reflect.apply", fn3("apply", "Reflect.apply", { declaringTypeFqn: "Reflect", parameterTypes: ["Function", "any", "ArrayLike<any>"], returnType: "any" })],
+  ["Reflect.construct", fn3("construct", "Reflect.construct", { declaringTypeFqn: "Reflect", parameterTypes: ["Function", "ArrayLike<any>", "Function?"], returnType: "object" })],
+  ["Reflect.ownKeys", fn3("ownKeys", "Reflect.ownKeys", { declaringTypeFqn: "Reflect", parameterTypes: ["object"], returnType: "(string | symbol)[]" })]
+]);
+var TYPESCRIPT_STDLIB_INSTANCE_METHODS = /* @__PURE__ */ new Map([
+  // Array instance methods
+  ["Array.map", fn3("map", "Array.prototype.map", { declaringTypeFqn: "Array", parameterTypes: ["(value: T, index: number, array: T[]) => U", "any?"], returnType: "U[]" })],
+  ["Array.filter", fn3("filter", "Array.prototype.filter", { declaringTypeFqn: "Array", parameterTypes: ["(value: T, index: number, array: T[]) => boolean", "any?"], returnType: "T[]" })],
+  ["Array.reduce", fn3("reduce", "Array.prototype.reduce", { declaringTypeFqn: "Array", parameterTypes: ["(prev: U, curr: T, index: number, array: T[]) => U", "U?"], returnType: "U" })],
+  ["Array.reduceRight", fn3("reduceRight", "Array.prototype.reduceRight", { declaringTypeFqn: "Array", parameterTypes: ["(prev: U, curr: T, index: number, array: T[]) => U", "U?"], returnType: "U" })],
+  ["Array.forEach", fn3("forEach", "Array.prototype.forEach", { declaringTypeFqn: "Array", parameterTypes: ["(value: T, index: number, array: T[]) => void", "any?"], returnType: "void" })],
+  ["Array.find", fn3("find", "Array.prototype.find", { declaringTypeFqn: "Array", parameterTypes: ["(value: T, index: number, obj: T[]) => boolean", "any?"], returnType: "T | undefined" })],
+  ["Array.findIndex", fn3("findIndex", "Array.prototype.findIndex", { declaringTypeFqn: "Array", parameterTypes: ["(value: T, index: number, obj: T[]) => boolean", "any?"], returnType: "number" })],
+  ["Array.findLast", fn3("findLast", "Array.prototype.findLast", { declaringTypeFqn: "Array", parameterTypes: ["(value: T, index: number, obj: T[]) => boolean", "any?"], returnType: "T | undefined" })],
+  ["Array.findLastIndex", fn3("findLastIndex", "Array.prototype.findLastIndex", { declaringTypeFqn: "Array", parameterTypes: ["(value: T, index: number, obj: T[]) => boolean", "any?"], returnType: "number" })],
+  ["Array.some", fn3("some", "Array.prototype.some", { declaringTypeFqn: "Array", parameterTypes: ["(value: T, index: number, array: T[]) => boolean", "any?"], returnType: "boolean" })],
+  ["Array.every", fn3("every", "Array.prototype.every", { declaringTypeFqn: "Array", parameterTypes: ["(value: T, index: number, array: T[]) => boolean", "any?"], returnType: "boolean" })],
+  ["Array.includes", fn3("includes", "Array.prototype.includes", { declaringTypeFqn: "Array", parameterTypes: ["T", "number?"], returnType: "boolean" })],
+  ["Array.indexOf", fn3("indexOf", "Array.prototype.indexOf", { declaringTypeFqn: "Array", parameterTypes: ["T", "number?"], returnType: "number" })],
+  ["Array.lastIndexOf", fn3("lastIndexOf", "Array.prototype.lastIndexOf", { declaringTypeFqn: "Array", parameterTypes: ["T", "number?"], returnType: "number" })],
+  ["Array.join", fn3("join", "Array.prototype.join", { declaringTypeFqn: "Array", parameterTypes: ["string?"], returnType: "string" })],
+  ["Array.concat", fn3("concat", "Array.prototype.concat", { declaringTypeFqn: "Array", parameterTypes: ["...(T | ConcatArray<T>)[]"], returnType: "T[]" })],
+  ["Array.slice", fn3("slice", "Array.prototype.slice", { declaringTypeFqn: "Array", parameterTypes: ["number?", "number?"], returnType: "T[]" })],
+  ["Array.splice", fn3("splice", "Array.prototype.splice", { declaringTypeFqn: "Array", parameterTypes: ["number", "number?", "...T[]"], returnType: "T[]" })],
+  ["Array.push", fn3("push", "Array.prototype.push", { declaringTypeFqn: "Array", parameterTypes: ["...T[]"], returnType: "number" })],
+  ["Array.pop", fn3("pop", "Array.prototype.pop", { declaringTypeFqn: "Array", parameterTypes: [], returnType: "T | undefined" })],
+  ["Array.shift", fn3("shift", "Array.prototype.shift", { declaringTypeFqn: "Array", parameterTypes: [], returnType: "T | undefined" })],
+  ["Array.unshift", fn3("unshift", "Array.prototype.unshift", { declaringTypeFqn: "Array", parameterTypes: ["...T[]"], returnType: "number" })],
+  ["Array.sort", fn3("sort", "Array.prototype.sort", { declaringTypeFqn: "Array", parameterTypes: ["((a: T, b: T) => number)?"], returnType: "T[]" })],
+  ["Array.reverse", fn3("reverse", "Array.prototype.reverse", { declaringTypeFqn: "Array", parameterTypes: [], returnType: "T[]" })],
+  ["Array.flat", fn3("flat", "Array.prototype.flat", { declaringTypeFqn: "Array", parameterTypes: ["number?"], returnType: "FlatArray<T, D>[]" })],
+  ["Array.flatMap", fn3("flatMap", "Array.prototype.flatMap", { declaringTypeFqn: "Array", parameterTypes: ["(value: T, index: number, array: T[]) => U | ReadonlyArray<U>", "any?"], returnType: "U[]" })],
+  ["Array.fill", fn3("fill", "Array.prototype.fill", { declaringTypeFqn: "Array", parameterTypes: ["T", "number?", "number?"], returnType: "T[]" })],
+  ["Array.copyWithin", fn3("copyWithin", "Array.prototype.copyWithin", { declaringTypeFqn: "Array", parameterTypes: ["number", "number", "number?"], returnType: "T[]" })],
+  ["Array.entries", fn3("entries", "Array.prototype.entries", { declaringTypeFqn: "Array", parameterTypes: [], returnType: "IterableIterator<[number, T]>" })],
+  ["Array.keys", fn3("keys", "Array.prototype.keys", { declaringTypeFqn: "Array", parameterTypes: [], returnType: "IterableIterator<number>" })],
+  ["Array.values", fn3("values", "Array.prototype.values", { declaringTypeFqn: "Array", parameterTypes: [], returnType: "IterableIterator<T>" })],
+  ["Array.at", fn3("at", "Array.prototype.at", { declaringTypeFqn: "Array", parameterTypes: ["number"], returnType: "T | undefined" })],
+  ["Array.toReversed", fn3("toReversed", "Array.prototype.toReversed", { declaringTypeFqn: "Array", parameterTypes: [], returnType: "T[]" })],
+  ["Array.toSorted", fn3("toSorted", "Array.prototype.toSorted", { declaringTypeFqn: "Array", parameterTypes: ["((a: T, b: T) => number)?"], returnType: "T[]" })],
+  ["Array.toSpliced", fn3("toSpliced", "Array.prototype.toSpliced", { declaringTypeFqn: "Array", parameterTypes: ["number", "number?", "...T[]"], returnType: "T[]" })],
+  ["Array.with", fn3("with", "Array.prototype.with", { declaringTypeFqn: "Array", parameterTypes: ["number", "T"], returnType: "T[]" })],
+  // String instance methods
+  ["String.charAt", fn3("charAt", "String.prototype.charAt", { declaringTypeFqn: "String", parameterTypes: ["number"], returnType: "string" })],
+  ["String.charCodeAt", fn3("charCodeAt", "String.prototype.charCodeAt", { declaringTypeFqn: "String", parameterTypes: ["number"], returnType: "number" })],
+  ["String.codePointAt", fn3("codePointAt", "String.prototype.codePointAt", { declaringTypeFqn: "String", parameterTypes: ["number"], returnType: "number | undefined" })],
+  ["String.concat", fn3("concat", "String.prototype.concat", { declaringTypeFqn: "String", parameterTypes: ["...string[]"], returnType: "string" })],
+  ["String.includes", fn3("includes", "String.prototype.includes", { declaringTypeFqn: "String", parameterTypes: ["string", "number?"], returnType: "boolean" })],
+  ["String.startsWith", fn3("startsWith", "String.prototype.startsWith", { declaringTypeFqn: "String", parameterTypes: ["string", "number?"], returnType: "boolean" })],
+  ["String.endsWith", fn3("endsWith", "String.prototype.endsWith", { declaringTypeFqn: "String", parameterTypes: ["string", "number?"], returnType: "boolean" })],
+  ["String.indexOf", fn3("indexOf", "String.prototype.indexOf", { declaringTypeFqn: "String", parameterTypes: ["string", "number?"], returnType: "number" })],
+  ["String.lastIndexOf", fn3("lastIndexOf", "String.prototype.lastIndexOf", { declaringTypeFqn: "String", parameterTypes: ["string", "number?"], returnType: "number" })],
+  ["String.match", fn3("match", "String.prototype.match", { declaringTypeFqn: "String", parameterTypes: ["string | RegExp"], returnType: "RegExpMatchArray | null" })],
+  ["String.matchAll", fn3("matchAll", "String.prototype.matchAll", { declaringTypeFqn: "String", parameterTypes: ["RegExp"], returnType: "IterableIterator<RegExpMatchArray>" })],
+  ["String.replace", fn3("replace", "String.prototype.replace", { declaringTypeFqn: "String", parameterTypes: ["string | RegExp", "string | ((substring: string, ...args: any[]) => string)"], returnType: "string" })],
+  ["String.replaceAll", fn3("replaceAll", "String.prototype.replaceAll", { declaringTypeFqn: "String", parameterTypes: ["string | RegExp", "string | ((substring: string, ...args: any[]) => string)"], returnType: "string" })],
+  ["String.search", fn3("search", "String.prototype.search", { declaringTypeFqn: "String", parameterTypes: ["string | RegExp"], returnType: "number" })],
+  ["String.slice", fn3("slice", "String.prototype.slice", { declaringTypeFqn: "String", parameterTypes: ["number?", "number?"], returnType: "string" })],
+  ["String.split", fn3("split", "String.prototype.split", { declaringTypeFqn: "String", parameterTypes: ["string | RegExp", "number?"], returnType: "string[]" })],
+  ["String.substring", fn3("substring", "String.prototype.substring", { declaringTypeFqn: "String", parameterTypes: ["number", "number?"], returnType: "string" })],
+  ["String.toLowerCase", fn3("toLowerCase", "String.prototype.toLowerCase", { declaringTypeFqn: "String", parameterTypes: [], returnType: "string" })],
+  ["String.toUpperCase", fn3("toUpperCase", "String.prototype.toUpperCase", { declaringTypeFqn: "String", parameterTypes: [], returnType: "string" })],
+  ["String.toLocaleLowerCase", fn3("toLocaleLowerCase", "String.prototype.toLocaleLowerCase", { declaringTypeFqn: "String", parameterTypes: ["string | string[]?"], returnType: "string" })],
+  ["String.toLocaleUpperCase", fn3("toLocaleUpperCase", "String.prototype.toLocaleUpperCase", { declaringTypeFqn: "String", parameterTypes: ["string | string[]?"], returnType: "string" })],
+  ["String.trim", fn3("trim", "String.prototype.trim", { declaringTypeFqn: "String", parameterTypes: [], returnType: "string" })],
+  ["String.trimStart", fn3("trimStart", "String.prototype.trimStart", { declaringTypeFqn: "String", parameterTypes: [], returnType: "string" })],
+  ["String.trimEnd", fn3("trimEnd", "String.prototype.trimEnd", { declaringTypeFqn: "String", parameterTypes: [], returnType: "string" })],
+  ["String.padStart", fn3("padStart", "String.prototype.padStart", { declaringTypeFqn: "String", parameterTypes: ["number", "string?"], returnType: "string" })],
+  ["String.padEnd", fn3("padEnd", "String.prototype.padEnd", { declaringTypeFqn: "String", parameterTypes: ["number", "string?"], returnType: "string" })],
+  ["String.repeat", fn3("repeat", "String.prototype.repeat", { declaringTypeFqn: "String", parameterTypes: ["number"], returnType: "string" })],
+  ["String.normalize", fn3("normalize", "String.prototype.normalize", { declaringTypeFqn: "String", parameterTypes: ["string?"], returnType: "string" })],
+  ["String.at", fn3("at", "String.prototype.at", { declaringTypeFqn: "String", parameterTypes: ["number"], returnType: "string | undefined" })],
+  // Promise instance methods
+  ["Promise.then", fn3("then", "Promise.prototype.then", { declaringTypeFqn: "Promise", parameterTypes: ["((value: T) => TResult1 | PromiseLike<TResult1>)?", "((reason: any) => TResult2 | PromiseLike<TResult2>)?"], returnType: "Promise<TResult1 | TResult2>" })],
+  ["Promise.catch", fn3("catch", "Promise.prototype.catch", { declaringTypeFqn: "Promise", parameterTypes: ["((reason: any) => TResult | PromiseLike<TResult>)?"], returnType: "Promise<T | TResult>" })],
+  ["Promise.finally", fn3("finally", "Promise.prototype.finally", { declaringTypeFqn: "Promise", parameterTypes: ["(() => void)?"], returnType: "Promise<T>" })],
+  // Map instance methods
+  ["Map.get", fn3("get", "Map.prototype.get", { declaringTypeFqn: "Map", parameterTypes: ["K"], returnType: "V | undefined" })],
+  ["Map.set", fn3("set", "Map.prototype.set", { declaringTypeFqn: "Map", parameterTypes: ["K", "V"], returnType: "Map<K, V>" })],
+  ["Map.has", fn3("has", "Map.prototype.has", { declaringTypeFqn: "Map", parameterTypes: ["K"], returnType: "boolean" })],
+  ["Map.delete", fn3("delete", "Map.prototype.delete", { declaringTypeFqn: "Map", parameterTypes: ["K"], returnType: "boolean" })],
+  ["Map.clear", fn3("clear", "Map.prototype.clear", { declaringTypeFqn: "Map", parameterTypes: [], returnType: "void" })],
+  ["Map.forEach", fn3("forEach", "Map.prototype.forEach", { declaringTypeFqn: "Map", parameterTypes: ["(value: V, key: K, map: Map<K, V>) => void", "any?"], returnType: "void" })],
+  ["Map.keys", fn3("keys", "Map.prototype.keys", { declaringTypeFqn: "Map", parameterTypes: [], returnType: "IterableIterator<K>" })],
+  ["Map.values", fn3("values", "Map.prototype.values", { declaringTypeFqn: "Map", parameterTypes: [], returnType: "IterableIterator<V>" })],
+  ["Map.entries", fn3("entries", "Map.prototype.entries", { declaringTypeFqn: "Map", parameterTypes: [], returnType: "IterableIterator<[K, V]>" })],
+  // Set instance methods
+  ["Set.add", fn3("add", "Set.prototype.add", { declaringTypeFqn: "Set", parameterTypes: ["T"], returnType: "Set<T>" })],
+  ["Set.has", fn3("has", "Set.prototype.has", { declaringTypeFqn: "Set", parameterTypes: ["T"], returnType: "boolean" })],
+  ["Set.delete", fn3("delete", "Set.prototype.delete", { declaringTypeFqn: "Set", parameterTypes: ["T"], returnType: "boolean" })],
+  ["Set.clear", fn3("clear", "Set.prototype.clear", { declaringTypeFqn: "Set", parameterTypes: [], returnType: "void" })],
+  ["Set.forEach", fn3("forEach", "Set.prototype.forEach", { declaringTypeFqn: "Set", parameterTypes: ["(value: T, value2: T, set: Set<T>) => void", "any?"], returnType: "void" })],
+  ["Set.keys", fn3("keys", "Set.prototype.keys", { declaringTypeFqn: "Set", parameterTypes: [], returnType: "IterableIterator<T>" })],
+  ["Set.values", fn3("values", "Set.prototype.values", { declaringTypeFqn: "Set", parameterTypes: [], returnType: "IterableIterator<T>" })],
+  ["Set.entries", fn3("entries", "Set.prototype.entries", { declaringTypeFqn: "Set", parameterTypes: [], returnType: "IterableIterator<[T, T]>" })]
+]);
+function getTypescriptStdlibSymbols() {
+  const result = /* @__PURE__ */ new Map();
+  for (const [name, func] of TYPESCRIPT_STDLIB_FUNCTIONS) {
+    result.set(name, func);
+  }
+  for (const [name, func] of TYPESCRIPT_STDLIB_INSTANCE_METHODS) {
+    result.set(name, func);
+  }
+  for (const [name, clsSymbol] of TYPESCRIPT_STDLIB_CLASSES) {
+    result.set(name, clsSymbol);
+  }
+  return result;
+}
+function isTypescriptStdlibSymbol(name) {
+  return TYPESCRIPT_BUILTIN_TYPES.has(name) || TYPESCRIPT_STDLIB_CLASSES.has(name) || TYPESCRIPT_STDLIB_FUNCTIONS.has(name) || TYPESCRIPT_STDLIB_INSTANCE_METHODS.has(name);
+}
+var TypescriptStdlibProvider = class {
+  languages = ["typescript", "javascript"];
+  // TypeScript/JavaScript don't have implicit wildcard imports
+  defaultWildcardImports = [];
+  lookupFunction(name) {
+    return TYPESCRIPT_STDLIB_FUNCTIONS.get(name);
+  }
+  lookupClass(name) {
+    return TYPESCRIPT_STDLIB_CLASSES.get(name);
+  }
+  lookupStaticMethod(qualifiedName) {
+    const staticMethod = TYPESCRIPT_STDLIB_FUNCTIONS.get(qualifiedName);
+    if (staticMethod) {
+      return staticMethod;
+    }
+    return TYPESCRIPT_STDLIB_INSTANCE_METHODS.get(qualifiedName);
+  }
+  isKnownSymbol(name) {
+    return isTypescriptStdlibSymbol(name);
+  }
+  getAllSymbols() {
+    return getTypescriptStdlibSymbols();
+  }
+  /**
+   * Check if a type name is a built-in primitive type.
+   */
+  isBuiltinType(typeName) {
+    return TYPESCRIPT_BUILTIN_TYPES.has(typeName);
+  }
+};
+
+// src/indexer/resolver/stdlib/nodejs-stdlib.ts
+var STDLIB_LOC4 = {
+  filePath: "<nodejs-stdlib>",
+  startLine: 0,
+  startColumn: 0,
+  endLine: 0,
+  endColumn: 0
+};
+function fn4(name, fqn, opts = {}) {
+  return {
+    name,
+    fqn,
+    kind: "function",
+    filePath: "<nodejs-stdlib>",
+    location: STDLIB_LOC4,
+    packageName: "nodejs",
+    parameterTypes: opts.parameterTypes || [],
+    returnType: opts.returnType,
+    declaringTypeFqn: opts.declaringTypeFqn,
+    isExtension: false
+  };
+}
+function cls4(name, fqn, kind = "class", opts = {}) {
+  return {
+    name,
+    fqn,
+    kind,
+    filePath: "<nodejs-stdlib>",
+    location: STDLIB_LOC4,
+    packageName: "nodejs",
+    superClass: opts.superClass,
+    interfaces: opts.interfaces || [],
+    isAbstract: opts.isAbstract
+  };
+}
+var NODEJS_STDLIB_CLASSES = /* @__PURE__ */ new Map([
+  // Buffer
+  ["Buffer", cls4("Buffer", "Buffer", "class")],
+  // Process
+  ["process", cls4("process", "process", "object")],
+  // Global objects
+  ["global", cls4("global", "global", "object")],
+  ["globalThis", cls4("globalThis", "globalThis", "object")],
+  ["__dirname", cls4("__dirname", "__dirname", "object")],
+  ["__filename", cls4("__filename", "__filename", "object")],
+  ["module", cls4("module", "module", "object")],
+  ["exports", cls4("exports", "exports", "object")],
+  ["require", cls4("require", "require", "object")],
+  // Events
+  ["EventEmitter", cls4("EventEmitter", "events.EventEmitter", "class")],
+  // Streams
+  ["Stream", cls4("Stream", "stream.Stream", "class")],
+  ["Readable", cls4("Readable", "stream.Readable", "class", { superClass: "Stream" })],
+  ["Writable", cls4("Writable", "stream.Writable", "class", { superClass: "Stream" })],
+  ["Duplex", cls4("Duplex", "stream.Duplex", "class", { superClass: "Stream" })],
+  ["Transform", cls4("Transform", "stream.Transform", "class", { superClass: "Duplex" })],
+  // HTTP
+  ["IncomingMessage", cls4("IncomingMessage", "http.IncomingMessage", "class")],
+  ["ServerResponse", cls4("ServerResponse", "http.ServerResponse", "class")],
+  ["Server", cls4("Server", "http.Server", "class")],
+  // File System
+  ["Stats", cls4("Stats", "fs.Stats", "class")],
+  ["ReadStream", cls4("ReadStream", "fs.ReadStream", "class")],
+  ["WriteStream", cls4("WriteStream", "fs.WriteStream", "class")],
+  // URL
+  ["URL", cls4("URL", "URL", "class")],
+  ["URLSearchParams", cls4("URLSearchParams", "URLSearchParams", "class")],
+  // Timers
+  ["Timeout", cls4("Timeout", "Timeout", "class")],
+  ["Immediate", cls4("Immediate", "Immediate", "class")]
+]);
+var NODEJS_STDLIB_FUNCTIONS = /* @__PURE__ */ new Map([
+  // Global functions
+  ["require", fn4("require", "require", { parameterTypes: ["string"], returnType: "any" })],
+  ["setImmediate", fn4("setImmediate", "setImmediate", { parameterTypes: ["(...args: any[]) => void", "...any[]"], returnType: "Immediate" })],
+  ["clearImmediate", fn4("clearImmediate", "clearImmediate", { parameterTypes: ["Immediate"], returnType: "void" })],
+  ["setTimeout", fn4("setTimeout", "setTimeout", { parameterTypes: ["(...args: any[]) => void", "number?", "...any[]"], returnType: "Timeout" })],
+  ["clearTimeout", fn4("clearTimeout", "clearTimeout", { parameterTypes: ["Timeout"], returnType: "void" })],
+  ["setInterval", fn4("setInterval", "setInterval", { parameterTypes: ["(...args: any[]) => void", "number?", "...any[]"], returnType: "Timeout" })],
+  ["clearInterval", fn4("clearInterval", "clearInterval", { parameterTypes: ["Timeout"], returnType: "void" })],
+  ["queueMicrotask", fn4("queueMicrotask", "queueMicrotask", { parameterTypes: ["() => void"], returnType: "void" })],
+  // Buffer static methods
+  ["Buffer.alloc", fn4("alloc", "Buffer.alloc", { declaringTypeFqn: "Buffer", parameterTypes: ["number", "number | Buffer | string?", "string?"], returnType: "Buffer" })],
+  ["Buffer.allocUnsafe", fn4("allocUnsafe", "Buffer.allocUnsafe", { declaringTypeFqn: "Buffer", parameterTypes: ["number"], returnType: "Buffer" })],
+  ["Buffer.from", fn4("from", "Buffer.from", { declaringTypeFqn: "Buffer", parameterTypes: ["string | Buffer | ArrayBuffer | any[]", "string?", "number?", "number?"], returnType: "Buffer" })],
+  ["Buffer.concat", fn4("concat", "Buffer.concat", { declaringTypeFqn: "Buffer", parameterTypes: ["Buffer[]", "number?"], returnType: "Buffer" })],
+  ["Buffer.isBuffer", fn4("isBuffer", "Buffer.isBuffer", { declaringTypeFqn: "Buffer", parameterTypes: ["any"], returnType: "boolean" })],
+  ["Buffer.byteLength", fn4("byteLength", "Buffer.byteLength", { declaringTypeFqn: "Buffer", parameterTypes: ["string | Buffer", "string?"], returnType: "number" })],
+  ["Buffer.compare", fn4("compare", "Buffer.compare", { declaringTypeFqn: "Buffer", parameterTypes: ["Buffer", "Buffer"], returnType: "number" })],
+  // Process methods
+  ["process.exit", fn4("exit", "process.exit", { declaringTypeFqn: "process", parameterTypes: ["number?"], returnType: "never" })],
+  ["process.cwd", fn4("cwd", "process.cwd", { declaringTypeFqn: "process", parameterTypes: [], returnType: "string" })],
+  ["process.chdir", fn4("chdir", "process.chdir", { declaringTypeFqn: "process", parameterTypes: ["string"], returnType: "void" })],
+  ["process.nextTick", fn4("nextTick", "process.nextTick", { declaringTypeFqn: "process", parameterTypes: ["(...args: any[]) => void", "...any[]"], returnType: "void" })],
+  ["process.hrtime", fn4("hrtime", "process.hrtime", { declaringTypeFqn: "process", parameterTypes: ["[number, number]?"], returnType: "[number, number]" })],
+  ["process.memoryUsage", fn4("memoryUsage", "process.memoryUsage", { declaringTypeFqn: "process", parameterTypes: [], returnType: "MemoryUsage" })],
+  ["process.cpuUsage", fn4("cpuUsage", "process.cpuUsage", { declaringTypeFqn: "process", parameterTypes: ["CpuUsage?"], returnType: "CpuUsage" })],
+  ["process.uptime", fn4("uptime", "process.uptime", { declaringTypeFqn: "process", parameterTypes: [], returnType: "number" })],
+  ["process.kill", fn4("kill", "process.kill", { declaringTypeFqn: "process", parameterTypes: ["number", "string | number?"], returnType: "boolean" })],
+  // fs synchronous functions (commonly used)
+  ["fs.readFileSync", fn4("readFileSync", "fs.readFileSync", { parameterTypes: ["string | Buffer | URL | number", "string | object?"], returnType: "string | Buffer" })],
+  ["fs.writeFileSync", fn4("writeFileSync", "fs.writeFileSync", { parameterTypes: ["string | Buffer | URL | number", "string | Buffer", "string | object?"], returnType: "void" })],
+  ["fs.existsSync", fn4("existsSync", "fs.existsSync", { parameterTypes: ["string | Buffer | URL"], returnType: "boolean" })],
+  ["fs.mkdirSync", fn4("mkdirSync", "fs.mkdirSync", { parameterTypes: ["string | Buffer | URL", "string | object?"], returnType: "string | undefined" })],
+  ["fs.readdirSync", fn4("readdirSync", "fs.readdirSync", { parameterTypes: ["string | Buffer | URL", "string | object?"], returnType: "string[] | Buffer[] | Dirent[]" })],
+  ["fs.statSync", fn4("statSync", "fs.statSync", { parameterTypes: ["string | Buffer | URL", "object?"], returnType: "Stats" })],
+  ["fs.unlinkSync", fn4("unlinkSync", "fs.unlinkSync", { parameterTypes: ["string | Buffer | URL"], returnType: "void" })],
+  ["fs.renameSync", fn4("renameSync", "fs.renameSync", { parameterTypes: ["string | Buffer | URL", "string | Buffer | URL"], returnType: "void" })],
+  ["fs.copyFileSync", fn4("copyFileSync", "fs.copyFileSync", { parameterTypes: ["string | Buffer | URL", "string | Buffer | URL", "number?"], returnType: "void" })],
+  ["fs.appendFileSync", fn4("appendFileSync", "fs.appendFileSync", { parameterTypes: ["string | Buffer | URL | number", "string | Buffer", "string | object?"], returnType: "void" })],
+  // fs async functions
+  ["fs.readFile", fn4("readFile", "fs.readFile", { parameterTypes: ["string | Buffer | URL | number", "string | object?", "(err: Error | null, data: string | Buffer) => void"], returnType: "void" })],
+  ["fs.writeFile", fn4("writeFile", "fs.writeFile", { parameterTypes: ["string | Buffer | URL | number", "string | Buffer", "string | object?", "(err: Error | null) => void"], returnType: "void" })],
+  ["fs.mkdir", fn4("mkdir", "fs.mkdir", { parameterTypes: ["string | Buffer | URL", "string | object?", "(err: Error | null, path?: string) => void"], returnType: "void" })],
+  ["fs.readdir", fn4("readdir", "fs.readdir", { parameterTypes: ["string | Buffer | URL", "string | object?", "(err: Error | null, files: string[]) => void"], returnType: "void" })],
+  ["fs.stat", fn4("stat", "fs.stat", { parameterTypes: ["string | Buffer | URL", "object?", "(err: Error | null, stats: Stats) => void"], returnType: "void" })],
+  // path methods
+  ["path.join", fn4("join", "path.join", { parameterTypes: ["...string[]"], returnType: "string" })],
+  ["path.resolve", fn4("resolve", "path.resolve", { parameterTypes: ["...string[]"], returnType: "string" })],
+  ["path.dirname", fn4("dirname", "path.dirname", { parameterTypes: ["string"], returnType: "string" })],
+  ["path.basename", fn4("basename", "path.basename", { parameterTypes: ["string", "string?"], returnType: "string" })],
+  ["path.extname", fn4("extname", "path.extname", { parameterTypes: ["string"], returnType: "string" })],
+  ["path.parse", fn4("parse", "path.parse", { parameterTypes: ["string"], returnType: "ParsedPath" })],
+  ["path.format", fn4("format", "path.format", { parameterTypes: ["ParsedPath"], returnType: "string" })],
+  ["path.normalize", fn4("normalize", "path.normalize", { parameterTypes: ["string"], returnType: "string" })],
+  ["path.relative", fn4("relative", "path.relative", { parameterTypes: ["string", "string"], returnType: "string" })],
+  ["path.isAbsolute", fn4("isAbsolute", "path.isAbsolute", { parameterTypes: ["string"], returnType: "boolean" })],
+  // os methods
+  ["os.platform", fn4("platform", "os.platform", { parameterTypes: [], returnType: "string" })],
+  ["os.arch", fn4("arch", "os.arch", { parameterTypes: [], returnType: "string" })],
+  ["os.cpus", fn4("cpus", "os.cpus", { parameterTypes: [], returnType: "CpuInfo[]" })],
+  ["os.homedir", fn4("homedir", "os.homedir", { parameterTypes: [], returnType: "string" })],
+  ["os.tmpdir", fn4("tmpdir", "os.tmpdir", { parameterTypes: [], returnType: "string" })],
+  ["os.hostname", fn4("hostname", "os.hostname", { parameterTypes: [], returnType: "string" })],
+  ["os.freemem", fn4("freemem", "os.freemem", { parameterTypes: [], returnType: "number" })],
+  ["os.totalmem", fn4("totalmem", "os.totalmem", { parameterTypes: [], returnType: "number" })],
+  // http methods
+  ["http.createServer", fn4("createServer", "http.createServer", { parameterTypes: ["RequestListener?"], returnType: "Server" })],
+  ["http.get", fn4("get", "http.get", { parameterTypes: ["string | URL | RequestOptions", "((res: IncomingMessage) => void)?"], returnType: "ClientRequest" })],
+  ["http.request", fn4("request", "http.request", { parameterTypes: ["string | URL | RequestOptions", "((res: IncomingMessage) => void)?"], returnType: "ClientRequest" })],
+  // https methods
+  ["https.createServer", fn4("createServer", "https.createServer", { parameterTypes: ["ServerOptions?", "RequestListener?"], returnType: "Server" })],
+  ["https.get", fn4("get", "https.get", { parameterTypes: ["string | URL | RequestOptions", "((res: IncomingMessage) => void)?"], returnType: "ClientRequest" })],
+  ["https.request", fn4("request", "https.request", { parameterTypes: ["string | URL | RequestOptions", "((res: IncomingMessage) => void)?"], returnType: "ClientRequest" })],
+  // crypto methods (commonly used)
+  ["crypto.randomBytes", fn4("randomBytes", "crypto.randomBytes", { parameterTypes: ["number", "((err: Error | null, buf: Buffer) => void)?"], returnType: "Buffer" })],
+  ["crypto.createHash", fn4("createHash", "crypto.createHash", { parameterTypes: ["string", "object?"], returnType: "Hash" })],
+  ["crypto.createHmac", fn4("createHmac", "crypto.createHmac", { parameterTypes: ["string", "string | Buffer", "object?"], returnType: "Hmac" })],
+  ["crypto.createCipheriv", fn4("createCipheriv", "crypto.createCipheriv", { parameterTypes: ["string", "string | Buffer", "string | Buffer | null", "object?"], returnType: "Cipher" })],
+  ["crypto.createDecipheriv", fn4("createDecipheriv", "crypto.createDecipheriv", { parameterTypes: ["string", "string | Buffer", "string | Buffer | null", "object?"], returnType: "Decipher" })],
+  // util methods
+  ["util.promisify", fn4("promisify", "util.promisify", { parameterTypes: ["Function"], returnType: "Function" })],
+  ["util.inspect", fn4("inspect", "util.inspect", { parameterTypes: ["any", "object?"], returnType: "string" })],
+  ["util.format", fn4("format", "util.format", { parameterTypes: ["any?", "...any[]"], returnType: "string" })],
+  ["util.deprecate", fn4("deprecate", "util.deprecate", { parameterTypes: ["Function", "string", "string?"], returnType: "Function" })],
+  ["util.types.isArrayBuffer", fn4("isArrayBuffer", "util.types.isArrayBuffer", { parameterTypes: ["any"], returnType: "boolean" })],
+  ["util.types.isPromise", fn4("isPromise", "util.types.isPromise", { parameterTypes: ["any"], returnType: "boolean" })],
+  // events methods
+  ["events.on", fn4("on", "events.on", { parameterTypes: ["EventEmitter", "string | symbol", "object?"], returnType: "AsyncIterableIterator<any>" })],
+  ["events.once", fn4("once", "events.once", { parameterTypes: ["EventEmitter", "string | symbol", "object?"], returnType: "Promise<any[]>" })],
+  // child_process methods
+  ["child_process.spawn", fn4("spawn", "child_process.spawn", { parameterTypes: ["string", "string[]?", "SpawnOptions?"], returnType: "ChildProcess" })],
+  ["child_process.exec", fn4("exec", "child_process.exec", { parameterTypes: ["string", "object?", "((error: Error | null, stdout: string, stderr: string) => void)?"], returnType: "ChildProcess" })],
+  ["child_process.execSync", fn4("execSync", "child_process.execSync", { parameterTypes: ["string", "object?"], returnType: "Buffer | string" })],
+  ["child_process.fork", fn4("fork", "child_process.fork", { parameterTypes: ["string", "string[]?", "ForkOptions?"], returnType: "ChildProcess" })]
+]);
+var NodejsStdlibProvider = class {
+  languages = ["typescript", "javascript"];
+  // Node.js global objects (available without import)
+  defaultWildcardImports = [];
+  lookupFunction(name) {
+    return NODEJS_STDLIB_FUNCTIONS.get(name);
+  }
+  lookupClass(name) {
+    return NODEJS_STDLIB_CLASSES.get(name);
+  }
+  lookupStaticMethod(qualifiedName) {
+    return NODEJS_STDLIB_FUNCTIONS.get(qualifiedName);
+  }
+  isKnownSymbol(name) {
+    return NODEJS_STDLIB_CLASSES.has(name) || NODEJS_STDLIB_FUNCTIONS.has(name);
+  }
+  getAllSymbols() {
+    const result = /* @__PURE__ */ new Map();
+    for (const [name, func] of NODEJS_STDLIB_FUNCTIONS) {
+      result.set(name, func);
+    }
+    for (const [name, clsSymbol] of NODEJS_STDLIB_CLASSES) {
+      result.set(name, clsSymbol);
+    }
+    return result;
+  }
+  isBuiltinType(_typeName) {
+    return false;
+  }
+};
+
+// src/indexer/resolver/stdlib/dom-stdlib.ts
+var STDLIB_LOC5 = {
+  filePath: "<dom-stdlib>",
+  startLine: 0,
+  startColumn: 0,
+  endLine: 0,
+  endColumn: 0
+};
+function fn5(name, fqn, opts = {}) {
+  return {
+    name,
+    fqn,
+    kind: "function",
+    filePath: "<dom-stdlib>",
+    location: STDLIB_LOC5,
+    packageName: "dom",
+    parameterTypes: opts.parameterTypes || [],
+    returnType: opts.returnType,
+    declaringTypeFqn: opts.declaringTypeFqn,
+    isExtension: false
+  };
+}
+function cls5(name, fqn, kind = "class", opts = {}) {
+  return {
+    name,
+    fqn,
+    kind,
+    filePath: "<dom-stdlib>",
+    location: STDLIB_LOC5,
+    packageName: "dom",
+    superClass: opts.superClass,
+    interfaces: opts.interfaces || [],
+    isAbstract: opts.isAbstract
+  };
+}
+var DOM_STDLIB_CLASSES = /* @__PURE__ */ new Map([
+  // Global objects
+  ["window", cls5("window", "Window", "object")],
+  ["document", cls5("document", "Document", "object")],
+  ["navigator", cls5("navigator", "Navigator", "object")],
+  ["location", cls5("location", "Location", "object")],
+  ["history", cls5("history", "History", "object")],
+  ["screen", cls5("screen", "Screen", "object")],
+  ["localStorage", cls5("localStorage", "Storage", "object")],
+  ["sessionStorage", cls5("sessionStorage", "Storage", "object")],
+  ["console", cls5("console", "Console", "object")],
+  ["performance", cls5("performance", "Performance", "object")],
+  ["crypto", cls5("crypto", "Crypto", "object")],
+  // Window interface
+  ["Window", cls5("Window", "Window", "interface")],
+  ["Document", cls5("Document", "Document", "interface")],
+  ["Navigator", cls5("Navigator", "Navigator", "interface")],
+  ["Location", cls5("Location", "Location", "interface")],
+  ["History", cls5("History", "History", "interface")],
+  ["Storage", cls5("Storage", "Storage", "interface")],
+  ["Performance", cls5("Performance", "Performance", "interface")],
+  ["Crypto", cls5("Crypto", "Crypto", "interface")],
+  ["SubtleCrypto", cls5("SubtleCrypto", "SubtleCrypto", "interface")],
+  // DOM Elements
+  ["Element", cls5("Element", "Element", "class")],
+  ["Node", cls5("Node", "Node", "class")],
+  ["HTMLElement", cls5("HTMLElement", "HTMLElement", "class", { superClass: "Element" })],
+  ["HTMLDivElement", cls5("HTMLDivElement", "HTMLDivElement", "class", { superClass: "HTMLElement" })],
+  ["HTMLSpanElement", cls5("HTMLSpanElement", "HTMLSpanElement", "class", { superClass: "HTMLElement" })],
+  ["HTMLParagraphElement", cls5("HTMLParagraphElement", "HTMLParagraphElement", "class", { superClass: "HTMLElement" })],
+  ["HTMLHeadingElement", cls5("HTMLHeadingElement", "HTMLHeadingElement", "class", { superClass: "HTMLElement" })],
+  ["HTMLAnchorElement", cls5("HTMLAnchorElement", "HTMLAnchorElement", "class", { superClass: "HTMLElement" })],
+  ["HTMLImageElement", cls5("HTMLImageElement", "HTMLImageElement", "class", { superClass: "HTMLElement" })],
+  ["HTMLInputElement", cls5("HTMLInputElement", "HTMLInputElement", "class", { superClass: "HTMLElement" })],
+  ["HTMLButtonElement", cls5("HTMLButtonElement", "HTMLButtonElement", "class", { superClass: "HTMLElement" })],
+  ["HTMLFormElement", cls5("HTMLFormElement", "HTMLFormElement", "class", { superClass: "HTMLElement" })],
+  ["HTMLSelectElement", cls5("HTMLSelectElement", "HTMLSelectElement", "class", { superClass: "HTMLElement" })],
+  ["HTMLTextAreaElement", cls5("HTMLTextAreaElement", "HTMLTextAreaElement", "class", { superClass: "HTMLElement" })],
+  ["HTMLTableElement", cls5("HTMLTableElement", "HTMLTableElement", "class", { superClass: "HTMLElement" })],
+  ["HTMLCanvasElement", cls5("HTMLCanvasElement", "HTMLCanvasElement", "class", { superClass: "HTMLElement" })],
+  ["HTMLVideoElement", cls5("HTMLVideoElement", "HTMLVideoElement", "class", { superClass: "HTMLMediaElement" })],
+  ["HTMLAudioElement", cls5("HTMLAudioElement", "HTMLAudioElement", "class", { superClass: "HTMLMediaElement" })],
+  ["HTMLMediaElement", cls5("HTMLMediaElement", "HTMLMediaElement", "class", { superClass: "HTMLElement" })],
+  ["SVGElement", cls5("SVGElement", "SVGElement", "class", { superClass: "Element" })],
+  // Collections
+  ["NodeList", cls5("NodeList", "NodeList", "class")],
+  ["HTMLCollection", cls5("HTMLCollection", "HTMLCollection", "class")],
+  ["DOMTokenList", cls5("DOMTokenList", "DOMTokenList", "class")],
+  ["NamedNodeMap", cls5("NamedNodeMap", "NamedNodeMap", "class")],
+  // Events
+  ["Event", cls5("Event", "Event", "class")],
+  ["MouseEvent", cls5("MouseEvent", "MouseEvent", "class", { superClass: "UIEvent" })],
+  ["KeyboardEvent", cls5("KeyboardEvent", "KeyboardEvent", "class", { superClass: "UIEvent" })],
+  ["UIEvent", cls5("UIEvent", "UIEvent", "class", { superClass: "Event" })],
+  ["FocusEvent", cls5("FocusEvent", "FocusEvent", "class", { superClass: "UIEvent" })],
+  ["InputEvent", cls5("InputEvent", "InputEvent", "class", { superClass: "UIEvent" })],
+  ["TouchEvent", cls5("TouchEvent", "TouchEvent", "class", { superClass: "UIEvent" })],
+  ["PointerEvent", cls5("PointerEvent", "PointerEvent", "class", { superClass: "MouseEvent" })],
+  ["WheelEvent", cls5("WheelEvent", "WheelEvent", "class", { superClass: "MouseEvent" })],
+  ["DragEvent", cls5("DragEvent", "DragEvent", "class", { superClass: "MouseEvent" })],
+  ["ClipboardEvent", cls5("ClipboardEvent", "ClipboardEvent", "class", { superClass: "Event" })],
+  ["CustomEvent", cls5("CustomEvent", "CustomEvent", "class", { superClass: "Event" })],
+  ["MessageEvent", cls5("MessageEvent", "MessageEvent", "class", { superClass: "Event" })],
+  ["ErrorEvent", cls5("ErrorEvent", "ErrorEvent", "class", { superClass: "Event" })],
+  ["ProgressEvent", cls5("ProgressEvent", "ProgressEvent", "class", { superClass: "Event" })],
+  ["AnimationEvent", cls5("AnimationEvent", "AnimationEvent", "class", { superClass: "Event" })],
+  ["TransitionEvent", cls5("TransitionEvent", "TransitionEvent", "class", { superClass: "Event" })],
+  ["EventTarget", cls5("EventTarget", "EventTarget", "class")],
+  // Fetch API
+  ["Request", cls5("Request", "Request", "class")],
+  ["Response", cls5("Response", "Response", "class")],
+  ["Headers", cls5("Headers", "Headers", "class")],
+  ["FormData", cls5("FormData", "FormData", "class")],
+  ["URLSearchParams", cls5("URLSearchParams", "URLSearchParams", "class")],
+  ["URL", cls5("URL", "URL", "class")],
+  ["Blob", cls5("Blob", "Blob", "class")],
+  ["File", cls5("File", "File", "class", { superClass: "Blob" })],
+  ["FileReader", cls5("FileReader", "FileReader", "class")],
+  ["FileList", cls5("FileList", "FileList", "class")],
+  ["AbortController", cls5("AbortController", "AbortController", "class")],
+  ["AbortSignal", cls5("AbortSignal", "AbortSignal", "class", { superClass: "EventTarget" })],
+  // Web APIs
+  ["WebSocket", cls5("WebSocket", "WebSocket", "class", { superClass: "EventTarget" })],
+  ["Worker", cls5("Worker", "Worker", "class", { superClass: "EventTarget" })],
+  ["SharedWorker", cls5("SharedWorker", "SharedWorker", "class", { superClass: "EventTarget" })],
+  ["ServiceWorker", cls5("ServiceWorker", "ServiceWorker", "class", { superClass: "EventTarget" })],
+  ["IntersectionObserver", cls5("IntersectionObserver", "IntersectionObserver", "class")],
+  ["MutationObserver", cls5("MutationObserver", "MutationObserver", "class")],
+  ["ResizeObserver", cls5("ResizeObserver", "ResizeObserver", "class")],
+  ["XMLHttpRequest", cls5("XMLHttpRequest", "XMLHttpRequest", "class", { superClass: "EventTarget" })],
+  // Graphics
+  ["CanvasRenderingContext2D", cls5("CanvasRenderingContext2D", "CanvasRenderingContext2D", "class")],
+  ["WebGLRenderingContext", cls5("WebGLRenderingContext", "WebGLRenderingContext", "class")],
+  ["WebGL2RenderingContext", cls5("WebGL2RenderingContext", "WebGL2RenderingContext", "class")],
+  ["ImageData", cls5("ImageData", "ImageData", "class")],
+  // Audio
+  ["AudioContext", cls5("AudioContext", "AudioContext", "class", { superClass: "BaseAudioContext" })],
+  ["BaseAudioContext", cls5("BaseAudioContext", "BaseAudioContext", "class")],
+  ["AudioNode", cls5("AudioNode", "AudioNode", "class")],
+  // Geolocation
+  ["Geolocation", cls5("Geolocation", "Geolocation", "interface")],
+  ["GeolocationPosition", cls5("GeolocationPosition", "GeolocationPosition", "interface")],
+  ["GeolocationCoordinates", cls5("GeolocationCoordinates", "GeolocationCoordinates", "interface")]
+]);
+var DOM_STDLIB_FUNCTIONS = /* @__PURE__ */ new Map([
+  // Global functions
+  ["fetch", fn5("fetch", "fetch", { parameterTypes: ["RequestInfo | URL", "RequestInit?"], returnType: "Promise<Response>" })],
+  ["alert", fn5("alert", "alert", { parameterTypes: ["any?"], returnType: "void" })],
+  ["confirm", fn5("confirm", "confirm", { parameterTypes: ["string?"], returnType: "boolean" })],
+  ["prompt", fn5("prompt", "prompt", { parameterTypes: ["string?", "string?"], returnType: "string | null" })],
+  ["setTimeout", fn5("setTimeout", "setTimeout", { parameterTypes: ["TimerHandler", "number?", "...any[]"], returnType: "number" })],
+  ["clearTimeout", fn5("clearTimeout", "clearTimeout", { parameterTypes: ["number?"], returnType: "void" })],
+  ["setInterval", fn5("setInterval", "setInterval", { parameterTypes: ["TimerHandler", "number?", "...any[]"], returnType: "number" })],
+  ["clearInterval", fn5("clearInterval", "clearInterval", { parameterTypes: ["number?"], returnType: "void" })],
+  ["requestAnimationFrame", fn5("requestAnimationFrame", "requestAnimationFrame", { parameterTypes: ["FrameRequestCallback"], returnType: "number" })],
+  ["cancelAnimationFrame", fn5("cancelAnimationFrame", "cancelAnimationFrame", { parameterTypes: ["number"], returnType: "void" })],
+  ["requestIdleCallback", fn5("requestIdleCallback", "requestIdleCallback", { parameterTypes: ["IdleRequestCallback", "IdleRequestOptions?"], returnType: "number" })],
+  ["cancelIdleCallback", fn5("cancelIdleCallback", "cancelIdleCallback", { parameterTypes: ["number"], returnType: "void" })],
+  ["atob", fn5("atob", "atob", { parameterTypes: ["string"], returnType: "string" })],
+  ["btoa", fn5("btoa", "btoa", { parameterTypes: ["string"], returnType: "string" })],
+  ["getComputedStyle", fn5("getComputedStyle", "getComputedStyle", { parameterTypes: ["Element", "string?"], returnType: "CSSStyleDeclaration" })],
+  ["matchMedia", fn5("matchMedia", "matchMedia", { parameterTypes: ["string"], returnType: "MediaQueryList" })],
+  ["scroll", fn5("scroll", "scroll", { parameterTypes: ["ScrollToOptions | number?", "number?"], returnType: "void" })],
+  ["scrollTo", fn5("scrollTo", "scrollTo", { parameterTypes: ["ScrollToOptions | number?", "number?"], returnType: "void" })],
+  ["scrollBy", fn5("scrollBy", "scrollBy", { parameterTypes: ["ScrollToOptions | number?", "number?"], returnType: "void" })],
+  ["open", fn5("open", "open", { parameterTypes: ["string?", "string?", "string?"], returnType: "Window | null" })],
+  ["close", fn5("close", "close", { parameterTypes: [], returnType: "void" })],
+  ["print", fn5("print", "print", { parameterTypes: [], returnType: "void" })],
+  ["focus", fn5("focus", "focus", { parameterTypes: [], returnType: "void" })],
+  ["blur", fn5("blur", "blur", { parameterTypes: [], returnType: "void" })],
+  // Document methods
+  ["document.getElementById", fn5("getElementById", "document.getElementById", { declaringTypeFqn: "Document", parameterTypes: ["string"], returnType: "HTMLElement | null" })],
+  ["document.getElementsByClassName", fn5("getElementsByClassName", "document.getElementsByClassName", { declaringTypeFqn: "Document", parameterTypes: ["string"], returnType: "HTMLCollectionOf<Element>" })],
+  ["document.getElementsByTagName", fn5("getElementsByTagName", "document.getElementsByTagName", { declaringTypeFqn: "Document", parameterTypes: ["string"], returnType: "HTMLCollectionOf<Element>" })],
+  ["document.getElementsByName", fn5("getElementsByName", "document.getElementsByName", { declaringTypeFqn: "Document", parameterTypes: ["string"], returnType: "NodeListOf<HTMLElement>" })],
+  ["document.querySelector", fn5("querySelector", "document.querySelector", { declaringTypeFqn: "Document", parameterTypes: ["string"], returnType: "Element | null" })],
+  ["document.querySelectorAll", fn5("querySelectorAll", "document.querySelectorAll", { declaringTypeFqn: "Document", parameterTypes: ["string"], returnType: "NodeListOf<Element>" })],
+  ["document.createElement", fn5("createElement", "document.createElement", { declaringTypeFqn: "Document", parameterTypes: ["string", "ElementCreationOptions?"], returnType: "HTMLElement" })],
+  ["document.createTextNode", fn5("createTextNode", "document.createTextNode", { declaringTypeFqn: "Document", parameterTypes: ["string"], returnType: "Text" })],
+  ["document.createDocumentFragment", fn5("createDocumentFragment", "document.createDocumentFragment", { declaringTypeFqn: "Document", parameterTypes: [], returnType: "DocumentFragment" })],
+  ["document.createComment", fn5("createComment", "document.createComment", { declaringTypeFqn: "Document", parameterTypes: ["string"], returnType: "Comment" })],
+  ["document.createAttribute", fn5("createAttribute", "document.createAttribute", { declaringTypeFqn: "Document", parameterTypes: ["string"], returnType: "Attr" })],
+  ["document.adoptNode", fn5("adoptNode", "document.adoptNode", { declaringTypeFqn: "Document", parameterTypes: ["Node"], returnType: "Node" })],
+  ["document.importNode", fn5("importNode", "document.importNode", { declaringTypeFqn: "Document", parameterTypes: ["Node", "boolean?"], returnType: "Node" })],
+  ["document.write", fn5("write", "document.write", { declaringTypeFqn: "Document", parameterTypes: ["...string[]"], returnType: "void" })],
+  ["document.writeln", fn5("writeln", "document.writeln", { declaringTypeFqn: "Document", parameterTypes: ["...string[]"], returnType: "void" })],
+  ["document.open", fn5("open", "document.open", { declaringTypeFqn: "Document", parameterTypes: ["string?", "string?"], returnType: "Document" })],
+  ["document.close", fn5("close", "document.close", { declaringTypeFqn: "Document", parameterTypes: [], returnType: "void" })],
+  ["document.hasFocus", fn5("hasFocus", "document.hasFocus", { declaringTypeFqn: "Document", parameterTypes: [], returnType: "boolean" })],
+  ["document.execCommand", fn5("execCommand", "document.execCommand", { declaringTypeFqn: "Document", parameterTypes: ["string", "boolean?", "string?"], returnType: "boolean" })],
+  // Element methods
+  ["Element.querySelector", fn5("querySelector", "Element.prototype.querySelector", { declaringTypeFqn: "Element", parameterTypes: ["string"], returnType: "Element | null" })],
+  ["Element.querySelectorAll", fn5("querySelectorAll", "Element.prototype.querySelectorAll", { declaringTypeFqn: "Element", parameterTypes: ["string"], returnType: "NodeListOf<Element>" })],
+  ["Element.getAttribute", fn5("getAttribute", "Element.prototype.getAttribute", { declaringTypeFqn: "Element", parameterTypes: ["string"], returnType: "string | null" })],
+  ["Element.setAttribute", fn5("setAttribute", "Element.prototype.setAttribute", { declaringTypeFqn: "Element", parameterTypes: ["string", "string"], returnType: "void" })],
+  ["Element.removeAttribute", fn5("removeAttribute", "Element.prototype.removeAttribute", { declaringTypeFqn: "Element", parameterTypes: ["string"], returnType: "void" })],
+  ["Element.hasAttribute", fn5("hasAttribute", "Element.prototype.hasAttribute", { declaringTypeFqn: "Element", parameterTypes: ["string"], returnType: "boolean" })],
+  ["Element.toggleAttribute", fn5("toggleAttribute", "Element.prototype.toggleAttribute", { declaringTypeFqn: "Element", parameterTypes: ["string", "boolean?"], returnType: "boolean" })],
+  ["Element.closest", fn5("closest", "Element.prototype.closest", { declaringTypeFqn: "Element", parameterTypes: ["string"], returnType: "Element | null" })],
+  ["Element.matches", fn5("matches", "Element.prototype.matches", { declaringTypeFqn: "Element", parameterTypes: ["string"], returnType: "boolean" })],
+  ["Element.append", fn5("append", "Element.prototype.append", { declaringTypeFqn: "Element", parameterTypes: ["...(Node | string)[]"], returnType: "void" })],
+  ["Element.prepend", fn5("prepend", "Element.prototype.prepend", { declaringTypeFqn: "Element", parameterTypes: ["...(Node | string)[]"], returnType: "void" })],
+  ["Element.before", fn5("before", "Element.prototype.before", { declaringTypeFqn: "Element", parameterTypes: ["...(Node | string)[]"], returnType: "void" })],
+  ["Element.after", fn5("after", "Element.prototype.after", { declaringTypeFqn: "Element", parameterTypes: ["...(Node | string)[]"], returnType: "void" })],
+  ["Element.replaceWith", fn5("replaceWith", "Element.prototype.replaceWith", { declaringTypeFqn: "Element", parameterTypes: ["...(Node | string)[]"], returnType: "void" })],
+  ["Element.remove", fn5("remove", "Element.prototype.remove", { declaringTypeFqn: "Element", parameterTypes: [], returnType: "void" })],
+  ["Element.insertAdjacentHTML", fn5("insertAdjacentHTML", "Element.prototype.insertAdjacentHTML", { declaringTypeFqn: "Element", parameterTypes: ["InsertPosition", "string"], returnType: "void" })],
+  ["Element.insertAdjacentText", fn5("insertAdjacentText", "Element.prototype.insertAdjacentText", { declaringTypeFqn: "Element", parameterTypes: ["InsertPosition", "string"], returnType: "void" })],
+  ["Element.insertAdjacentElement", fn5("insertAdjacentElement", "Element.prototype.insertAdjacentElement", { declaringTypeFqn: "Element", parameterTypes: ["InsertPosition", "Element"], returnType: "Element | null" })],
+  ["Element.scrollIntoView", fn5("scrollIntoView", "Element.prototype.scrollIntoView", { declaringTypeFqn: "Element", parameterTypes: ["boolean | ScrollIntoViewOptions?"], returnType: "void" })],
+  ["Element.getBoundingClientRect", fn5("getBoundingClientRect", "Element.prototype.getBoundingClientRect", { declaringTypeFqn: "Element", parameterTypes: [], returnType: "DOMRect" })],
+  ["Element.getClientRects", fn5("getClientRects", "Element.prototype.getClientRects", { declaringTypeFqn: "Element", parameterTypes: [], returnType: "DOMRectList" })],
+  // Node methods
+  ["Node.appendChild", fn5("appendChild", "Node.prototype.appendChild", { declaringTypeFqn: "Node", parameterTypes: ["Node"], returnType: "Node" })],
+  ["Node.removeChild", fn5("removeChild", "Node.prototype.removeChild", { declaringTypeFqn: "Node", parameterTypes: ["Node"], returnType: "Node" })],
+  ["Node.replaceChild", fn5("replaceChild", "Node.prototype.replaceChild", { declaringTypeFqn: "Node", parameterTypes: ["Node", "Node"], returnType: "Node" })],
+  ["Node.insertBefore", fn5("insertBefore", "Node.prototype.insertBefore", { declaringTypeFqn: "Node", parameterTypes: ["Node", "Node | null"], returnType: "Node" })],
+  ["Node.cloneNode", fn5("cloneNode", "Node.prototype.cloneNode", { declaringTypeFqn: "Node", parameterTypes: ["boolean?"], returnType: "Node" })],
+  ["Node.contains", fn5("contains", "Node.prototype.contains", { declaringTypeFqn: "Node", parameterTypes: ["Node | null"], returnType: "boolean" })],
+  ["Node.hasChildNodes", fn5("hasChildNodes", "Node.prototype.hasChildNodes", { declaringTypeFqn: "Node", parameterTypes: [], returnType: "boolean" })],
+  ["Node.normalize", fn5("normalize", "Node.prototype.normalize", { declaringTypeFqn: "Node", parameterTypes: [], returnType: "void" })],
+  ["Node.compareDocumentPosition", fn5("compareDocumentPosition", "Node.prototype.compareDocumentPosition", { declaringTypeFqn: "Node", parameterTypes: ["Node"], returnType: "number" })],
+  ["Node.isEqualNode", fn5("isEqualNode", "Node.prototype.isEqualNode", { declaringTypeFqn: "Node", parameterTypes: ["Node | null"], returnType: "boolean" })],
+  ["Node.isSameNode", fn5("isSameNode", "Node.prototype.isSameNode", { declaringTypeFqn: "Node", parameterTypes: ["Node | null"], returnType: "boolean" })],
+  // EventTarget methods
+  ["EventTarget.addEventListener", fn5("addEventListener", "EventTarget.prototype.addEventListener", { declaringTypeFqn: "EventTarget", parameterTypes: ["string", "EventListenerOrEventListenerObject | null", "AddEventListenerOptions | boolean?"], returnType: "void" })],
+  ["EventTarget.removeEventListener", fn5("removeEventListener", "EventTarget.prototype.removeEventListener", { declaringTypeFqn: "EventTarget", parameterTypes: ["string", "EventListenerOrEventListenerObject | null", "EventListenerOptions | boolean?"], returnType: "void" })],
+  ["EventTarget.dispatchEvent", fn5("dispatchEvent", "EventTarget.prototype.dispatchEvent", { declaringTypeFqn: "EventTarget", parameterTypes: ["Event"], returnType: "boolean" })],
+  // Storage methods
+  ["Storage.getItem", fn5("getItem", "Storage.prototype.getItem", { declaringTypeFqn: "Storage", parameterTypes: ["string"], returnType: "string | null" })],
+  ["Storage.setItem", fn5("setItem", "Storage.prototype.setItem", { declaringTypeFqn: "Storage", parameterTypes: ["string", "string"], returnType: "void" })],
+  ["Storage.removeItem", fn5("removeItem", "Storage.prototype.removeItem", { declaringTypeFqn: "Storage", parameterTypes: ["string"], returnType: "void" })],
+  ["Storage.clear", fn5("clear", "Storage.prototype.clear", { declaringTypeFqn: "Storage", parameterTypes: [], returnType: "void" })],
+  ["Storage.key", fn5("key", "Storage.prototype.key", { declaringTypeFqn: "Storage", parameterTypes: ["number"], returnType: "string | null" })],
+  // History methods
+  ["History.back", fn5("back", "History.prototype.back", { declaringTypeFqn: "History", parameterTypes: [], returnType: "void" })],
+  ["History.forward", fn5("forward", "History.prototype.forward", { declaringTypeFqn: "History", parameterTypes: [], returnType: "void" })],
+  ["History.go", fn5("go", "History.prototype.go", { declaringTypeFqn: "History", parameterTypes: ["number?"], returnType: "void" })],
+  ["History.pushState", fn5("pushState", "History.prototype.pushState", { declaringTypeFqn: "History", parameterTypes: ["any", "string", "string | URL | null?"], returnType: "void" })],
+  ["History.replaceState", fn5("replaceState", "History.prototype.replaceState", { declaringTypeFqn: "History", parameterTypes: ["any", "string", "string | URL | null?"], returnType: "void" })],
+  // Fetch/Response methods
+  ["Response.json", fn5("json", "Response.prototype.json", { declaringTypeFqn: "Response", parameterTypes: [], returnType: "Promise<any>" })],
+  ["Response.text", fn5("text", "Response.prototype.text", { declaringTypeFqn: "Response", parameterTypes: [], returnType: "Promise<string>" })],
+  ["Response.blob", fn5("blob", "Response.prototype.blob", { declaringTypeFqn: "Response", parameterTypes: [], returnType: "Promise<Blob>" })],
+  ["Response.arrayBuffer", fn5("arrayBuffer", "Response.prototype.arrayBuffer", { declaringTypeFqn: "Response", parameterTypes: [], returnType: "Promise<ArrayBuffer>" })],
+  ["Response.formData", fn5("formData", "Response.prototype.formData", { declaringTypeFqn: "Response", parameterTypes: [], returnType: "Promise<FormData>" })],
+  ["Response.clone", fn5("clone", "Response.prototype.clone", { declaringTypeFqn: "Response", parameterTypes: [], returnType: "Response" })]
+]);
+var DomStdlibProvider = class {
+  languages = ["typescript", "javascript"];
+  // DOM globals (available without import)
+  defaultWildcardImports = [];
+  lookupFunction(name) {
+    return DOM_STDLIB_FUNCTIONS.get(name);
+  }
+  lookupClass(name) {
+    return DOM_STDLIB_CLASSES.get(name);
+  }
+  lookupStaticMethod(qualifiedName) {
+    return DOM_STDLIB_FUNCTIONS.get(qualifiedName);
+  }
+  isKnownSymbol(name) {
+    return DOM_STDLIB_CLASSES.has(name) || DOM_STDLIB_FUNCTIONS.has(name);
+  }
+  getAllSymbols() {
+    const result = /* @__PURE__ */ new Map();
+    for (const [name, func] of DOM_STDLIB_FUNCTIONS) {
+      result.set(name, func);
+    }
+    for (const [name, clsSymbol] of DOM_STDLIB_CLASSES) {
+      result.set(name, clsSymbol);
+    }
+    return result;
+  }
+  isBuiltinType(_typeName) {
+    return false;
+  }
+};
+
 // src/indexer/resolver/stdlib/stdlib-registry.ts
 var StdlibRegistry = class {
   providers = /* @__PURE__ */ new Map();
@@ -35060,10 +39346,13 @@ var StdlibRegistry = class {
   registerDefaults() {
     const kotlinProvider = new KotlinStdlibProvider();
     const javaProvider = new JavaStdlibProvider();
+    const typescriptProvider = new TypescriptStdlibProvider();
+    const nodejsProvider = new NodejsStdlibProvider();
+    const domProvider = new DomStdlibProvider();
     this.providers.set("kotlin", [kotlinProvider, javaProvider]);
     this.providers.set("java", [javaProvider]);
-    this.providers.set("typescript", []);
-    this.providers.set("javascript", []);
+    this.providers.set("typescript", [typescriptProvider, nodejsProvider, domProvider]);
+    this.providers.set("javascript", [typescriptProvider, nodejsProvider, domProvider]);
   }
   /**
    * Register a stdlib provider for specific languages.
@@ -35164,7 +39453,7 @@ var stdlibRegistry = new StdlibRegistry();
 
 // src/indexer/writer/index.ts
 var import_neo4j_driver2 = __toESM(require_lib3(), 1);
-var import_path2 = __toESM(require("path"), 1);
+var import_path3 = __toESM(require("path"), 1);
 
 // src/indexer/domain/utils/capitalize.ts
 function capitalize(str) {
@@ -35232,6 +39521,13 @@ var DEFAULT_DOMAIN_SEGMENT_INDEX = {
   javascript: 1
   // src/[domain]/*
 };
+var SLASH_PATH_LANGUAGES = /* @__PURE__ */ new Set(["typescript", "javascript"]);
+function generatePatternsForDomain(name, language) {
+  if (SLASH_PATH_LANGUAGES.has(language)) {
+    return [`**/${name}/**`, `**/${name}`];
+  }
+  return [`*.${name}.*`, `*.${name}`];
+}
 function inferDomainsFromPackages(packages, language, options) {
   const segmentIndex = options.domainSegmentIndex ?? DEFAULT_DOMAIN_SEGMENT_INDEX[language];
   const domainMap = /* @__PURE__ */ new Map();
@@ -35245,15 +39541,16 @@ function inferDomainsFromPackages(packages, language, options) {
   }
   return Array.from(domainMap.entries()).map(([name, matchedPackages]) => ({
     name: capitalize(name),
-    patterns: [`*.${name}.*`, `*.${name}`],
-    // Inferred patterns
+    patterns: generatePatternsForDomain(name, language),
     matchedPackages
   }));
 }
 
 // src/indexer/domain/pattern-matching/matches-pattern.ts
 function matchesPattern(pkg, pattern) {
-  const regexPattern = pattern.replace(/\./g, "\\.").replace(/\*\*/g, "{{DOUBLE_STAR}}").replace(/\*/g, "[^.]+").replace(/\{\{DOUBLE_STAR}}/g, ".*");
+  const separator = pattern.includes("/") ? "/" : ".";
+  const escapedSeparator = separator === "/" ? "\\/" : "\\.";
+  const regexPattern = pattern.replace(/[./]/g, (char) => char === separator ? escapedSeparator : `\\${char}`).replace(/\*\*/g, "{{DOUBLE_STAR}}").replace(/\*/g, `[^${separator === "/" ? "/" : "."}]+`).replace(/\{\{DOUBLE_STAR}}/g, ".*");
   const regex = new RegExp(`^${regexPattern}$`);
   return regex.test(pkg);
 }
@@ -35299,8 +39596,8 @@ var import_fs = require("fs");
 var import_path = require("path");
 async function loadDomainsConfig(configPath) {
   const paths = configPath ? [configPath] : ["codegraph.domains.json", ".codegraph/domains.json", "codegraph.config.json"];
-  for (const path2 of paths) {
-    const fullPath = (0, import_path.join)(process.cwd(), path2);
+  for (const path5 of paths) {
+    const fullPath = (0, import_path.join)(process.cwd(), path5);
     if ((0, import_fs.existsSync)(fullPath)) {
       try {
         const content = await (0, import_promises.readFile)(fullPath, "utf-8");
@@ -35314,14 +39611,18 @@ async function loadDomainsConfig(configPath) {
 }
 
 // src/indexer/domain/dependencies/extract-package-from-fqn.ts
+function detectSeparator(path5) {
+  return path5.includes("/") ? "/" : ".";
+}
 function extractPackageFromFqn(fqn) {
-  const lastDot = fqn.lastIndexOf(".");
-  if (lastDot === -1) return null;
-  let current = fqn.substring(0, lastDot);
-  while (current.includes(".")) {
-    const lastSegment = current.substring(current.lastIndexOf(".") + 1);
+  const separator = detectSeparator(fqn);
+  const lastSep = fqn.lastIndexOf(separator);
+  if (lastSep === -1) return null;
+  let current = fqn.substring(0, lastSep);
+  while (current.includes(separator)) {
+    const lastSegment = current.substring(current.lastIndexOf(separator) + 1);
     if (lastSegment[0] === lastSegment[0]?.toUpperCase() && lastSegment[0] !== lastSegment[0]?.toLowerCase()) {
-      current = current.substring(0, current.lastIndexOf("."));
+      current = current.substring(0, current.lastIndexOf(separator));
     } else {
       return current;
     }
@@ -35402,11 +39703,417 @@ async function analyzeDomains(files, options = {}) {
   };
 }
 
+// src/indexer/resolver/module-resolver/resolve-module-path.ts
+var path2 = __toESM(require("path"), 1);
+var TS_EXTENSIONS = [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"];
+function isRelativeImport(importPath) {
+  return importPath.startsWith("./") || importPath.startsWith("../");
+}
+function isPackageImport(importPath) {
+  return !isRelativeImport(importPath) && !path2.isAbsolute(importPath);
+}
+function resolveModulePath(importPath, fromFilePath, existingFiles) {
+  if (isPackageImport(importPath)) {
+    return void 0;
+  }
+  const fromDir = path2.dirname(fromFilePath);
+  let resolvedBase = path2.resolve(fromDir, importPath);
+  resolvedBase = path2.normalize(resolvedBase);
+  if (existingFiles.has(resolvedBase)) {
+    return resolvedBase;
+  }
+  for (const ext of TS_EXTENSIONS) {
+    const withExt = resolvedBase + ext;
+    if (existingFiles.has(withExt)) {
+      return withExt;
+    }
+  }
+  for (const ext of TS_EXTENSIONS) {
+    const indexFile2 = path2.join(resolvedBase, `index${ext}`);
+    if (existingFiles.has(indexFile2)) {
+      return indexFile2;
+    }
+  }
+  return void 0;
+}
+function buildFilePathSet(filePaths) {
+  return new Set(filePaths.map((p) => path2.normalize(p)));
+}
+
+// src/indexer/resolver/module-resolver/export-index.ts
+function buildExportIndex(files) {
+  const index = /* @__PURE__ */ new Map();
+  for (const file of files) {
+    const fileExports = /* @__PURE__ */ new Map();
+    for (const cls6 of file.classes) {
+      addClassExports(fileExports, cls6, file);
+    }
+    for (const func of file.topLevelFunctions) {
+      const fqn = file.packageName ? `${file.packageName}.${func.name}` : func.name;
+      fileExports.set(func.name, {
+        exportedName: func.name,
+        originalName: func.name,
+        fqn,
+        kind: "function",
+        isDefault: false,
+        // TODO: detect default exports
+        isReexport: false
+      });
+    }
+    for (const prop of file.topLevelProperties) {
+      const fqn = file.packageName ? `${file.packageName}.${prop.name}` : prop.name;
+      fileExports.set(prop.name, {
+        exportedName: prop.name,
+        originalName: prop.name,
+        fqn,
+        kind: "property",
+        isDefault: false,
+        isReexport: false
+      });
+    }
+    for (const alias of file.typeAliases) {
+      const fqn = file.packageName ? `${file.packageName}.${alias.name}` : alias.name;
+      fileExports.set(alias.name, {
+        exportedName: alias.name,
+        originalName: alias.name,
+        fqn,
+        kind: "typealias",
+        isDefault: false,
+        isReexport: false
+      });
+    }
+    for (const reexport of file.reexports) {
+      if (reexport.originalName) {
+        fileExports.set(reexport.exportedName || reexport.originalName, {
+          exportedName: reexport.exportedName || reexport.originalName,
+          originalName: reexport.originalName,
+          fqn: "",
+          // Will be resolved later
+          kind: "class",
+          // Placeholder, will be determined later
+          isDefault: reexport.originalName === "default",
+          isReexport: true,
+          sourceFilePath: reexport.sourcePath
+        });
+      }
+    }
+    index.set(file.filePath, fileExports);
+  }
+  return index;
+}
+function addClassExports(fileExports, cls6, file) {
+  const fqn = file.packageName ? `${file.packageName}.${cls6.name}` : cls6.name;
+  let kind = "class";
+  if (cls6.kind === "interface") {
+    kind = "interface";
+  } else if (cls6.kind === "object") {
+    kind = "object";
+  } else if (cls6.kind === "enum") {
+    kind = "enum";
+  }
+  fileExports.set(cls6.name, {
+    exportedName: cls6.name,
+    originalName: cls6.name,
+    fqn,
+    kind,
+    isDefault: false,
+    // TODO: detect default exports
+    isReexport: false
+  });
+  for (const nested of cls6.nestedClasses) {
+    addClassExports(fileExports, nested, file);
+  }
+}
+function getExport(index, filePath, exportName) {
+  return index.get(filePath)?.get(exportName);
+}
+
+// src/indexer/resolver/module-resolver/resolve-imports.ts
+function resolveImportedSymbol(imp, fromFilePath, existingFiles, exportIndex) {
+  if (!isRelativeImport(imp.path)) {
+    return void 0;
+  }
+  const resolvedFilePath = resolveModulePath(imp.path, fromFilePath, existingFiles);
+  if (!resolvedFilePath) {
+    return void 0;
+  }
+  const symbolName = imp.name;
+  if (!symbolName) {
+    return void 0;
+  }
+  const exportEntry = getExport(exportIndex, resolvedFilePath, symbolName);
+  if (!exportEntry) {
+    return void 0;
+  }
+  if (exportEntry.isReexport && exportEntry.sourceFilePath) {
+    const sourceFilePath = resolveModulePath(
+      exportEntry.sourceFilePath,
+      resolvedFilePath,
+      existingFiles
+    );
+    if (sourceFilePath) {
+      const sourceExport = getExport(exportIndex, sourceFilePath, exportEntry.originalName);
+      if (sourceExport && !sourceExport.isReexport) {
+        return sourceExport.fqn;
+      }
+    }
+  }
+  return exportEntry.fqn;
+}
+function buildImportResolutionMap(file, allFiles, exportIndex) {
+  const map = /* @__PURE__ */ new Map();
+  const index = exportIndex || buildExportIndex(allFiles);
+  const existingFiles = buildFilePathSet(allFiles.map((f) => f.filePath));
+  for (const imp of file.imports) {
+    const localName = imp.alias || imp.name;
+    if (!localName) {
+      continue;
+    }
+    const fqn = resolveImportedSymbol(imp, file.filePath, existingFiles, index);
+    if (fqn) {
+      map.set(localName, fqn);
+    }
+  }
+  for (const cls6 of file.classes) {
+    const fqn = file.packageName ? `${file.packageName}.${cls6.name}` : cls6.name;
+    if (!map.has(cls6.name)) {
+      map.set(cls6.name, fqn);
+    }
+  }
+  for (const func of file.topLevelFunctions) {
+    const fqn = file.packageName ? `${file.packageName}.${func.name}` : func.name;
+    if (!map.has(func.name)) {
+      map.set(func.name, fqn);
+    }
+  }
+  for (const alias of file.typeAliases) {
+    const fqn = file.packageName ? `${file.packageName}.${alias.name}` : alias.name;
+    if (!map.has(alias.name)) {
+      map.set(alias.name, fqn);
+    }
+  }
+  return map;
+}
+function buildAllImportResolutionMaps(files) {
+  const result = /* @__PURE__ */ new Map();
+  const exportIndex = buildExportIndex(files);
+  for (const file of files) {
+    const map = buildImportResolutionMap(file, files, exportIndex);
+    result.set(file.filePath, map);
+  }
+  return result;
+}
+
+// src/indexer/module/index.ts
+var import_path2 = __toESM(require("path"), 1);
+var DEFAULT_SOURCE_ROOTS = ["src", "lib", "app", "source", "sources"];
+function inferModulePath(filePath, options) {
+  const { projectPath, sourceRoots = DEFAULT_SOURCE_ROOTS, includeFileName = false, separator = "/" } = options;
+  const normalizedProjectPath = import_path2.default.normalize(projectPath);
+  const normalizedFilePath = import_path2.default.normalize(filePath);
+  if (!normalizedFilePath.startsWith(normalizedProjectPath)) {
+    return void 0;
+  }
+  let relativePath = import_path2.default.relative(normalizedProjectPath, normalizedFilePath);
+  let parts = relativePath.split(import_path2.default.sep);
+  if (parts.length > 0) {
+    const lastPart = parts[parts.length - 1];
+    const ext = import_path2.default.extname(lastPart);
+    if (ext) {
+      if (includeFileName) {
+        parts[parts.length - 1] = import_path2.default.basename(lastPart, ext);
+      } else {
+        parts = parts.slice(0, -1);
+      }
+    }
+  }
+  while (parts.length > 0 && sourceRoots.includes(parts[0])) {
+    parts = parts.slice(1);
+  }
+  if (parts.length === 0) {
+    return void 0;
+  }
+  return parts.join(separator);
+}
+function collectModulePaths(filePaths, options) {
+  const modules = /* @__PURE__ */ new Set();
+  for (const filePath of filePaths) {
+    const modulePath = inferModulePath(filePath, options);
+    if (modulePath) {
+      modules.add(modulePath);
+      const parts = modulePath.split(options.separator || "/");
+      for (let i = 1; i < parts.length; i++) {
+        const parentPath = parts.slice(0, i).join(options.separator || "/");
+        if (parentPath) {
+          modules.add(parentPath);
+        }
+      }
+    }
+  }
+  return modules;
+}
+function buildModuleHierarchy(modulePaths, separator = "/") {
+  const hierarchy = /* @__PURE__ */ new Map();
+  for (const modulePath of modulePaths) {
+    const parts = modulePath.split(separator);
+    if (parts.length === 1) {
+      const children = hierarchy.get(null) || [];
+      if (!children.includes(modulePath)) {
+        children.push(modulePath);
+        hierarchy.set(null, children);
+      }
+    } else {
+      const parentPath = parts.slice(0, -1).join(separator);
+      const children = hierarchy.get(parentPath) || [];
+      if (!children.includes(modulePath)) {
+        children.push(modulePath);
+        hierarchy.set(parentPath, children);
+      }
+    }
+  }
+  return hierarchy;
+}
+function getModuleName(modulePath, separator = "/") {
+  const parts = modulePath.split(separator);
+  return parts[parts.length - 1] || modulePath;
+}
+
 // src/indexer/writer/index.ts
 function buildFqn(packageName, ...parts) {
   const allParts = packageName ? [packageName, ...parts] : parts;
   return allParts.filter(Boolean).join(".");
 }
+var BUILTIN_TYPES = /* @__PURE__ */ new Set([
+  // Kotlin types
+  "Unit",
+  "Nothing",
+  "Any",
+  "Boolean",
+  "Byte",
+  "Short",
+  "Int",
+  "Long",
+  "Float",
+  "Double",
+  "Char",
+  "String",
+  "Array",
+  "List",
+  "Set",
+  "Map",
+  "Collection",
+  "Iterable",
+  "Sequence",
+  "Pair",
+  "Triple",
+  "Result",
+  "Comparable",
+  "Number",
+  "Enum",
+  "Object",
+  "Throwable",
+  "Exception",
+  "Error",
+  "RuntimeException",
+  // TypeScript primitive types (PascalCase for type annotations)
+  "Void",
+  "Never",
+  "Unknown",
+  "Undefined",
+  "Null",
+  "BigInt",
+  "Symbol",
+  // TypeScript utility types
+  "Partial",
+  "Required",
+  "Readonly",
+  "Record",
+  "Pick",
+  "Omit",
+  "Exclude",
+  "Extract",
+  "NonNullable",
+  "Parameters",
+  "ReturnType",
+  "ConstructorParameters",
+  "InstanceType",
+  "ThisParameterType",
+  "OmitThisParameter",
+  "ThisType",
+  "Awaited",
+  "Uppercase",
+  "Lowercase",
+  "Capitalize",
+  "Uncapitalize",
+  "NoInfer",
+  // TypeScript built-in objects and types
+  "Promise",
+  "ArrayLike",
+  "Iterator",
+  "IterableIterator",
+  "AsyncIterator",
+  "AsyncIterableIterator",
+  "Generator",
+  "AsyncGenerator",
+  "ReadonlyArray",
+  "ReadonlyMap",
+  "ReadonlySet",
+  "WeakMap",
+  "WeakSet",
+  "WeakRef",
+  "Function",
+  "Date",
+  "RegExp",
+  "JSON",
+  "Math",
+  "Proxy",
+  "Reflect",
+  "ArrayBuffer",
+  "SharedArrayBuffer",
+  "DataView",
+  "Int8Array",
+  "Uint8Array",
+  "Uint8ClampedArray",
+  "Int16Array",
+  "Uint16Array",
+  "Int32Array",
+  "Uint32Array",
+  "Float32Array",
+  "Float64Array",
+  "BigInt64Array",
+  "BigUint64Array",
+  // DOM types (commonly used in TypeScript)
+  "HTMLElement",
+  "HTMLDivElement",
+  "HTMLInputElement",
+  "HTMLButtonElement",
+  "HTMLFormElement",
+  "HTMLAnchorElement",
+  "HTMLImageElement",
+  "HTMLSpanElement",
+  "HTMLParagraphElement",
+  "Element",
+  "Node",
+  "NodeList",
+  "Document",
+  "Window",
+  "Event",
+  "MouseEvent",
+  "KeyboardEvent",
+  "CustomEvent",
+  "EventTarget",
+  "Response",
+  "Request",
+  "Headers",
+  "URL",
+  "URLSearchParams",
+  "FormData",
+  "Blob",
+  "File",
+  "FileReader",
+  "AbortController",
+  "AbortSignal"
+]);
 function extractTypeNames(typeStr) {
   if (!typeStr) return [];
   const types = [];
@@ -35415,43 +40122,18 @@ function extractTypeNames(typeStr) {
   let match;
   while ((match = typePattern.exec(cleaned)) !== null) {
     const typeName = match[1];
-    const builtinTypes = [
-      "Unit",
-      "Nothing",
-      "Any",
-      "Boolean",
-      "Byte",
-      "Short",
-      "Int",
-      "Long",
-      "Float",
-      "Double",
-      "Char",
-      "String",
-      "Array",
-      "List",
-      "Set",
-      "Map",
-      "Collection",
-      "Iterable",
-      "Sequence",
-      "Pair",
-      "Triple",
-      "Result",
-      "Comparable",
-      "Number",
-      "Enum",
-      "Object",
-      "Throwable",
-      "Exception",
-      "Error",
-      "RuntimeException"
-    ];
-    if (!builtinTypes.includes(typeName)) {
+    if (!BUILTIN_TYPES.has(typeName)) {
       types.push(typeName);
     }
   }
   return [...new Set(types)];
+}
+function resolveTypeNames(typeStr, importMap) {
+  const simpleNames = extractTypeNames(typeStr);
+  return simpleNames.map((name) => {
+    const fqn = importMap?.get(name);
+    return { name, fqn };
+  });
 }
 function serializeTypeParameters(typeParams) {
   if (!typeParams || typeParams.length === 0) return null;
@@ -35468,9 +40150,29 @@ function serializeTypeParameters(typeParams) {
 var Neo4jWriter = class {
   client;
   batchSize;
+  /** Current project path for adding to all nodes */
+  currentProjectPath;
+  /** Cache of file path to module path mappings */
+  fileToModuleMap = /* @__PURE__ */ new Map();
   constructor(client, options = {}) {
     this.client = client;
     this.batchSize = options.batchSize ?? 100;
+  }
+  /**
+   * Get the module path for a file.
+   * Uses cached value if available.
+   */
+  getModulePathForFile(filePath) {
+    if (!this.currentProjectPath) return void 0;
+    if (this.fileToModuleMap.has(filePath)) {
+      return this.fileToModuleMap.get(filePath);
+    }
+    const modulePath = inferModulePath(filePath, {
+      projectPath: this.currentProjectPath,
+      includeFileName: false
+    });
+    this.fileToModuleMap.set(filePath, modulePath);
+    return modulePath;
   }
   /**
    * Create necessary constraints and indexes for optimal performance.
@@ -35492,7 +40194,9 @@ var Neo4jWriter = class {
       // Annotation uniqueness by name (annotations are shared across elements)
       "CREATE CONSTRAINT annotation_name_unique IF NOT EXISTS FOR (a:Annotation) REQUIRE a.name IS UNIQUE",
       // Domain uniqueness by name
-      "CREATE CONSTRAINT domain_name_unique IF NOT EXISTS FOR (d:Domain) REQUIRE d.name IS UNIQUE"
+      "CREATE CONSTRAINT domain_name_unique IF NOT EXISTS FOR (d:Domain) REQUIRE d.name IS UNIQUE",
+      // Module uniqueness by path (for TypeScript/JavaScript module hierarchy)
+      "CREATE CONSTRAINT module_path_unique IF NOT EXISTS FOR (m:Module) REQUIRE m.path IS UNIQUE"
     ];
     const indexes = [
       // Project index
@@ -35510,7 +40214,18 @@ var Neo4jWriter = class {
       "CREATE INDEX function_file_index IF NOT EXISTS FOR (f:Function) ON (f.filePath)",
       // Visibility indexes
       "CREATE INDEX class_visibility_index IF NOT EXISTS FOR (c:Class) ON (c.visibility)",
-      "CREATE INDEX function_visibility_index IF NOT EXISTS FOR (f:Function) ON (f.visibility)"
+      "CREATE INDEX function_visibility_index IF NOT EXISTS FOR (f:Function) ON (f.visibility)",
+      // Project path indexes for efficient multi-project queries
+      "CREATE INDEX class_project_index IF NOT EXISTS FOR (c:Class) ON (c.projectPath)",
+      "CREATE INDEX interface_project_index IF NOT EXISTS FOR (i:Interface) ON (i.projectPath)",
+      "CREATE INDEX object_project_index IF NOT EXISTS FOR (o:Object) ON (o.projectPath)",
+      "CREATE INDEX function_project_index IF NOT EXISTS FOR (f:Function) ON (f.projectPath)",
+      "CREATE INDEX property_project_index IF NOT EXISTS FOR (p:Property) ON (p.projectPath)",
+      "CREATE INDEX typealias_project_index IF NOT EXISTS FOR (t:TypeAlias) ON (t.projectPath)",
+      "CREATE INDEX constructor_project_index IF NOT EXISTS FOR (c:Constructor) ON (c.projectPath)",
+      // Module indexes for TypeScript/JavaScript hierarchy
+      "CREATE INDEX module_name_index IF NOT EXISTS FOR (m:Module) ON (m.name)",
+      "CREATE INDEX module_project_index IF NOT EXISTS FOR (m:Module) ON (m.projectPath)"
     ];
     for (const constraint of constraints) {
       await this.client.write(constraint);
@@ -35525,28 +40240,51 @@ var Neo4jWriter = class {
    * Otherwise, clears all code graph data.
    */
   async clearGraph(projectPath) {
-    let deleteQuery;
-    let params = {};
+    let totalNodesDeleted = 0;
+    let totalRelationshipsDeleted = 0;
     if (projectPath) {
-      deleteQuery = `
-        MATCH (proj:Project {path: $projectPath})
-        OPTIONAL MATCH (proj)-[:CONTAINS*]->(n)
-        DETACH DELETE proj, n
-      `;
-      params = { projectPath };
-    } else {
-      deleteQuery = `
+      const filePathResult = await this.client.execute(
+        `
         MATCH (n)
-        WHERE n:Project OR n:Package OR n:Class OR n:Interface OR n:Object
-           OR n:Function OR n:Property OR n:Parameter OR n:Annotation OR n:TypeAlias
-           OR n:Constructor OR n:Domain
+        WHERE n.filePath STARTS WITH $projectPath
         DETACH DELETE n
-      `;
+        `,
+        { projectPath },
+        import_neo4j_driver2.default.routing.WRITE
+      );
+      totalNodesDeleted += filePathResult.summary.counters.nodesDeleted || 0;
+      totalRelationshipsDeleted += filePathResult.summary.counters.relationshipsDeleted || 0;
+      const projectResult = await this.client.execute(
+        `
+        MATCH (proj:Project {path: $projectPath})
+        OPTIONAL MATCH (proj)-[:CONTAINS]->(pkg:Package)
+        OPTIONAL MATCH (proj)-[:CONTAINS]->(mod:Module)
+        OPTIONAL MATCH (proj)-[:HAS_DOMAIN]->(dom:Domain)
+        DETACH DELETE proj, pkg, mod, dom
+        `,
+        { projectPath },
+        import_neo4j_driver2.default.routing.WRITE
+      );
+      totalNodesDeleted += projectResult.summary.counters.nodesDeleted || 0;
+      totalRelationshipsDeleted += projectResult.summary.counters.relationshipsDeleted || 0;
+    } else {
+      const result = await this.client.execute(
+        `
+        MATCH (n)
+        WHERE n:Project OR n:Package OR n:Module OR n:Class OR n:Interface OR n:Object
+           OR n:Function OR n:Property OR n:Parameter OR n:Annotation OR n:TypeAlias
+           OR n:Constructor OR n:Domain OR n:Reexport
+        DETACH DELETE n
+        `,
+        {},
+        import_neo4j_driver2.default.routing.WRITE
+      );
+      totalNodesDeleted = result.summary.counters.nodesDeleted || 0;
+      totalRelationshipsDeleted = result.summary.counters.relationshipsDeleted || 0;
     }
-    const result = await this.client.execute(deleteQuery, params, import_neo4j_driver2.default.routing.WRITE);
     return {
-      nodesDeleted: result.summary.counters.nodesDeleted || 0,
-      relationshipsDeleted: result.summary.counters.relationshipsDeleted || 0
+      nodesDeleted: totalNodesDeleted,
+      relationshipsDeleted: totalRelationshipsDeleted
     };
   }
   /**
@@ -35560,6 +40298,8 @@ var Neo4jWriter = class {
       filesProcessed: 0,
       errors: []
     };
+    this.currentProjectPath = options.projectPath;
+    this.fileToModuleMap.clear();
     if (options.ensureSchema !== false) {
       await this.ensureConstraintsAndIndexes();
     }
@@ -35579,6 +40319,14 @@ var Neo4jWriter = class {
     const packageResult = await this.writePackages(Array.from(packages), options.projectPath);
     result.nodesCreated += packageResult.nodesCreated;
     result.relationshipsCreated += packageResult.relationshipsCreated;
+    if (options.projectPath) {
+      const tsJsFiles = files.filter((f) => !f.packageName && (f.language === "typescript" || f.language === "javascript")).map((f) => f.filePath);
+      if (tsJsFiles.length > 0) {
+        const moduleResult = await this.writeModules(tsJsFiles, options.projectPath);
+        result.nodesCreated += moduleResult.nodesCreated;
+        result.relationshipsCreated += moduleResult.relationshipsCreated;
+      }
+    }
     for (const file of files) {
       try {
         const fileResult = await this.writeFile(file);
@@ -35611,8 +40359,8 @@ var Neo4jWriter = class {
   async writeFile(file) {
     let nodesCreated = 0;
     let relationshipsCreated = 0;
-    for (const cls3 of file.classes) {
-      const classResult = await this.writeClass(cls3, file.packageName, file.filePath);
+    for (const cls6 of file.classes) {
+      const classResult = await this.writeClass(cls6, file.packageName, file.filePath);
       nodesCreated += classResult.nodesCreated;
       relationshipsCreated += classResult.relationshipsCreated;
     }
@@ -35649,13 +40397,18 @@ var Neo4jWriter = class {
       nodesCreated += objExprResult.nodesCreated;
       relationshipsCreated += objExprResult.relationshipsCreated;
     }
+    if (file.reexports.length > 0) {
+      const reexportResult = await this.writeReexports(file.reexports, file.packageName, file.filePath);
+      nodesCreated += reexportResult.nodesCreated;
+      relationshipsCreated += reexportResult.relationshipsCreated;
+    }
     return { nodesCreated, relationshipsCreated };
   }
   /**
    * Write a project node to Neo4j.
    */
   async writeProject(projectPath, projectName) {
-    const name = projectName || import_path2.default.basename(projectPath);
+    const name = projectName || import_path3.default.basename(projectPath);
     const query = `
       MERGE (p:Project {path: $path})
       SET p.name = $name
@@ -35688,37 +40441,106 @@ var Neo4jWriter = class {
     return { nodesCreated: packages.length, relationshipsCreated };
   }
   /**
-   * Write a class/interface/object/enum to Neo4j with all its members.
+   * Write modules to Neo4j for TypeScript/JavaScript files.
+   * Creates a hierarchical structure: Project -> Module -> ... -> Module -> Class
+   *
+   * @param filePaths - List of TypeScript/JavaScript file paths
+   * @param projectPath - The project root path
+   * @returns Count of nodes and relationships created
    */
-  async writeClass(cls3, packageName, filePath, parentFqn) {
+  async writeModules(filePaths, projectPath) {
     let nodesCreated = 0;
     let relationshipsCreated = 0;
-    const fqn = parentFqn ? `${parentFqn}.${cls3.name}` : buildFqn(packageName, cls3.name);
-    const label = this.getClassLabel(cls3.kind);
+    const moduleOptions = {
+      projectPath,
+      includeFileName: false
+      // Use directory-based modules
+    };
+    const modulePaths = collectModulePaths(filePaths, moduleOptions);
+    if (modulePaths.size === 0) {
+      return { nodesCreated, relationshipsCreated };
+    }
+    const hierarchy = buildModuleHierarchy(modulePaths);
+    const moduleData = Array.from(modulePaths).map((modulePath) => ({
+      path: modulePath,
+      name: getModuleName(modulePath),
+      projectPath
+    }));
+    const createModulesQuery = `
+      UNWIND $modules AS mod
+      MERGE (m:Module {path: mod.path})
+      SET m.name = mod.name, m.projectPath = mod.projectPath
+      RETURN count(m) AS created
+    `;
+    await this.client.write(createModulesQuery, { modules: moduleData });
+    nodesCreated += modulePaths.size;
+    const topLevelModules = hierarchy.get(null) || [];
+    if (topLevelModules.length > 0) {
+      const linkToProjectQuery = `
+        MATCH (proj:Project {path: $projectPath})
+        UNWIND $modules AS modPath
+        MATCH (m:Module {path: modPath})
+        MERGE (proj)-[:CONTAINS]->(m)
+      `;
+      await this.client.write(linkToProjectQuery, {
+        projectPath,
+        modules: topLevelModules
+      });
+      relationshipsCreated += topLevelModules.length;
+    }
+    for (const [parentPath, children] of hierarchy) {
+      if (parentPath !== null && children.length > 0) {
+        const linkModulesQuery = `
+          MATCH (parent:Module {path: $parentPath})
+          UNWIND $children AS childPath
+          MATCH (child:Module {path: childPath})
+          MERGE (parent)-[:CONTAINS]->(child)
+        `;
+        await this.client.write(linkModulesQuery, { parentPath, children });
+        relationshipsCreated += children.length;
+      }
+    }
+    return { nodesCreated, relationshipsCreated };
+  }
+  /**
+   * Write a class/interface/object/enum to Neo4j with all its members.
+   */
+  async writeClass(cls6, packageName, filePath, parentFqn) {
+    let nodesCreated = 0;
+    let relationshipsCreated = 0;
+    const fqn = parentFqn ? `${parentFqn}.${cls6.name}` : buildFqn(packageName, cls6.name);
+    const label = this.getClassLabel(cls6.kind);
     const props = {
       fqn,
-      name: cls3.name,
-      visibility: cls3.visibility,
+      name: cls6.name,
+      visibility: cls6.visibility,
       filePath,
-      lineNumber: cls3.location.startLine
+      lineNumber: cls6.location.startLine
     };
-    if (cls3.kind === "class") {
-      props.isAbstract = cls3.isAbstract;
-      props.isData = cls3.isData;
-      props.isSealed = cls3.isSealed;
-      if (cls3.superClass) props.superClass = cls3.superClass;
-      if (cls3.interfaces.length > 0) props.interfaces = cls3.interfaces;
-    } else if (cls3.kind === "interface") {
-      props.isSealed = cls3.isSealed;
-      if (cls3.interfaces.length > 0) props.interfaces = cls3.interfaces;
-    } else if (cls3.kind === "object") {
+    if (this.currentProjectPath) {
+      props.projectPath = this.currentProjectPath;
+    }
+    const modulePath = !packageName ? this.getModulePathForFile(filePath) : void 0;
+    if (modulePath) {
+      props.modulePath = modulePath;
+    }
+    if (cls6.kind === "class") {
+      props.isAbstract = cls6.isAbstract;
+      props.isData = cls6.isData;
+      props.isSealed = cls6.isSealed;
+      if (cls6.superClass) props.superClass = cls6.superClass;
+      if (cls6.interfaces.length > 0) props.interfaces = cls6.interfaces;
+    } else if (cls6.kind === "interface") {
+      props.isSealed = cls6.isSealed;
+      if (cls6.interfaces.length > 0) props.interfaces = cls6.interfaces;
+    } else if (cls6.kind === "object") {
       props.isCompanion = false;
-    } else if (cls3.kind === "enum") {
+    } else if (cls6.kind === "enum") {
       props.isEnum = true;
-    } else if (cls3.kind === "annotation") {
+    } else if (cls6.kind === "annotation") {
       props.isAnnotationClass = true;
     }
-    const typeParams = serializeTypeParameters(cls3.typeParameters);
+    const typeParams = serializeTypeParameters(cls6.typeParameters);
     if (typeParams) props.typeParameters = typeParams;
     const createNodeQuery = `
       MERGE (n:${label} {fqn: $fqn})
@@ -35736,40 +40558,49 @@ var Neo4jWriter = class {
       await this.client.write(containsQuery, { packageName, fqn });
       relationshipsCreated++;
     }
-    const annotationResult = await this.writeAnnotations(cls3.annotations, fqn, label);
+    if (modulePath && !parentFqn) {
+      const belongsToQuery = `
+        MATCH (m:Module {path: $modulePath})
+        MATCH (n:${label} {fqn: $fqn})
+        MERGE (m)-[:CONTAINS]->(n)
+      `;
+      await this.client.write(belongsToQuery, { modulePath, fqn });
+      relationshipsCreated++;
+    }
+    const annotationResult = await this.writeAnnotations(cls6.annotations, fqn, label);
     nodesCreated += annotationResult.nodesCreated;
     relationshipsCreated += annotationResult.relationshipsCreated;
-    if (cls3.superClass) {
-      const extendsResult = await this.writeExtendsRelationship(fqn, cls3.superClass, label);
+    if (cls6.superClass) {
+      const extendsResult = await this.writeExtendsRelationship(fqn, cls6.superClass, label);
       relationshipsCreated += extendsResult;
     }
-    for (const iface of cls3.interfaces) {
+    for (const iface of cls6.interfaces) {
       const implementsResult = await this.writeImplementsRelationship(fqn, iface, label);
       relationshipsCreated += implementsResult;
     }
-    for (const prop of cls3.properties) {
+    for (const prop of cls6.properties) {
       const propResult = await this.writeProperty(prop, fqn, filePath);
       nodesCreated += propResult.nodesCreated;
       relationshipsCreated += propResult.relationshipsCreated;
     }
-    for (const func of cls3.functions) {
+    for (const func of cls6.functions) {
       const funcResult = await this.writeFunction(func, fqn, filePath);
       nodesCreated += funcResult.nodesCreated;
       relationshipsCreated += funcResult.relationshipsCreated;
     }
-    for (const nested of cls3.nestedClasses) {
+    for (const nested of cls6.nestedClasses) {
       const nestedResult = await this.writeClass(nested, packageName, filePath, fqn);
       nodesCreated += nestedResult.nodesCreated;
       relationshipsCreated += nestedResult.relationshipsCreated;
     }
-    if (cls3.companionObject) {
-      const companionResult = await this.writeCompanionObject(cls3.companionObject, fqn, filePath);
+    if (cls6.companionObject) {
+      const companionResult = await this.writeCompanionObject(cls6.companionObject, fqn, filePath);
       nodesCreated += companionResult.nodesCreated;
       relationshipsCreated += companionResult.relationshipsCreated;
     }
-    if (cls3.secondaryConstructors && cls3.secondaryConstructors.length > 0) {
-      for (let i = 0; i < cls3.secondaryConstructors.length; i++) {
-        const ctor = cls3.secondaryConstructors[i];
+    if (cls6.secondaryConstructors && cls6.secondaryConstructors.length > 0) {
+      for (let i = 0; i < cls6.secondaryConstructors.length; i++) {
+        const ctor = cls6.secondaryConstructors[i];
         const ctorResult = await this.writeSecondaryConstructor(ctor, fqn, filePath, i);
         nodesCreated += ctorResult.nodesCreated;
         relationshipsCreated += ctorResult.relationshipsCreated;
@@ -35813,6 +40644,9 @@ var Neo4jWriter = class {
       filePath,
       lineNumber: companion.location.startLine
     };
+    if (this.currentProjectPath) {
+      props.projectPath = this.currentProjectPath;
+    }
     const createQuery = `
       MERGE (o:Object {fqn: $fqn})
       SET o += $props
@@ -35860,6 +40694,9 @@ var Neo4jWriter = class {
       filePath,
       lineNumber: func.location.startLine
     };
+    if (this.currentProjectPath) {
+      props.projectPath = this.currentProjectPath;
+    }
     if (func.returnType) props.returnType = func.returnType;
     if (func.receiverType) props.receiverType = func.receiverType;
     const typeParams = serializeTypeParameters(func.typeParameters);
@@ -35909,6 +40746,13 @@ var Neo4jWriter = class {
       filePath,
       lineNumber: func.location.startLine
     };
+    if (this.currentProjectPath) {
+      props.projectPath = this.currentProjectPath;
+    }
+    const modulePath = !packageName ? this.getModulePathForFile(filePath) : void 0;
+    if (modulePath) {
+      props.modulePath = modulePath;
+    }
     if (func.returnType) props.returnType = func.returnType;
     if (func.receiverType) props.receiverType = func.receiverType;
     const typeParams = serializeTypeParameters(func.typeParameters);
@@ -35927,6 +40771,15 @@ var Neo4jWriter = class {
         MERGE (pkg)-[:CONTAINS]->(f)
       `;
       await this.client.write(containsQuery, { packageName, fqn });
+      relationshipsCreated++;
+    }
+    if (modulePath) {
+      const belongsToQuery = `
+        MATCH (m:Module {path: $modulePath})
+        MATCH (f:Function {fqn: $fqn})
+        MERGE (m)-[:CONTAINS]->(f)
+      `;
+      await this.client.write(belongsToQuery, { modulePath, fqn });
       relationshipsCreated++;
     }
     const annotationResult = await this.writeAnnotations(func.annotations, fqn, "Function");
@@ -35955,6 +40808,9 @@ var Neo4jWriter = class {
       filePath,
       lineNumber: prop.location.startLine
     };
+    if (this.currentProjectPath) {
+      props.projectPath = this.currentProjectPath;
+    }
     if (prop.type) props.type = prop.type;
     if (prop.initializer) props.initializer = prop.initializer;
     const createQuery = `
@@ -35992,6 +40848,13 @@ var Neo4jWriter = class {
       filePath,
       lineNumber: prop.location.startLine
     };
+    if (this.currentProjectPath) {
+      props.projectPath = this.currentProjectPath;
+    }
+    const modulePath = !packageName ? this.getModulePathForFile(filePath) : void 0;
+    if (modulePath) {
+      props.modulePath = modulePath;
+    }
     if (prop.type) props.type = prop.type;
     if (prop.initializer) props.initializer = prop.initializer;
     const createQuery = `
@@ -36008,6 +40871,15 @@ var Neo4jWriter = class {
         MERGE (pkg)-[:CONTAINS]->(p)
       `;
       await this.client.write(containsQuery, { packageName, fqn });
+      relationshipsCreated++;
+    }
+    if (modulePath) {
+      const belongsToQuery = `
+        MATCH (m:Module {path: $modulePath})
+        MATCH (p:Property {fqn: $fqn})
+        MERGE (m)-[:CONTAINS]->(p)
+      `;
+      await this.client.write(belongsToQuery, { modulePath, fqn });
       relationshipsCreated++;
     }
     const annotationResult = await this.writeAnnotations(prop.annotations, fqn, "Property");
@@ -36057,6 +40929,13 @@ var Neo4jWriter = class {
       filePath,
       lineNumber: typeAlias.location.startLine
     };
+    if (this.currentProjectPath) {
+      props.projectPath = this.currentProjectPath;
+    }
+    const modulePath = !packageName ? this.getModulePathForFile(filePath) : void 0;
+    if (modulePath) {
+      props.modulePath = modulePath;
+    }
     const typeParams = serializeTypeParameters(typeAlias.typeParameters);
     if (typeParams) props.typeParameters = typeParams;
     const createQuery = `
@@ -36073,6 +40952,15 @@ var Neo4jWriter = class {
         MERGE (pkg)-[:CONTAINS]->(t)
       `;
       await this.client.write(containsQuery, { packageName, fqn });
+      relationshipsCreated++;
+    }
+    if (modulePath) {
+      const belongsToQuery = `
+        MATCH (m:Module {path: $modulePath})
+        MATCH (t:TypeAlias {fqn: $fqn})
+        MERGE (m)-[:CONTAINS]->(t)
+      `;
+      await this.client.write(belongsToQuery, { modulePath, fqn });
       relationshipsCreated++;
     }
     return { nodesCreated, relationshipsCreated };
@@ -36113,13 +41001,16 @@ var Neo4jWriter = class {
   }
   /**
    * Write EXTENDS relationship.
+   * Supports both Class extends Class and Interface extends Interface scenarios.
    */
   async writeExtendsRelationship(childFqn, parentName, childLabel) {
     const extendsQuery = `
       MATCH (child:${childLabel} {fqn: $childFqn})
-      OPTIONAL MATCH (parentByFqn:Class {fqn: $parentName})
-      OPTIONAL MATCH (parentByName:Class {name: $parentName})
-      WITH child, COALESCE(parentByFqn, parentByName) AS parent
+      OPTIONAL MATCH (parentClassByFqn:Class {fqn: $parentName})
+      OPTIONAL MATCH (parentClassByName:Class {name: $parentName})
+      OPTIONAL MATCH (parentIfaceByFqn:Interface {fqn: $parentName})
+      OPTIONAL MATCH (parentIfaceByName:Interface {name: $parentName})
+      WITH child, COALESCE(parentClassByFqn, parentClassByName, parentIfaceByFqn, parentIfaceByName) AS parent
       WHERE parent IS NOT NULL
       MERGE (child)-[:EXTENDS]->(parent)
     `;
@@ -36178,71 +41069,76 @@ var Neo4jWriter = class {
   /**
    * Write USES relationships for functions to types they use in parameters.
    * Collects all parameter types from functions and creates USES relationships.
+   *
+   * Enhanced to use import resolution for TypeScript/JavaScript files,
+   * enabling accurate type resolution via imports.
    */
   async writeUsesRelationships(files) {
+    const importMaps = buildAllImportResolutionMaps(files);
     const usesData = [];
-    const collectFunctionUses = (func, functionFqn) => {
+    const collectFunctionUses = (func, functionFqn, importMap) => {
       for (const param of func.parameters) {
-        const types = extractTypeNames(param.type);
-        for (const typeName of types) {
-          usesData.push({ functionFqn, typeName, context: "parameter" });
+        const resolvedTypes = resolveTypeNames(param.type, importMap);
+        for (const { name, fqn } of resolvedTypes) {
+          usesData.push({ functionFqn, typeName: name, typeFqn: fqn, context: "parameter" });
         }
         if (param.functionType) {
           for (const paramType of param.functionType.parameterTypes) {
-            const types2 = extractTypeNames(paramType);
-            for (const typeName of types2) {
-              usesData.push({ functionFqn, typeName, context: "parameter" });
+            const resolvedTypes2 = resolveTypeNames(paramType, importMap);
+            for (const { name, fqn } of resolvedTypes2) {
+              usesData.push({ functionFqn, typeName: name, typeFqn: fqn, context: "parameter" });
             }
           }
-          const returnTypes = extractTypeNames(param.functionType.returnType);
-          for (const typeName of returnTypes) {
-            usesData.push({ functionFqn, typeName, context: "parameter" });
+          const returnTypes = resolveTypeNames(param.functionType.returnType, importMap);
+          for (const { name, fqn } of returnTypes) {
+            usesData.push({ functionFqn, typeName: name, typeFqn: fqn, context: "parameter" });
           }
           if (param.functionType.receiverType) {
-            const receiverTypes = extractTypeNames(param.functionType.receiverType);
-            for (const typeName of receiverTypes) {
-              usesData.push({ functionFqn, typeName, context: "parameter" });
+            const receiverTypes = resolveTypeNames(param.functionType.receiverType, importMap);
+            for (const { name, fqn } of receiverTypes) {
+              usesData.push({ functionFqn, typeName: name, typeFqn: fqn, context: "parameter" });
             }
           }
         }
       }
       if (func.receiverType) {
-        const types = extractTypeNames(func.receiverType);
-        for (const typeName of types) {
-          usesData.push({ functionFqn, typeName, context: "receiver" });
+        const resolvedTypes = resolveTypeNames(func.receiverType, importMap);
+        for (const { name, fqn } of resolvedTypes) {
+          usesData.push({ functionFqn, typeName: name, typeFqn: fqn, context: "receiver" });
         }
       }
     };
-    const processClass = (cls3, packageName, parentFqn) => {
-      const classFqn = parentFqn ? `${parentFqn}.${cls3.name}` : buildFqn(packageName, cls3.name);
-      for (const func of cls3.functions) {
+    const processClass = (cls6, packageName, importMap, parentFqn) => {
+      const classFqn = parentFqn ? `${parentFqn}.${cls6.name}` : buildFqn(packageName, cls6.name);
+      for (const func of cls6.functions) {
         const functionFqn = `${classFqn}.${func.name}`;
-        collectFunctionUses(func, functionFqn);
+        collectFunctionUses(func, functionFqn, importMap);
       }
-      for (const nested of cls3.nestedClasses) {
-        processClass(nested, packageName, classFqn);
+      for (const nested of cls6.nestedClasses) {
+        processClass(nested, packageName, importMap, classFqn);
       }
-      if (cls3.companionObject) {
-        const companionFqn = `${classFqn}.${cls3.companionObject.name || "Companion"}`;
-        for (const func of cls3.companionObject.functions) {
+      if (cls6.companionObject) {
+        const companionFqn = `${classFqn}.${cls6.companionObject.name || "Companion"}`;
+        for (const func of cls6.companionObject.functions) {
           const functionFqn = `${companionFqn}.${func.name}`;
-          collectFunctionUses(func, functionFqn);
+          collectFunctionUses(func, functionFqn, importMap);
         }
       }
     };
     for (const file of files) {
-      for (const cls3 of file.classes) {
-        processClass(cls3, file.packageName);
+      const importMap = importMaps.get(file.filePath);
+      for (const cls6 of file.classes) {
+        processClass(cls6, file.packageName, importMap);
       }
       for (const func of file.topLevelFunctions) {
         const functionFqn = buildFqn(file.packageName, func.name);
-        collectFunctionUses(func, functionFqn);
+        collectFunctionUses(func, functionFqn, importMap);
       }
     }
     if (usesData.length === 0) return 0;
     const uniqueUses = /* @__PURE__ */ new Map();
     for (const use of usesData) {
-      const key = `${use.functionFqn}:${use.typeName}`;
+      const key = `${use.functionFqn}:${use.typeFqn || use.typeName}`;
       if (!uniqueUses.has(key)) {
         uniqueUses.set(key, use);
       }
@@ -36254,9 +41150,18 @@ var Neo4jWriter = class {
       const usesQuery = `
         UNWIND $uses AS use
         MATCH (f:Function {fqn: use.functionFqn})
+
+        // Try FQN match first (more accurate)
+        OPTIONAL MATCH (cByFqn:Class {fqn: use.typeFqn})
+        OPTIONAL MATCH (iByFqn:Interface {fqn: use.typeFqn})
+
+        // Fall back to name match if FQN not available or not found
         OPTIONAL MATCH (cByName:Class {name: use.typeName})
+        WHERE use.typeFqn IS NULL OR (cByFqn IS NULL AND iByFqn IS NULL)
         OPTIONAL MATCH (iByName:Interface {name: use.typeName})
-        WITH f, use, COALESCE(cByName, iByName) AS target
+        WHERE use.typeFqn IS NULL OR (cByFqn IS NULL AND iByFqn IS NULL)
+
+        WITH f, use, COALESCE(cByFqn, iByFqn, cByName, iByName) AS target
         WHERE target IS NOT NULL
         MERGE (f)-[r:USES]->(target)
         ON CREATE SET r.context = use.context
@@ -36283,26 +41188,26 @@ var Neo4jWriter = class {
         }
       }
     };
-    const processClass = (cls3, packageName, parentFqn) => {
-      const classFqn = parentFqn ? `${parentFqn}.${cls3.name}` : buildFqn(packageName, cls3.name);
-      for (const func of cls3.functions) {
+    const processClass = (cls6, packageName, parentFqn) => {
+      const classFqn = parentFqn ? `${parentFqn}.${cls6.name}` : buildFqn(packageName, cls6.name);
+      for (const func of cls6.functions) {
         const functionFqn = `${classFqn}.${func.name}`;
         collectFunctionReturns(func, functionFqn);
       }
-      for (const nested of cls3.nestedClasses) {
+      for (const nested of cls6.nestedClasses) {
         processClass(nested, packageName, classFqn);
       }
-      if (cls3.companionObject) {
-        const companionFqn = `${classFqn}.${cls3.companionObject.name || "Companion"}`;
-        for (const func of cls3.companionObject.functions) {
+      if (cls6.companionObject) {
+        const companionFqn = `${classFqn}.${cls6.companionObject.name || "Companion"}`;
+        for (const func of cls6.companionObject.functions) {
           const functionFqn = `${companionFqn}.${func.name}`;
           collectFunctionReturns(func, functionFqn);
         }
       }
     };
     for (const file of files) {
-      for (const cls3 of file.classes) {
-        processClass(cls3, file.packageName);
+      for (const cls6 of file.classes) {
+        processClass(cls6, file.packageName);
       }
       for (const func of file.topLevelFunctions) {
         const functionFqn = buildFqn(file.packageName, func.name);
@@ -36354,6 +41259,9 @@ var Neo4jWriter = class {
       lineNumber: ctor.location.startLine,
       parameterCount: ctor.parameters.length
     };
+    if (this.currentProjectPath) {
+      props.projectPath = this.currentProjectPath;
+    }
     if (ctor.delegatesTo) {
       props.delegatesTo = ctor.delegatesTo;
     }
@@ -36424,6 +41332,9 @@ var Neo4jWriter = class {
         filePath,
         lineNumber: destructuring.location.startLine
       };
+      if (this.currentProjectPath) {
+        props.projectPath = this.currentProjectPath;
+      }
       if (componentType) props.type = componentType;
       if (destructuring.initializer) props.initializer = destructuring.initializer;
       const createQuery = `
@@ -36460,6 +41371,9 @@ var Neo4jWriter = class {
       filePath,
       lineNumber: objExpr.location.startLine
     };
+    if (this.currentProjectPath) {
+      props.projectPath = this.currentProjectPath;
+    }
     if (objExpr.superTypes.length > 0) {
       props.superTypes = objExpr.superTypes;
     }
@@ -36560,7 +41474,55 @@ var Neo4jWriter = class {
     }
     return { nodesCreated, relationshipsCreated };
   }
+  /**
+   * Write re-exports to Neo4j.
+   * Re-exports create relationships between modules to track module re-exporting patterns.
+   *
+   * Creates:
+   * - Reexport nodes (one per re-export statement)
+   * - REEXPORTS relationship from the module/file to the Reexport node
+   */
+  async writeReexports(reexports, packageName, filePath) {
+    let nodesCreated = 0;
+    let relationshipsCreated = 0;
+    for (const reexport of reexports) {
+      const reexportId = `${filePath}:${reexport.sourcePath}:${reexport.originalName || "*"}:${reexport.exportedName || "*"}`;
+      const props = {
+        id: reexportId,
+        sourcePath: reexport.sourcePath,
+        filePath
+      };
+      if (this.currentProjectPath) {
+        props.projectPath = this.currentProjectPath;
+      }
+      if (reexport.originalName) props.originalName = reexport.originalName;
+      if (reexport.exportedName) props.exportedName = reexport.exportedName;
+      if (reexport.isNamespaceReexport) props.isNamespaceReexport = true;
+      if (reexport.isWildcard) props.isWildcard = true;
+      if (reexport.isTypeOnly) props.isTypeOnly = true;
+      const createQuery = `
+        MERGE (r:Reexport {id: $id})
+        SET r += $props
+        RETURN r
+      `;
+      await this.client.write(createQuery, { id: reexportId, props });
+      nodesCreated++;
+      if (packageName) {
+        const reexportsQuery = `
+          MATCH (pkg:Package {name: $packageName})
+          MATCH (r:Reexport {id: $reexportId})
+          MERGE (pkg)-[:REEXPORTS]->(r)
+        `;
+        await this.client.write(reexportsQuery, { packageName, reexportId });
+        relationshipsCreated++;
+      }
+    }
+    return { nodesCreated, relationshipsCreated };
+  }
 };
+
+// src/indexer/index.ts
+init_file_filter();
 
 // src/scripts/setup.ts
 var NEO4J_URI = process.env.NEO4J_URI || "bolt://localhost:7687";
@@ -36578,14 +41540,14 @@ function findDockerCompose() {
   const scriptDir = __dirname;
   const candidates = [
     // From script dir: ../docker-compose.yml (scripts/ -> plugin/)
-    (0, import_path3.resolve)(scriptDir, "..", "docker-compose.yml"),
+    (0, import_path4.resolve)(scriptDir, "..", "docker-compose.yml"),
     // From script dir: ../../docker-compose.yml (dist/scripts/ -> plugin/)
-    (0, import_path3.resolve)(scriptDir, "..", "..", "docker-compose.yml"),
+    (0, import_path4.resolve)(scriptDir, "..", "..", "docker-compose.yml"),
     // Fallback: check cwd for local development
-    (0, import_path3.resolve)(process.cwd(), "docker-compose.yml")
+    (0, import_path4.resolve)(process.cwd(), "docker-compose.yml")
   ];
-  for (const path2 of candidates) {
-    if ((0, import_fs2.existsSync)(path2)) return path2;
+  for (const path5 of candidates) {
+    if ((0, import_fs2.existsSync)(path5)) return path5;
   }
   return null;
 }
@@ -36598,7 +41560,7 @@ function isNeo4jContainerRunning() {
   }
 }
 function startNeo4jContainer(composePath) {
-  const composeDir = (0, import_path3.dirname)(composePath);
+  const composeDir = (0, import_path4.dirname)(composePath);
   const commands = [
     "docker compose up -d",
     "docker-compose up -d"

@@ -1,6 +1,6 @@
 {
   "name": "@codegraph/plugin",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "private": true,
   "description": "CodeGraph Claude plugin - native dependencies",
   "scripts": {
@@ -11,6 +11,7 @@
   "dependencies": {
     "tree-sitter": "^0.22.4",
     "tree-sitter-kotlin": "^0.3.8",
-    "tree-sitter-java": "^0.23.5"
+    "tree-sitter-java": "^0.23.5",
+    "tree-sitter-typescript": "^0.23.2"
   }
 }
